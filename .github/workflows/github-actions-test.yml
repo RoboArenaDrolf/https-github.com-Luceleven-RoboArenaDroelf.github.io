@@ -1,7 +1,7 @@
 name: Code Quality
 
 on:
-  push:
+  pull_request:
     paths:
       - "**.py"
 
@@ -23,10 +23,7 @@ jobs:
           config: path/to/flake8.ini
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          
-on:
-  pull_request:
+  push:
     paths:
       - "**.py"
 
