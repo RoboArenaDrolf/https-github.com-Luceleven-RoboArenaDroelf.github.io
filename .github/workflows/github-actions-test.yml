@@ -1,8 +1,9 @@
 name: Code Quality
 
-on: [pull_request, push]
-paths:
-  - "**.py"
+on:
+  pull_request:
+    paths:
+      - "**.py"
 
 jobs:
   lint:
