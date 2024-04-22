@@ -4,7 +4,10 @@ on:
   pull_request:
     paths:
       - "**.py"
-
+  push:
+    paths:
+      - "**.py"
+# I don't know why [pull_request, push] isn't allowed with specific paths, but it works like this
 jobs:
   lint:
     name: Python Lint
