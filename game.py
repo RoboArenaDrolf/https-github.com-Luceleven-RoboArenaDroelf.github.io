@@ -25,6 +25,7 @@ square_size = 20
 
 # Liste für die Positionen und Geschwindigkeiten der schwarzen Quadrate
 black_squares = []
+white_squares = []
 
 # Event-Timer für die Erzeugung der Quadrate
 ADD_SQUARE = pygame.USEREVENT + 1
@@ -63,6 +64,7 @@ def game_over_screen():
 game_over = False
 
 run = True
+points = 0
 while run:
     pygame.time.delay(20)
 
@@ -73,6 +75,8 @@ while run:
             # Zufällige X-Position generieren und zur Liste hinzufügen
             random_x_position = random.randint(0, WIN_SIZE - square_size)
             black_squares.append([random_x_position, 0, 5])  # [x, y, speed]
+            random_x_position = random.randint(0, WIN_SIZE - square_size)
+            white_squares.append([random_x_position, 0, 5])
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_over:
             # Mausklick-Ereignis verarbeiten, wenn das Spiel vorbei ist
@@ -96,11 +100,18 @@ while run:
         if keys[pygame.K_LEFT]:
             x -= 5
 
+
         # Überprüfen, ob das rote Rechteck mit einem schwarzen Rechteck kollidiert
         for square in black_squares:
             square[1] += square[2]  # Update y-coordinate using speed
             if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
                 game_over = True
+
+        for square in white_squares:
+            square[1] += square[2]  # Update y-coordinate using speed
+            if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
+                points = points+1
+                square[1] = square[1] + 200
 
     screen.fill((0, 255, 200))
 
@@ -108,11 +119,20 @@ while run:
     for square in black_squares:
         pygame.draw.rect(screen, black, [square[0], square[1], square_size, square_size])
 
+    for square in white_squares:
+        pygame.draw.rect(screen, white, [square[0], square[1], square_size, square_size])
+
     # Spielerrechteck zeichnen
     pygame.draw.rect(screen, red, (x, y, 50, 50))
 
     if game_over:
         game_over_screen()
+
+    # Text für die Punkte
+    font = pygame.font.Font(None, 64)
+    text_points = font.render(f"Deine Punkte {points} " , True, black)
+    points_rect = text_points.get_rect(center=(200 , 50))
+    screen.blit(text_points, points_rect)
 
     pygame.display.update()
 
