@@ -106,11 +106,13 @@ while run:
             square[1] += square[2]  # Update y-coordinate using speed
             if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
                 game_over = True
-
+        # Überprüfen, ob das rote Rechteck mit einem weißen Rechteck kollidiert
         for square in white_squares:
             square[1] += square[2]  # Update y-coordinate using speed
             if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
+                #update des Punktecounters
                 points = points+1
+                #weißes Rechteck wird außerhalb des spielbereichs gepusht
                 square[1] = square[1] + 200
 
     screen.fill((0, 255, 200))
@@ -118,7 +120,7 @@ while run:
     # Schwarze Quadrate aktualisieren und zeichnen
     for square in black_squares:
         pygame.draw.rect(screen, black, [square[0], square[1], square_size, square_size])
-
+    # Weiße Quadrate aktualisieren und zeichnen
     for square in white_squares:
         pygame.draw.rect(screen, white, [square[0], square[1], square_size, square_size])
 
@@ -128,7 +130,7 @@ while run:
     if game_over:
         game_over_screen()
 
-    # Text für die Punkte
+    # Text für den Punket-counter
     font = pygame.font.Font(None, 64)
     text_points = font.render(f"Deine Punkte {points} " , True, black)
     points_rect = text_points.get_rect(center=(200 , 50))
