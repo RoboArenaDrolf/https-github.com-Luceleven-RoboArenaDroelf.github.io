@@ -1,16 +1,19 @@
 import pygame
 import random
 import sys
+from screeninfo import get_monitors
 
 pygame.init()
 
-WIN_SIZE = 800
+monitor = get_monitors()[0]
+windowWidth = monitor.width
+windowHeight = monitor.height
 
-screen = pygame.display.set_mode((WIN_SIZE, WIN_SIZE))
+screen = pygame.display.set_mode((windowWidth, windowHeight))
 pygame.display.set_caption("SNAKE")
 
-x = 400
-y = 700
+x = windowWidth // 2
+y = windowHeight - windowHeight // 10
 
 # Farbdefinitionen
 black = (0, 0, 0)
@@ -21,11 +24,14 @@ red = (200, 0, 0)
 clock = pygame.time.Clock()
 
 # Quadratgröße
-square_size = 20
+square_size = windowHeight // 40
 
 # Liste für die Positionen und Geschwindigkeiten der schwarzen Quadrate
 black_squares = []
 white_squares = []
+
+# Punktezähler
+points = 0
 
 # Event-Timer für die Erzeugung der Quadrate
 ADD_SQUARE = pygame.USEREVENT + 1
@@ -40,7 +46,7 @@ def game_over_screen():
     # "Game Over" anzeigen
     font = pygame.font.Font(None, 64)
     text = font.render("Game Over", True, black)
-    screen.blit(text, (WIN_SIZE // 2 - text.get_width() // 2, WIN_SIZE // 2 - text.get_height() // 2))
+    screen.blit(text, (windowWidth // 2 - text.get_width() // 2, windowHeight // 2 - text.get_height() // 2))
 
     # "Nochmal spielen" und "Spiel beenden" anzeigen
     font = pygame.font.Font(None, 36)
@@ -48,8 +54,8 @@ def game_over_screen():
     text_quit = font.render("Spiel beenden", True, black)
 
     # Positionen der Texte festlegen
-    retry_rect = text_retry.get_rect(center=(WIN_SIZE // 2, WIN_SIZE // 2 + 50))
-    quit_rect = text_quit.get_rect(center=(WIN_SIZE // 2, WIN_SIZE // 2 + 100))
+    retry_rect = text_retry.get_rect(center=(windowWidth // 2, windowHeight // 2 + 50))
+    quit_rect = text_quit.get_rect(center=(windowWidth // 2, windowHeight // 2 + 100))
 
     # Rechtecke zeichnen
     pygame.draw.rect(screen, white, retry_rect, 2)
@@ -64,18 +70,17 @@ def game_over_screen():
 game_over = False
 
 run = True
-points = 0
 while run:
     pygame.time.delay(20)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        elif event.type == ADD_SQUARE:
+        elif event.type == ADD_SQUARE and not game_over:
             # Zufällige X-Position generieren und zur Liste hinzufügen
-            random_x_position = random.randint(0, WIN_SIZE - square_size)
+            random_x_position = random.randint(0, windowWidth - square_size)
             black_squares.append([random_x_position, 0, 5])  # [x, y, speed]
-            random_x_position = random.randint(0, WIN_SIZE - square_size)
+            random_x_position = random.randint(0, windowWidth - square_size)
             white_squares.append([random_x_position, 0, 5])
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_over:
@@ -85,8 +90,10 @@ while run:
                 # Nochmal spielen
                 game_over = False
                 black_squares.clear()
-                x = 400
-                y = 700
+                white_squares.clear()
+                x = windowWidth // 2
+                y = windowHeight - windowHeight // 10
+                points = 0
             elif quit_rect.collidepoint(mouse_pos):
                 # Spiel beenden
                 pygame.quit()
@@ -96,15 +103,17 @@ while run:
 
     if not game_over:  # Das Spiel läuft nur weiter, wenn es nicht vorbei ist
         if keys[pygame.K_RIGHT]:
-            x += 5
+            x = min(x + 5, windowWidth - square_size)  # Spieler kann nicht über den Bildschirmrand hinaus
         if keys[pygame.K_LEFT]:
-            x -= 5
+            x = max(x - 5, 0)  # Spieler kann nicht über den Bildschirmrand hinaus
+
+        playerSize = windowHeight // 16
 
 
         # Überprüfen, ob das rote Rechteck mit einem schwarzen Rechteck kollidiert
         for square in black_squares:
             square[1] += square[2]  # Update y-coordinate using speed
-            if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
+            if y < square[1] + square_size and y + playerSize > square[1] and x < square[0] + square_size and x + playerSize > square[0]:
                 game_over = True
         # Überprüfen, ob das rote Rechteck mit einem weißen Rechteck kollidiert
         for square in white_squares:
@@ -125,7 +134,9 @@ while run:
             pygame.draw.rect(screen, white, [square[0], square[1], square_size, square_size])
 
     # Spielerrechteck zeichnen
-        pygame.draw.rect(screen, red, (x, y, 50, 50))
+
+    pygame.draw.rect(screen, red, (x, y, playerSize, playerSize))
+
 
     if game_over:
         game_over_screen()
