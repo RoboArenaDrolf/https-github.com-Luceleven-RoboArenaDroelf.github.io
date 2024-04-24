@@ -115,17 +115,17 @@ while run:
                 #weißes Rechteck wird außerhalb des spielbereichs gepusht
                 square[1] = square[1] + 200
 
-    screen.fill((0, 255, 200))
+        screen.fill((0, 255, 200))
 
     # Schwarze Quadrate aktualisieren und zeichnen
-    for square in black_squares:
-        pygame.draw.rect(screen, black, [square[0], square[1], square_size, square_size])
+        for square in black_squares:
+            pygame.draw.rect(screen, black, [square[0], square[1], square_size, square_size])
     # Weiße Quadrate aktualisieren und zeichnen
-    for square in white_squares:
-        pygame.draw.rect(screen, white, [square[0], square[1], square_size, square_size])
+        for square in white_squares:
+            pygame.draw.rect(screen, white, [square[0], square[1], square_size, square_size])
 
     # Spielerrechteck zeichnen
-    pygame.draw.rect(screen, red, (x, y, 50, 50))
+        pygame.draw.rect(screen, red, (x, y, 50, 50))
 
     if game_over:
         game_over_screen()
