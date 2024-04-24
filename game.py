@@ -144,6 +144,7 @@ while run:
     # Text für den Punket-counter
     font = pygame.font.Font(None, 64)
     text_points = font.render(f"Deine Punkte {points} " , True, black)
+    # Position des Counters
     points_rect = text_points.get_rect(center=(200 , 50))
     screen.blit(text_points, points_rect)
 
