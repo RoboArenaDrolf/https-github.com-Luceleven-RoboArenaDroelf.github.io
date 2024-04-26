@@ -1,0 +1,6 @@
+Idee war ein 2D Game mit Seitenansicht und grobes Spielprinzip wie Brawlhalla oder Smash Bros.
+Es gibt verschiedene spielbare Roboter mit verschiedenen Waffen/Items/Fähigkeiten und Bewegungsmöglichkeiten.
+Mögliche Spielmodi wären hierbei:
+Normaler Arena Fight wie bei Smash Bros, entweder mit HP oder den Prozenten mit mehr Rückstoß und man stirbt erst wenn man von der Map fliegt.
+Da die Arenas recht groß sein können kann man sich die Fights evtl. auch raussuchen und man macht so Art Levels.
+Endlosmodus Rogue Like mit Highscore und/oder Bossfights.
