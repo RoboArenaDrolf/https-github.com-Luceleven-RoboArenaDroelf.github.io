@@ -1,17 +1,17 @@
 from enum import Enum
 
+
 class Arena:
     class _TileType(Enum):
         """
         Enum of different tile types, value of tile represents it's color.
         """
-        CONCRETE = (178,190,181)
+        CONCRETE = (178, 190, 181)
         AIR = (255, 255, 255)
-        GRASS = (0,107,60)
-        ICE = (113,166,210)
-        SAND = (237,201,175)
-        LAVA = (207,16,32)
-
+        GRASS = (0, 107, 60)
+        ICE = (113, 166, 210)
+        SAND = (237, 201, 175)
+        LAVA = (207, 16, 32)
 
     _CO = _TileType.CONCRETE
     _GR = _TileType.GRASS
