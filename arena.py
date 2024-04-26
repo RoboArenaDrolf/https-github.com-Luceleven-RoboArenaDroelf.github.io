@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class Arena:
-    class _TileType(Enum):
+    class TileType(Enum):
         """
         Enum of different tile types, value of tile represents it's color.
         """
@@ -13,14 +13,14 @@ class Arena:
         SAND = (237, 201, 175)
         LAVA = (207, 16, 32)
 
-    _CO = _TileType.CONCRETE
-    _GR = _TileType.GRASS
-    _IC = _TileType.ICE
-    _AI = _TileType.AIR
-    _SA = _TileType.SAND
-    _LA = _TileType.LAVA
+    _CO = TileType.CONCRETE
+    _GR = TileType.GRASS
+    _IC = TileType.ICE
+    _AI = TileType.AIR
+    _SA = TileType.SAND
+    _LA = TileType.LAVA
 
-    _tiles = [[_CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI],
+    tiles = [[_CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI],
               [_LA, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI],
               [_LA, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI],
               [_LA, _AI, _AI, _AI, _SA, _SA, _SA, _SA, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _AI, _SA, _IC, _IC, _SA],
@@ -40,7 +40,7 @@ class Arena:
               [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _IC, _IC, _IC, _IC, _AI, _AI, _AI, _AI],
               [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO],
               [_CO, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO]]
-    _tile_size = 50
+    tile_size = 50
 
     def paint_arena(self, pygame, screen):
         """
@@ -54,9 +54,9 @@ class Arena:
         if screen.get_size() != (1000, 1000):
             raise ValueError("Wrong screen size! Must be 1000x1000.")
         y = 0
-        for row in self._tiles:
+        for row in self.tiles:
             x = 0
             for tile in row:
-                pygame.draw.rect(screen, tile.value, [x, y, self._tile_size, self._tile_size])
-                x += self._tile_size
-            y += self._tile_size
+                pygame.draw.rect(screen, tile.value, [x, y, self.tile_size, self.tile_size])
+                x += self.tile_size
+            y += self.tile_size
