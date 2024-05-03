@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roboarena Report</title>
+
+    <style>
+        body {
+            background-color: #a08c8c; 
+            width: 60%; 
+            margin: auto; 
+            padding: 20px; 
+            font-family: Arial, sans-serif; 
+            color: #333; 
+        }
+
+        h1 {
+            color: #6d0e00; 
+            text-decoration: underline; 
+        }
+
+        p {
+            margin-bottom: 15px; 
+        }
+
+        img {
+            display: block; 
+            margin: auto; 
+            margin-top: 20px; 
+            border: 2px solid #6d0e00; 
+            border-radius: 5px; 
+        }
+    </style>
+</head>
+<body>
+    <h1>Sprint 1: Einrichtung</h1>
+    <p>
+        Zuerst haben wir ein Repository mit unserem
+        Teamnamen erstellt. Danach haben wir allen die Adminrolle
+        zugeteilt, damit wir alle die Möglichkeit haben, an die Repository-
+        Einstellungen zu gelangen. Dadurch konnten wir die gewünschte 
+        Konfiguration für GitHub Pages einstellen.
+    </p>
+    <p>
+        Emanuel hat nun eine Grundbasis für ein erstes Spiel geschaffen. Hierbei
+        muss man mittels den Pfeiltasten den schwarzen Quadraten entweichen. Entsteht
+        eine Kollision, so erscheint die Schrift "Game Over" und das Spiel beendet sich.
+    </p>
+    <p>
+        Luca hat ermöglicht, dass das Spiel im Vollbildmodus spielbar ist. 
+        Er hat mithilfe des Moduls screeninfo die Monitorauflösung abgerufen 
+        und anhand dieser das Fenster sowie alles andere, was zuvor eine fixe 
+        Größe hatte, angepasst.
+    </p>
+    <p>
+        Emanuel hat nun noch das Feature hinzugefügt, dass man nach dem Verlieren noch 
+        die Möglichkeit hat, zwischen "Nochmal spielen" und "Beenden" zu wählen.
+    </p>
+    <img src="firstgame.png" alt="Screenshot des ersten Spiels" height="300" width="300">
+
+    <h1>Sprint 2: Konzeption und Kodierung</h1>
+    <p>
+        Emanuel hat sich um die Movement-Klasse unter dem Entwickler-Branch "Movement" 
+        gekümmert. Hierbei wurde eine Funktion geschrieben, die die posx- und posy-Werte 
+        der Robot-Klasse durch Drücken der Tasten verändert. Zudem wurde Gravitation 
+        eingefügt, sodass der Roboter nach dem Springen wieder zurück auf den Boden fällt.
+        Zusätzlich wurden vertikale Grenzen hinzugefügt, damit der Roboter sich nicht über den 
+        Bildschirmrand hinaus bewegt.
+    </p>
+</body>
+</html>
