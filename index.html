@@ -85,5 +85,14 @@
         Zusätzlich wurden vertikale Grenzen hinzugefügt, damit der Roboter sich nicht über den 
         Bildschirmrand hinaus bewegt.
     </p>
+    <p>
+        Luca hat die Arena Klasse unter dem branch "arena" entwickelt. Er hat sich zunächst dafür entschieden, 
+        die Tiles der Map als Liste von Listen abzuspeichern, quasi wie ein 20 x 20 Array. Die verschiedenen Tiles 
+        sind hierbei repräsentiert durch das Enum TileType, wo auch gleichzeitig die Farben der Tiles abgespeichert sind.
+        Optimal finden wir diese Speicherstruktur nicht, da es sehr anstrengend ist die Map zu "zeichnen". Eine Idee für später
+        wäre ein Map Editor, um das erstellen von Maps graphisch zu erleichtern und diese dann z.B. in eine Json Datei (evtl. immer noch als
+        "Array") abzuspeichern. Um die Arena zu zeichnen kann die Funktion paint_arena verwendet werden, die mithilfe von zwei For-Schleifen 
+        die verkettete Liste durchgeht und die Tiles als rectangles mithilfe der Farbe des TileType an der entsprechenden Position zeichnet.        
+    </p>
 </body>
 </html>
