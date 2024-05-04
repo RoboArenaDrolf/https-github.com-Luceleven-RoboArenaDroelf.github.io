@@ -17,24 +17,32 @@ class Arena:
     tile_size = 50
 
     def __init__(self, filename):
-        self.tiles = self.load_map_from_json(filename)
+        self.num_tiles_x, self.num_tiles_y, self.tiles = self.load_map_from_json(filename)
 
     def load_map_from_json(self, filename):
-        with open(filename, 'r') as f:
-            data = json.load(f)
-            tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
-            return tiles
+        try:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+                num_tiles_x = data['num_tiles_x']
+                num_tiles_y = data['num_tiles_y']
+                tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
+                return num_tiles_x, num_tiles_y, tiles
+        except:
+            print("File not found!")
+            with open("emptyMap.json", 'r') as f:
+                data = json.load(f)
+                num_tiles_x = data['num_tiles_x']
+                num_tiles_y = data['num_tiles_y']
+                tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
+                return num_tiles_x, num_tiles_y, tiles
 
     def paint_arena(self, pygame, screen):
         """
         Paints the arena with help of parameters pygame and screen.
 
-        Precond: Screen size has to be 1000 x 1000, throws a ValueError otherwise.
         :param pygame: pygame instance
         :param screen: screen element of pygame initialized with pygame.display.set_mode()
         """
-        if screen.get_size() != (1000, 1000):
-            raise ValueError("Wrong screen size! Must be 1000x1000.")
         y = 0
         for row in self.tiles:
             x = 0
