@@ -1,3 +1,4 @@
+import json
 from enum import Enum
 
 
@@ -13,34 +14,16 @@ class Arena:
         SAND = (237, 201, 175)
         LAVA = (207, 16, 32)
 
-    _CO = TileType.CONCRETE
-    _GR = TileType.GRASS
-    _IC = TileType.ICE
-    _AI = TileType.AIR
-    _SA = TileType.SAND
-    _LA = TileType.LAVA
-
-    tiles = [[_CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI],
-              [_LA, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI],
-              [_LA, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI],
-              [_LA, _AI, _AI, _AI, _SA, _SA, _SA, _SA, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _AI, _SA, _IC, _IC, _SA],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO],
-              [_AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _GR, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO],
-              [_AI, _AI, _GR, _GR, _AI, _AI, _AI, _AI, _AI, _GR, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO],
-              [_AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _GR, _AI, _AI, _AI, _AI, _CO, _CO, _AI, _AI, _CO],
-              [_AI, _AI, _AI, _AI, _AI, _GR, _GR, _AI, _AI, _AI, _AI, _GR, _AI, _AI, _AI, _LA, _AI, _AI, _AI, _AI],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _LA, _AI, _AI, _GR, _AI],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _GR, _AI, _AI, _AI, _AI, _AI, _LA, _AI, _AI, _AI, _AI],
-              [_CO, _AI, _AI, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _LA, _CO, _AI, _AI, _CO],
-              [_AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _LA, _AI, _AI, _AI, _CO],
-              [_AI, _AI, _AI, _AI, _IC, _IC, _IC, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _LA, _AI, _AI, _GR, _CO],
-              [_AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _GR, _AI, _AI],
-              [_CO, _GR, _GR, _GR, _GR, _GR, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _IC, _IC, _IC, _IC, _AI, _AI, _AI, _AI],
-              [_CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _AI, _CO],
-              [_CO, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO, _AI, _AI, _AI, _AI, _AI, _CO, _CO, _CO, _CO, _CO]]
     tile_size = 50
+
+    def __init__(self, filename):
+        self.tiles = self.load_map_from_json(filename)
+
+    def load_map_from_json(self, filename):
+        with open(filename, 'r') as f:
+            data = json.load(f)
+            tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
+            return tiles
 
     def paint_arena(self, pygame, screen):
         """
@@ -49,7 +32,6 @@ class Arena:
         Precond: Screen size has to be 1000 x 1000, throws a ValueError otherwise.
         :param pygame: pygame instance
         :param screen: screen element of pygame initialized with pygame.display.set_mode()
-        :return:
         """
         if screen.get_size() != (1000, 1000):
             raise ValueError("Wrong screen size! Must be 1000x1000.")
