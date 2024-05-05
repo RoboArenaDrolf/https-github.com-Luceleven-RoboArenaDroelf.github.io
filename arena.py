@@ -17,24 +17,22 @@ class Arena:
     tile_size = 50
 
     def __init__(self, filename):
-        self.num_tiles_x, self.num_tiles_y, self.tiles = self.load_map_from_json(filename)
+        self.load_map_from_json(filename)
 
     def load_map_from_json(self, filename):
         try:
             with open(filename, 'r') as f:
                 data = json.load(f)
-                num_tiles_x = data['num_tiles_x']
-                num_tiles_y = data['num_tiles_y']
-                tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
-                return num_tiles_x, num_tiles_y, tiles
+                self.num_tiles_x = data['num_tiles_x']
+                self.num_tiles_y = data['num_tiles_y']
+                self.tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
         except:
             print("File not found!")
             with open("emptyMap.json", 'r') as f:
                 data = json.load(f)
-                num_tiles_x = data['num_tiles_x']
-                num_tiles_y = data['num_tiles_y']
-                tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
-                return num_tiles_x, num_tiles_y, tiles
+                self.num_tiles_x = data['num_tiles_x']
+                self.num_tiles_y = data['num_tiles_y']
+                self.tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
 
     def paint_arena(self, pygame, screen):
         """
