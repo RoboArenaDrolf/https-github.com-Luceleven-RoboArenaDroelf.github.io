@@ -18,7 +18,6 @@ class Movement:
         self.vertical_speed += self.gravity
         robot.posy += self.vertical_speed
 
-
         # Grenzen für die vertikale Position (optional)
         if robot.posy > screen_height:
             robot.posy = screen_height
