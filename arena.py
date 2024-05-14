@@ -7,6 +7,7 @@ class Arena:
         """
         Enum of different tile types, value of tile represents it's color.
         """
+
         CONCRETE = (178, 190, 181)
         AIR = (255, 255, 255)
         GRASS = (0, 107, 60)
@@ -21,18 +22,27 @@ class Arena:
 
     def load_map_from_json(self, filename):
         try:
-            with open(filename, 'r') as f:
+            with open(filename, "r") as f:
                 data = json.load(f)
-                self.num_tiles_x = data['num_tiles_x']
-                self.num_tiles_y = data['num_tiles_y']
-                self.tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
-        except:
+                self.num_tiles_x = data["num_tiles_x"]
+                self.num_tiles_y = data["num_tiles_y"]
+                self.tiles = [
+                    [Arena.TileType[tile] for tile in row] for row in data["tiles"]
+                ]
+        except (
+            FileNotFoundError,
+            json.JSONDecodeError,
+            UnicodeDecodeError,
+            ValueError,
+        ):
             print("File not found!")
-            with open("emptyMap.json", 'r') as f:
+            with open("emptyMap.json", "r") as f:
                 data = json.load(f)
-                self.num_tiles_x = data['num_tiles_x']
-                self.num_tiles_y = data['num_tiles_y']
-                self.tiles = [[Arena.TileType[tile] for tile in row] for row in data['tiles']]
+                self.num_tiles_x = data["num_tiles_x"]
+                self.num_tiles_y = data["num_tiles_y"]
+                self.tiles = [
+                    [Arena.TileType[tile] for tile in row] for row in data["tiles"]
+                ]
 
     def paint_arena(self, pygame, screen):
         """
@@ -45,6 +55,8 @@ class Arena:
         for row in self.tiles:
             x = 0
             for tile in row:
-                pygame.draw.rect(screen, tile.value, [x, y, self.tile_size, self.tile_size])
+                pygame.draw.rect(
+                    screen, tile.value, [x, y, self.tile_size, self.tile_size]
+                )
                 x += self.tile_size
             y += self.tile_size
