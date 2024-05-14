@@ -178,8 +178,10 @@ class ArenaBuilder(Arena):
             self._load_map()
         elif self._input_rect_saving.collidepoint(mouse_pos):
             self._input_active_saving = True
+            self._input_active_loading = False
         elif self._input_rect_loading.collidepoint(mouse_pos):
             self._input_active_loading = True
+            self._input_active_saving = False
         else:
             self._input_active_saving = False
             self._input_active_loading = False
@@ -194,7 +196,6 @@ class ArenaBuilder(Arena):
     def _load_map(self):
         map_name = self._input_text_loading
         filename = map_name + ".json"
-        self.load_map_from_json(filename)
         self._set_up_basics(filename, self.pygame)
         self._set_up_paint_related()
         self._input_text_saving = map_name
