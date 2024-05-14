@@ -192,12 +192,12 @@ class ArenaBuilder(Arena):
         )
 
     def _load_map(self):
-        mapname = self._input_text_loading
-        filename = mapname + ".json"
+        map_name = self._input_text_loading
+        filename = map_name + ".json"
         self.load_map_from_json(filename)
         self._set_up_basics(filename, self.pygame)
         self._set_up_paint_related()
-        self._input_text_saving = mapname
+        self._input_text_saving = map_name
 
     def _save_map(self):
         self.save_to_json(self._input_text_saving + ".json")
