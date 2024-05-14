@@ -5,20 +5,33 @@ from enum import Enum
 class Arena:
     class TileType(Enum):
         """
-        Enum of different tile types, value of tile represents it's color.
+        Enum of different tile types, value of tile represents its filename.
         """
 
-        CONCRETE = (178, 190, 181)
-        AIR = (255, 255, 255)
-        GRASS = (0, 107, 60)
-        ICE = (113, 166, 210)
-        SAND = (237, 201, 175)
-        LAVA = (207, 16, 32)
+        AIR = "Air.png"
+        GRASS = "Grass.png"
+        ICE = "Ice.png"
+        SAND = "Sand.png"
+        LAVA = "Lava.png"
+        BIRCH = "Birch.png"
+        LEAVES = "Leaves.png"
+
+        @classmethod
+        def set_values_to_pics(cls, pygame, base_path):
+            """
+            Sets the values of the Enum TileType to the loaded pictures specified by their filename.
+            :param pygame: instance of pygame
+            :param base_path: base path of picture directory, for example ".\\PixelArt\\"
+            """
+            for member in cls:
+                member._value_ = pygame.image.load(base_path + member.value)
 
     tile_size = 50
+    base_path = ".\\PixelArt\\"
 
-    def __init__(self, filename):
+    def __init__(self, filename, pygame):
         self.load_map_from_json(filename)
+        self.TileType.set_values_to_pics(pygame, self.base_path)
 
     def load_map_from_json(self, filename):
         try:
@@ -55,8 +68,6 @@ class Arena:
         for row in self.tiles:
             x = 0
             for tile in row:
-                pygame.draw.rect(
-                    screen, tile.value, [x, y, self.tile_size, self.tile_size]
-                )
+                screen.blit(pygame.transform.scale(tile.value, (self.tile_size, self.tile_size)), (x, y))
                 x += self.tile_size
             y += self.tile_size

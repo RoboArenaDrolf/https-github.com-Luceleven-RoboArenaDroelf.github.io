@@ -28,7 +28,7 @@ class ArenaBuilder(Arena):
         return filename
 
     def _set_up_basics(self, filename, pygame):
-        super().__init__(filename)
+        super().__init__(filename, pygame)
         self.pygame = pygame
         self.screen = self.pygame.display.set_mode(
             (self.num_tiles_x * self.tile_size + 200, self.num_tiles_y * self.tile_size)
@@ -64,7 +64,7 @@ class ArenaBuilder(Arena):
 
     def main(self):
         running = True
-        current_tile = self.TileType.CONCRETE
+        current_tile = self.TileType.GRASS
         mouse_pressed = False
         save_button_clicked = False
         load_button_clicked = False
@@ -145,17 +145,19 @@ class ArenaBuilder(Arena):
             else:
                 self._input_text_loading += event.unicode
         elif event.key == self.pygame.K_1:
-            current_tile = self.TileType.CONCRETE
-        elif event.key == self.pygame.K_2:
             current_tile = self.TileType.AIR
-        elif event.key == self.pygame.K_3:
+        elif event.key == self.pygame.K_2:
             current_tile = self.TileType.GRASS
-        elif event.key == self.pygame.K_4:
+        elif event.key == self.pygame.K_3:
             current_tile = self.TileType.ICE
-        elif event.key == self.pygame.K_5:
+        elif event.key == self.pygame.K_4:
             current_tile = self.TileType.SAND
-        elif event.key == self.pygame.K_6:
+        elif event.key == self.pygame.K_5:
             current_tile = self.TileType.LAVA
+        elif event.key == self.pygame.K_6:
+            current_tile = self.TileType.BIRCH
+        elif event.key == self.pygame.K_7:
+            current_tile = self.TileType.LEAVES
         return current_tile
 
     def _handle_mouse_button_down(
@@ -264,7 +266,7 @@ class ArenaBuilder(Arena):
         legend_spacing = 20
         for idx, tile_type in enumerate(self.TileType):
             legend_text = f"{idx + 1}: {tile_type.name}"
-            text_surface = self._font.render(legend_text, True, tile_type.value)
+            text_surface = self._font.render(legend_text, True, self._text_color)
             legend_surface.blit(
                 text_surface, (10, legend_pos[1] + idx * legend_spacing)
             )
