@@ -6,12 +6,30 @@ class Robot:
     posy: int
     radius = 0
     alpha = 0
+    accel = 0
+    accel_max = 10
+    accel_alpha = 0     # this might just be useless for us
+    accel_alpha_max = 10  # this feels VERY useless
+    vel = 0
+    vel_alpha = 0
 
     def __init__(self, x, y, r, a):
         self.posx = x
         self.posy = y
         self.radius = r
         self.alpha = a % 360  # thanks to mod 360 this will no longer break
+
+    def change_acceleration(self, a):
+        self.accel = a
+
+    def change_rot_acceleration(self, aa):
+        self.accel = aa
+
+    def change_velocity(self, v):
+        self.vel = v
+
+    def change_turn_velocity(self, va):
+        self.vel = va
 
     def paint_robot(self, pygame, screen):
         pygame.draw.circle(screen, "blue", (self.posx, self.posy), self.radius)
