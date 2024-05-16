@@ -1,19 +1,20 @@
 import pygame
 
+
 class Movement:
     gravity = 0.5  # Schwerkraftkonstante
     vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
 
-    def move_robot(self, robot, screen_height):
+    def move_robot(self, robot, screen_height, x):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            robot.posx += 5
+            robot.posx += x
         if keys[pygame.K_LEFT]:
-            robot.posx -= 5
+            robot.posx += x
 
         if keys[pygame.K_UP]:
             self.vertical_speed = -10  # Vertikale Geschwindigkeit für Sprung setzen
-        
+
         # Vertikale Bewegung mit Schwerkraft
         self.vertical_speed += self.gravity
         robot.posy += self.vertical_speed
