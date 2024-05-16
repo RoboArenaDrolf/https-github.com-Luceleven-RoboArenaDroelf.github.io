@@ -39,6 +39,18 @@ class Robot:
     def change_turn_velocity(self, va):
         self.vel = va
 
+    def change_acceleration(self, a):
+        self.accel = a
+
+    def change_rot_acceleration(self, aa):
+        self.accel = aa
+
+    def change_velocity(self, v):
+        self.vel = v
+
+    def change_turn_velocity(self, va):
+        self.vel = va
+
     def paint_robot(self, pygame, screen):
         pygame.draw.circle(screen, "blue", (self.posx, self.posy), self.radius)
         # now to get the orientation
