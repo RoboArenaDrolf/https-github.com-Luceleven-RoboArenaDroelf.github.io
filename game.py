@@ -108,19 +108,31 @@ while run:
         #         square[1] = square[1] + 200
 
         arena.paint_arena(pygame, screen)
-        if keys[pygame.K_RIGHT]:
-            robot.change_acceleration(robot.accel+0.01)
-            robot.change_velocity(robot.vel+robot.accel)
-        elif keys[pygame.K_LEFT]:
+        if keys[pygame.K_RIGHT]:   # key pressed -> speed up
+            robot.change_acceleration(robot.accel+0.01)  # increase acceleration
+            robot.change_velocity(robot.vel+robot.accel)  # change our speed accordingly
+        elif keys[pygame.K_LEFT]:  # same as above different direction
             robot.change_acceleration(robot.accel-0.01)
-            robot.change_velocity(robot.vel-robot.accel)
-        else:
-            if robot.vel < 0:
-                robot.change_acceleration(robot.accel+0.01)
-                robot.change_velocity(0)
-            elif robot.vel > 0:
-                robot.change_acceleration(robot.accel-0.01)
-                robot.change_velocity(0)
+            robot.change_velocity(robot.vel+robot.accel)
+        else:   # no left or right movement key pressed -> slow down
+            if robot.vel < 0:  # currently moving to the left
+                robot.change_acceleration(robot.accel+0.05)  # reduce acceleration to the left
+                if robot.vel+robot.accel >= 0:  # if resulting speed change is enough to make us stop/move right
+                    robot.change_velocity(0)    # we come to a halt
+                    robot.change_acceleration(0)  # we no longer want to move afterward so no acceleration
+                else:
+                    robot.change_velocity(robot.vel+robot.accel)  # otherwise we just change our speed
+
+            elif robot.vel > 0:  # same as above just moving to the right
+                robot.change_acceleration(robot.accel-0.05)
+                if robot.vel+robot.accel <= 0:
+                    robot.change_velocity(0)
+                    robot.change_acceleration(0)
+                else:
+                    robot.change_velocity(robot.vel+robot.accel)
+
+            elif robot.vel == 0:  # failsafe case
+                robot.change_acceleration(0)
 
         movement.move_robot(robot, arena_size, robot.vel)
         robot.paint_robot(pygame, screen)

@@ -22,10 +22,13 @@ class Robot:
         self.accel_alpha_max = aam
 
     def change_acceleration(self, a):
-        if abs(a) < self.accel_max:
+        if abs(a) <= self.accel_max:
             self.accel = a
         else:
-            self.accel = self.accel_max
+            if a < 0:
+                self.accel = -self.accel_max
+            else:
+                self.accel = self.accel_max
 
     def change_rot_acceleration(self, aa):
         if abs(aa) < self.accel_alpha_max:
