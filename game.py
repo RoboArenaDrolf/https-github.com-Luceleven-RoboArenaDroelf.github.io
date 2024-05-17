@@ -96,12 +96,14 @@ while run:
         # # Überprüfen, ob das rote Rechteck mit einem schwarzen Rechteck kollidiert
         # for square in black_squares:
         #     square[1] += square[2]  # Update y-coordinate using speed
-        #     if y < square[1] + square_size and y + playerSize > square[1] and x < square[0] + square_size and x + playerSize > square[0]:
+        #     if y < square[1] + square_size and y + playerSize > square[1]
+        #     and x < square[0] + square_size and x + playerSize > square[0]:
         #         game_paused = True
         # # Überprüfen, ob das rote Rechteck mit einem weißen Rechteck kollidiert
         # for square in white_squares:
         #     square[1] += square[2]  # Update y-coordinate using speed
-        #     if y < square[1] + square_size and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
+        #     if y < square[1] + square_size
+        #     and y + 50 > square[1] and x < square[0] + square_size and x + 50 > square[0]:
         #         #update des Punktecounters
         #         points = points+1
         #         #weißes Rechteck wird außerhalb des spielbereichs gepusht
@@ -109,30 +111,24 @@ while run:
 
         arena.paint_arena(pygame, screen)
         if keys[pygame.K_RIGHT]:   # key pressed -> speed up
-            robot.change_acceleration(robot.accel+0.01)  # increase acceleration
-            robot.change_velocity_cap(robot.vel+robot.accel)  # change our speed accordingly
+            robot.change_acceleration(robot.accel+0.05)  # increase acceleration
         elif keys[pygame.K_LEFT]:  # same as above different direction
-            robot.change_acceleration(robot.accel-0.01)
-            robot.change_velocity_cap(robot.vel+robot.accel)
+            robot.change_acceleration(robot.accel-0.05)
         else:   # no left or right movement key pressed -> slow down
             if robot.vel < 0:  # currently moving to the left
-                robot.change_acceleration(robot.accel+0.05)  # reduce acceleration to the left
+                robot.change_acceleration(robot.accel+0.025)  # reduce acceleration to the left
                 if robot.vel+robot.accel >= 0:  # if resulting speed change is enough to make us stop/move right
-                    robot.change_velocity_cap(0)    # we come to a halt
+                    robot.change_velocity_cap(0)  # we come to a halt
                     robot.change_acceleration(0)  # we no longer want to move afterward so no acceleration
-                else:
-                    robot.change_velocity_cap(robot.vel+robot.accel)  # otherwise we just change our speed
-
             elif robot.vel > 0:  # same as above just moving to the right
-                robot.change_acceleration(robot.accel-0.05)
+                robot.change_acceleration(robot.accel-0.025)
                 if robot.vel+robot.accel <= 0:
                     robot.change_velocity_cap(0)
                     robot.change_acceleration(0)
-                else:
-                    robot.change_velocity_cap(robot.vel+robot.accel)
-
-            elif robot.vel == 0:  # failsafe case
+            else:  # failsafe case
                 robot.change_acceleration(0)
+
+        robot.change_velocity_cap(robot.vel+robot.accel)  # update our speed
 
         movement.move_robot(robot, arena_size, robot.vel)
         robot.paint_robot(pygame, screen)
