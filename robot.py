@@ -39,6 +39,15 @@ class Robot:
     def change_velocity(self, v):
         self.vel = v
 
+    def change_velocity_cap(self, v):
+        if abs(v) < 5:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
+            self.vel = v
+        else:
+            if v < 0:
+                self.vel = -5
+            else:
+                self.vel = 5
+
     def change_turn_velocity(self, va):
         self.vel = va
 
