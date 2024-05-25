@@ -60,7 +60,7 @@ def pause_screen():
 
 robot = Robot(300, 100, 25, 45, 1, 1)
 movement = Movement()
-arena = Arena("firstMap.json")
+arena = Arena("secondMap.json", pygame)
 
 game_paused = False
 run = True
