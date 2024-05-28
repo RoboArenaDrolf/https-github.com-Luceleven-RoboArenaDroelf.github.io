@@ -141,14 +141,19 @@
         Hiernach hat er das alte movement system, bei dem wir uns bei einem Pfeiltastendruck um eine feste Zahl x zur seite beweget haben, auf die neuen attribute angepasst.
         So beschleunigt nun der Roboter langsam und wird dabei immer schneller.
         Zusätzlich haben wir eine, momentan noch feste, Maximalgeschwindigkeit eingeführt, da ein "unendlich" langes beschleunigen nicht wirklich nützlich ist.
+        <br>
         Die Rotation wurde jedoch anders implementiert, die vorgschlagene Version ergibt unserer Meinung nach wegen unser Wahl der Perspektiv nicht sehr viel sinn.
         Die Orientierung eines Roboters ist durch eine schwarze linie gegeben, eine Drehung von Orientierung nach Rechts um 90° würde dann entweder direkt zur Kamera oder von der Kamera weg zeigen.
         Das ist widerrum nutzloss da wir uns ja nur nach links,rechts,oben und unten Bewegen können und nicht nach Vorne und Hinten.
         Eine Rotation nach Oben oder Unten ergibt hier eigentlich auch keinen Sinn, auch wenn die momentane Implementierung das so regelt.
         Weiterhin hatten wir aus Spielerischer sicht 2 ideen für die Rotation:
+        <br>
             1. Die Ausrichtung ändert sich sofort nach dem Tastendruck (Schnelles und präzises Zielen ist möglich)
+        <br>
             2. Die Ausrichtung nach Links und Rechts ist an die Geschwindigkeit gekoppelt (nur langsames Zielen "Tank controls")
+        <br>
         In beiden Fällen werden jedoch weder "rotational acceleration" noch dessen Maximum gebraucht, nur ein minimaler delay infrom des "turning speed" wäre angemessen.
+        <br>
         Außerdem hat Björn die Githubactions bearbeitet sodass flake8 test nun einem Zeilenlimit von 120 Zeichen arbeiten.
     </p>
 </body>
