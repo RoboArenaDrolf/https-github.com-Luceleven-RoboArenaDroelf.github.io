@@ -1,30 +1,33 @@
 import json
 from enum import Enum
 
-
 class Arena:
     class TileType(Enum):
         """
         Enum of different tile types, value of tile represents its filename.
         """
+        AIR = ("Air.png", False)
+        GRASS = ("Grass.png", True)
+        ICE = ("Ice.png", True)
+        SAND = ("Sand.png", True)
+        LAVA = ("Lava.png", True)
+        BIRCH = ("Birch.png", True)
+        LEAVES = ("Leaves.png", True)
 
-        AIR = "Air.png"
-        GRASS = "Grass.png"
-        ICE = "Ice.png"
-        SAND = "Sand.png"
-        LAVA = "Lava.png"
-        BIRCH = "Birch.png"
-        LEAVES = "Leaves.png"
+        def __init__(self, filename, solid):
+            self.filename = filename
+            self.solid = solid
+            self.image = None
 
         @classmethod
         def set_values_to_pics(cls, pygame, base_path):
             """
-            Sets the values of the Enum TileType to the loaded pictures specified by their filename.
+            Sets the images of the Enum TileType to the loaded pictures specified by their filename.
             :param pygame: instance of pygame
             :param base_path: base path of picture directory, for example ".\\PixelArt\\"
             """
             for member in cls:
-                member._value_ = pygame.image.load(base_path + member.value)
+                member.image = pygame.image.load(base_path + member.filename)
 
     tile_size = 50
     base_path = ".\\PixelArt\\"
@@ -68,6 +71,15 @@ class Arena:
         for row in self.tiles:
             x = 0
             for tile in row:
-                screen.blit(pygame.transform.scale(tile.value, (self.tile_size, self.tile_size)), (x, y))
+                screen.blit(pygame.transform.scale(tile.image, (self.tile_size, self.tile_size)), (x, y))
                 x += self.tile_size
             y += self.tile_size
+
+    def is_solid(self, x_positions, y_positions):
+        for x in x_positions:
+            for y in y_positions:
+                if x < 0 or y < 0 or x >= self.num_tiles_x or y >= self.num_tiles_y:
+                    return False
+                elif self.tiles[y][x].solid:
+                    return True
+        return False

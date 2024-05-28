@@ -30,11 +30,13 @@ def pause_screen():
     text_resume = font.render("Resume", True, white)
     text_quit = font.render("Quit Game", True, white)
 
+
     resume_rect = text_resume.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
     quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
 
     pygame.draw.rect(screen, black, resume_rect)
     pygame.draw.rect(screen, black, quit_rect)
+
 
     screen.blit(text_resume, resume_rect)
     screen.blit(text_quit, quit_rect)
@@ -89,6 +91,7 @@ jump = []
 
 clock = pygame.time.Clock()
 while run:
+    pygame.time.delay(10)
     clock.tick(60)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -132,10 +135,8 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         game_paused = True
-
-    if start_game:
-        start_screen()
-    elif not game_paused: 
+        
+    if not game_paused:
         screen.fill(white)
         frame_count += 1
         arena.paint_arena(pygame, screen)
@@ -186,4 +187,6 @@ while run:
 
     pygame.display.update()
 
+
 pygame.quit()
+
