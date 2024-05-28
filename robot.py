@@ -53,6 +53,6 @@ class Robot:
 
     def paint_robot(self, pygame, screen):
         pygame.draw.circle(screen, "blue", (self.posx, self.posy), self.radius)
-        new_x = self.radius * (math.cos(self.alpha))
-        new_y = self.radius * (math.sin(self.alpha))
+        new_x = self.radius * (math.cos(math.radians(self.alpha)))
+        new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx+new_x, self.posy+new_y))
