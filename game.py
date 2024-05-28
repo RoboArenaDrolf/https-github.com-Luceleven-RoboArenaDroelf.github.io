@@ -127,7 +127,7 @@ while run:
                     max_x = arena_size - robots[0].radius
                     min_y = robots[0].radius
                     max_y = arena_size - robots[0].radius
-                    
+
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
@@ -139,7 +139,7 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         game_paused = True
-        
+
     if not game_paused and not start_game:
         screen.fill(white)
         frame_count += 1
