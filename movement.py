@@ -2,7 +2,6 @@ import pygame
 
 class Movement:
     gravity = 0.5  # Schwerkraftkonstante
-    vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
 
     def move_robot(self, robot, screen_height, screen_width, x, arena):
         keys = pygame.key.get_pressed()
@@ -20,27 +19,27 @@ class Movement:
 
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP] and self.on_ground(robot, arena):
-            self.vertical_speed = -10  # Vertikale Geschwindigkeit für Sprung setzen
+            robot.vertical_speed = -10  # Vertikale Geschwindigkeit für Sprung setzen
 
         # Vertikale Bewegung
-        self.vertical_speed += self.gravity
+        robot.vertical_speed += self.gravity
 
         # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
         if robot.posy - robot.radius < 0:
             robot.posy = robot.radius
-            if self.vertical_speed < 0:
-                self.vertical_speed = 0
+            if robot.vertical_speed < 0:
+                robot.vertical_speed = 0
         elif robot.posy + robot.radius > screen_height:
             robot.posy = screen_height - robot.radius
-            if self.vertical_speed > 0:
-                self.vertical_speed = 0
+            if robot..vertical_speed > 0:
+                robot.vertical_speed = 0
         else:
-            robot.posy += self.vertical_speed
+            robot.posy += robot.vertical_speed
 
         # Kollision mit dem Boden überprüfen
         if self.check_collision_y(robot, arena):
             robot.posy = ((robot.posy // arena.tile_size) + 1) * arena.tile_size - robot.radius
-            self.vertical_speed = 0
+            robot.vertical_speed = 0
 
         if self.check_collision_x(robot, arena):
             robot.posx = ((robot.posx // arena.tile_size) + 1) * arena.tile_size - robot.radius
@@ -50,7 +49,24 @@ class Movement:
         # Grenzen für die vertikale Position (optional)
         if robot.posy > screen_height:
             robot.posy = screen_height
-            self.vertical_speed = 0
+            robot.vertical_speed = 0
+        elif robot.posy < 0:
+            robot.posy = 0
+
+    def move_bot(self, robot, screen_height, x, jump):
+        robot.posx += x
+
+        if jump:
+            robot.vertical_speed = -10  # Vertikale Geschwindigkeit für Sprung setzen
+
+        # Vertikale Bewegung mit Schwerkraft
+        robot.vertical_speed += self.gravity
+        robot.posy += robot.vertical_speed
+
+        # Grenzen für die vertikale Position (optional)
+        if robot.posy > screen_height:
+            robot.posy = screen_height
+            robot.vertical_speed = 0
         elif robot.posy < 0:
             robot.posy = 0
 
@@ -59,7 +75,7 @@ class Movement:
         # Überprüfen, ob der Roboter auf dem Boden steht
         x_positions = (round((robot.posx + robot.radius) // arena.tile_size), round((robot.posx - robot.radius) // arena.tile_size), round(robot.posx // arena.tile_size))
         y_positions = (round((robot.posy + robot.radius) // arena.tile_size), round((robot.posy - robot.radius) // arena.tile_size), round(robot.posy // arena.tile_size))
-        return arena.is_solid(x_positions, y_positions) or self.vertical_speed > 0
+        return arena.is_solid(x_positions, y_positions) or robot.vertical_speed > 0
 
 
     def check_collision_y(self, robot, arena):
