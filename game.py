@@ -97,6 +97,7 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         if start_game:
+            start_screen()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
@@ -136,7 +137,7 @@ while run:
     if keys[pygame.K_ESCAPE]:
         game_paused = True
         
-    if not game_paused:
+    if not game_paused and not start_game:
         screen.fill(white)
         frame_count += 1
         arena.paint_arena(pygame, screen)
@@ -170,7 +171,7 @@ while run:
 
         for i in range(1, len(robots)):
             # Bewegung des Roboters
-            movement.move_bot(robots[i], arena_size, robots[i].vel, jump[i-1])
+            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i-1])
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i-1] = False
 
@@ -180,9 +181,9 @@ while run:
             robots[i].paint_robot(pygame, screen)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, arena_size, player_robot.vel)
+        movement.move_robot(player_robot, arena_size, arena_size, player_robot.vel, arena)
         player_robot.paint_robot(pygame, screen)
-    else:
+    elif game_paused:
         pause_screen()
 
     pygame.display.update()
