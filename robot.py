@@ -1,5 +1,6 @@
 import math
 
+
 class Robot:
     posx: int
     posy: int

@@ -1,6 +1,7 @@
 import json
 from enum import Enum
 
+
 class Arena:
     class TileType(Enum):
         """
