@@ -47,6 +47,7 @@ class Robot:
                 self.vel = -5
             else:
                 self.vel = 5
+        self.alpha = 270+(90/5)*self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va
