@@ -12,6 +12,7 @@ class Robot:
     accel_alpha_max = 1  # this feels VERY useless
     vel = 0
     vel_alpha = 0
+    vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
 
     def __init__(self, x, y, r, a, am, aam):
         self.posx = x
