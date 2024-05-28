@@ -11,8 +11,12 @@ class Movement:
         # Überprüfen, ob der Roboter die seitlichen Grenzen der Arena erreicht hat
         if robot.posx < robot.radius:
             robot.posx = robot.radius
+            robot.change_velocity(0)
+            robot.change_acceleration(0)
         elif robot.posx > screen_width - robot.radius:
             robot.posx = screen_width - robot.radius
+            robot.change_velocity(0)
+            robot.change_acceleration(0)
 
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP] and self.on_ground(robot, arena):
@@ -34,9 +38,14 @@ class Movement:
             robot.posy += self.vertical_speed
 
         # Kollision mit dem Boden überprüfen
-        if self.check_collision(robot, arena):
+        if self.check_collision_y(robot, arena):
             robot.posy = ((robot.posy // arena.tile_size) + 1) * arena.tile_size - robot.radius
             self.vertical_speed = 0
+
+        if self.check_collision_x(robot, arena):
+            robot.posx = ((robot.posx // arena.tile_size) + 1) * arena.tile_size - robot.radius
+            robot.change_acceleration(0)
+            robot.change_velocity(0)
 
         # Grenzen für die vertikale Position (optional)
         if robot.posy > screen_height:
@@ -48,13 +57,19 @@ class Movement:
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
-        x = int(robot.posx // arena.tile_size)
-        y = int((robot.posy + robot.radius) // arena.tile_size)
-        return arena.is_solid(x, y) or self.vertical_speed > 0
+        x_positions = (round((robot.posx + robot.radius) // arena.tile_size), round((robot.posx - robot.radius) // arena.tile_size), round(robot.posx // arena.tile_size))
+        y_positions = (round((robot.posy + robot.radius) // arena.tile_size), round((robot.posy - robot.radius) // arena.tile_size), round(robot.posy // arena.tile_size))
+        return arena.is_solid(x_positions, y_positions) or self.vertical_speed > 0
 
 
-    def check_collision(self, robot, arena):
-        # Überprüfen, ob der Roboter mit einem festen Tile kollidiert
-        x = int(robot.posx // arena.tile_size)
-        y = int((robot.posy + robot.radius) // arena.tile_size)
-        return arena.is_solid(x, y)
+    def check_collision_y(self, robot, arena):
+        # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
+        x_positions = [(round(robot.posx // arena.tile_size))]
+        y_positions = [round((robot.posy + robot.radius) // arena.tile_size), round((robot.posy - robot.radius) // arena.tile_size), round(robot.posy // arena.tile_size)]
+        return arena.is_solid(x_positions, y_positions)
+
+    def check_collision_x(self, robot, arena):
+        # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf x-Achse
+        x_positions = [round((robot.posx + robot.radius) // arena.tile_size), round((robot.posx - robot.radius) // arena.tile_size), round(robot.posx // arena.tile_size)]
+        y_positions = [(round(robot.posy // arena.tile_size))]
+        return arena.is_solid(x_positions, y_positions)

@@ -75,7 +75,11 @@ class Arena:
                 x += self.tile_size
             y += self.tile_size
 
-    def is_solid(self, x, y):
-        if x < 0 or y < 0 or x >= self.num_tiles_x or y >= self.num_tiles_y:
-            return False
-        return self.tiles[y][x].solid
+    def is_solid(self, x_positions, y_positions):
+        for x in x_positions:
+            for y in y_positions:
+                if x < 0 or y < 0 or x >= self.num_tiles_x or y >= self.num_tiles_y:
+                    return False
+                elif self.tiles[y][x].solid:
+                    return True
+        return False
