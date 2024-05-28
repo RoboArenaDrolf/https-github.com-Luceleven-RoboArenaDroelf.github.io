@@ -1,9 +1,7 @@
 import json
 from arena import Arena
 
-
 class ArenaBuilder(Arena):
-
     # Set up colors
     BLACK = (0, 0, 0)
     WHITE = (255, 255, 255)
@@ -12,11 +10,13 @@ class ArenaBuilder(Arena):
     GREY = (100, 100, 100)
 
     def __init__(self, num_tiles_x, num_tiles_y, pygame):
+        # Initialize an empty map and basic setup
         filename = self._set_up_empty_map(num_tiles_x, num_tiles_y)
         self._set_up_basics(filename, pygame)
         self._set_up_paint_related()
 
     def _set_up_empty_map(self, num_tiles_x, num_tiles_y):
+        # Create an empty map with AIR tiles
         self.num_tiles_x = num_tiles_x
         self.num_tiles_y = num_tiles_y
         self.tiles = [
@@ -28,6 +28,7 @@ class ArenaBuilder(Arena):
         return filename
 
     def _set_up_basics(self, filename, pygame):
+        # Basic setup for the arena and screen
         super().__init__(filename, pygame)
         self.pygame = pygame
         self.screen = self.pygame.display.set_mode(
@@ -35,34 +36,31 @@ class ArenaBuilder(Arena):
         )
 
     def _set_up_paint_related(self):
+        # Setup for painting the arena builder
         self._x_placing_of_legend = self.num_tiles_x * self.tile_size
-        # Set up font
         self._font = self.pygame.font.SysFont(None, 24)
         self._text_color = self.WHITE
-        # Set up text input field for saving
         self._input_text_saving = ""
         self._input_active_saving = False
         self._input_rect_saving = self.pygame.Rect(
             self._x_placing_of_legend + 20, 250, 160, 30
         )
-        # Set up save button
         self._save_button_text = self._font.render("Save Map", True, self.WHITE)
         self._save_button_rect = self.pygame.Rect(
             self._x_placing_of_legend + 20, 300, 160, 40
         )
-        # Set up text input field for loading
         self._input_text_loading = ""
         self._input_active_loading = False
         self._input_rect_loading = self.pygame.Rect(
             self._x_placing_of_legend + 20, 350, 160, 30
         )
-        # Set up load button
         self._load_button_text = self._font.render("Load Map", True, self.WHITE)
         self._load_button_rect = self.pygame.Rect(
             self._x_placing_of_legend + 20, 400, 160, 40
         )
 
     def main(self):
+        # Main loop for the arena builder
         running = True
         current_tile = self.TileType.GRASS
         mouse_pressed = False
@@ -73,24 +71,19 @@ class ArenaBuilder(Arena):
 
         # Main loop
         while running:
-            # Clear the self.screen
+            # Clear the screen
             self.screen.fill(self.BLACK)
-
-            # Paint the arenaBuilder
+            # Paint the arena builder
             self._paint_arena_builder(save_button_clicked, load_button_clicked)
-
             # Update the display
             self.pygame.display.flip()
-
             current_time = self.pygame.time.get_ticks()
 
             # Handle events
             for event in self.pygame.event.get():
                 if event.type == self.pygame.QUIT:
                     running = False
-                elif (
-                    event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1
-                ):  # Left mouse button
+                elif event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                     (
                         button_click_time_loading,
                         button_click_time_saving,
@@ -104,9 +97,7 @@ class ArenaBuilder(Arena):
                         load_button_clicked,
                         save_button_clicked,
                     )
-                elif (
-                    event.type == self.pygame.MOUSEBUTTONUP and event.button == 1
-                ):  # Left mouse button released
+                elif event.type == self.pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button released
                     mouse_pressed = False
                 elif event.type == self.pygame.KEYDOWN:
                     current_tile = self._handle_key_down(current_tile, event)
@@ -121,6 +112,7 @@ class ArenaBuilder(Arena):
                 load_button_clicked = False
 
     def _paint_tile(self, current_tile):
+        # Paint a tile at the mouse position
         x, y = self.pygame.mouse.get_pos()
         x //= self.tile_size
         y //= self.tile_size
@@ -128,6 +120,7 @@ class ArenaBuilder(Arena):
             self.set_tile(x, y, current_tile)
 
     def _handle_key_down(self, current_tile, event):
+        # Handle key down events for changing tiles and text input
         if self._input_active_saving:
             if event.key == self.pygame.K_RETURN:
                 self._input_active_saving = False
@@ -168,6 +161,7 @@ class ArenaBuilder(Arena):
         load_button_clicked,
         save_button_clicked,
     ):
+        # Handle mouse button down events for buttons and text input
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
         if self._save_button_rect.collidepoint(mouse_pos):
@@ -196,6 +190,7 @@ class ArenaBuilder(Arena):
         )
 
     def _load_map(self):
+        # Load map from file
         map_name = self._input_text_loading
         filename = map_name + ".json"
         self._set_up_basics(filename, self.pygame)
@@ -203,13 +198,11 @@ class ArenaBuilder(Arena):
         self._input_text_saving = map_name
 
     def _save_map(self):
+        # Save map to file
         self.save_to_json(self._input_text_saving + ".json")
 
     def _paint_arena_builder(self, save_button_clicked, load_button_clicked):
-        """
-        Paints the arena defined by tiles with a grid
-        and a legend of possible tiles as well as other fields
-        """
+        # Paint the arena builder interface
         self.paint_arena(self.pygame, self.screen)
         self._draw_grid()
         self._draw_legend()
@@ -217,7 +210,7 @@ class ArenaBuilder(Arena):
         self._draw_buttons(load_button_clicked, save_button_clicked)
 
     def _draw_buttons(self, load_button_clicked, save_button_clicked):
-        # Draw save button
+        # Draw save and load buttons
         if save_button_clicked:
             self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._save_button_rect)
         else:
@@ -226,7 +219,6 @@ class ArenaBuilder(Arena):
             self._save_button_text,
             (self._save_button_rect.x + 10, self._save_button_rect.y + 10),
         )
-        # Draw load button
         if load_button_clicked:
             self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._load_button_rect)
         else:
@@ -237,7 +229,7 @@ class ArenaBuilder(Arena):
         )
 
     def _draw_input_fields(self):
-        # Draw text input field saving
+        # Draw input fields for saving and loading maps
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_saving)
         self.pygame.draw.rect(self.screen, self._text_color, self._input_rect_saving, 2)
         text_surface = self._font.render(
@@ -246,7 +238,6 @@ class ArenaBuilder(Arena):
         self.screen.blit(
             text_surface, (self._input_rect_saving.x + 5, self._input_rect_saving.y + 5)
         )
-        # Draw text input field loading
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_loading)
         self.pygame.draw.rect(
             self.screen, self._text_color, self._input_rect_loading, 2
@@ -260,6 +251,7 @@ class ArenaBuilder(Arena):
         )
 
     def _draw_legend(self):
+        # Draw the legend of tile types
         legend_surface = self.pygame.Surface((200, self.screen.get_height()))
         legend_surface.fill((0, 0, 0))
         legend_pos = (self._x_placing_of_legend + 20, 10)
@@ -273,6 +265,7 @@ class ArenaBuilder(Arena):
         self.screen.blit(legend_surface, (self._x_placing_of_legend, 0))
 
     def _draw_grid(self):
+        # Draw the grid lines
         for x in range(0, self._x_placing_of_legend, self.tile_size):
             self.pygame.draw.line(
                 self.screen, self.GREY, (x, 0), (x, self.screen.get_height())
@@ -283,9 +276,10 @@ class ArenaBuilder(Arena):
             )
 
     def set_tile(self, x, y, tile_type):
+        # Set a tile at a specific position
         self.tiles[y][x] = tile_type
 
-    # Speichere die Daten in einer JSON-Datei
+    # Save the map data to a JSON file
     def save_to_json(self, filename):
         data = {
             "num_tiles_x": self.num_tiles_x,

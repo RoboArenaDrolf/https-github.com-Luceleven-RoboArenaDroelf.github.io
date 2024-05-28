@@ -9,12 +9,12 @@ from arena import Arena
 
 pygame.init()
 
-# # Commenting these out for now, maybe introduce them later for full-screen support
+# # Kommentiere diese Zeilen vorerst aus, eventuell später für Full-Screen-Support einführen
 # monitor = get_monitors()[0]
 # windowWidth = monitor.width
 # windowHeight = monitor.height
 
-arena_size = 1000
+arena_size = 1000  # Größe der Arena
 
 screen = pygame.display.set_mode((arena_size, arena_size))
 pygame.display.set_caption("Robo Arena")
@@ -29,7 +29,6 @@ white = (255, 255, 255)
 # Rechtecke für die Schaltflächen "Resume" und "Quit Game"
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
-
 
 def pause_screen():
     global resume_rect, quit_rect
@@ -57,7 +56,7 @@ def pause_screen():
 
     pygame.display.update()
 
-
+# Instanziiere Objekte für das Roboterspiel
 robot = Robot(300, 100, 25, 45, 1, 1)
 movement = Movement()
 arena = Arena("secondMap.json", pygame)
@@ -65,7 +64,7 @@ arena = Arena("secondMap.json", pygame)
 game_paused = False
 run = True
 while run:
-    pygame.time.delay(20)
+    pygame.time.delay(20)  # Wartezeit, um die Spielgeschwindigkeit zu kontrollieren
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -78,10 +77,10 @@ while run:
         #     white_squares.append([random_x_position, 0, 5])
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
-            # Mausklick-Ereignis verarbeiten, wenn das Spiel vorbei ist
+            # Mausklick-Ereignis verarbeiten, wenn das Spiel pausiert ist
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
-                # Weiter spielen
+                # Spiel fortsetzen
                 game_paused = False
             elif quit_rect.collidepoint(mouse_pos):
                 # Spiel beenden
@@ -128,14 +127,14 @@ while run:
             else:  # failsafe case
                 robot.change_acceleration(0)
 
-        robot.change_velocity_cap(robot.vel+robot.accel)  # update our speed
+        robot.change_velocity_cap(robot.vel + robot.accel)  # Geschwindigkeit aktualisieren
 
-        movement.move_robot(robot, arena_size, robot.vel)
-        robot.paint_robot(pygame, screen)
+        movement.move_robot(robot, arena_size, robot.vel)  # Roboter bewegen
+        robot.paint_robot(pygame, screen)  # Roboter zeichnen
     else:
-        pause_screen()
+        pause_screen()  # Pausenbildschirm anzeigen
 
-    # # Text für den Punkte-counter
+    # # Text für den Punkte-Counter
     # font = pygame.font.Font(None, 64)
     # text_points = font.render(f"Deine Punkte {points} " , True, black)
     # # Position des Counters
