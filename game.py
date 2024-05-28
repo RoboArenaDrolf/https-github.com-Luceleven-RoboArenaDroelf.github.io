@@ -1,3 +1,5 @@
+import random
+
 import pygame
 import sys
 
@@ -79,6 +81,12 @@ start_game = True
 player_count = 0
 robots = []
 
+# Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
+change_direction_interval = 40  # Ändere die Richtung alle 40 Frames
+frame_count = 0
+
+jump = []
+
 clock = pygame.time.Clock()
 while run:
     clock.tick(60)
@@ -95,15 +103,23 @@ while run:
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
                     robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1)]
+                    jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1), Robot(300, arena_size - 100, 25, 45, 1, 1)]
+                    jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1), Robot(300, arena_size - 100, 25, 45, 1, 1), Robot(400, arena_size - 100, 25, 45, 1, 1)]
+                    jump = [False, False, False]
                     start_game = False
+                if robots:
+                    min_x = robots[0].radius
+                    max_x = arena_size - robots[0].radius
+                    min_y = robots[0].radius
+                    max_y = arena_size - robots[0].radius
                     
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
@@ -121,29 +137,50 @@ while run:
         start_screen()
     elif not game_paused: 
         screen.fill(white)
+        frame_count += 1
         arena.paint_arena(pygame, screen)
-        for robot in robots:
-            if keys[pygame.K_RIGHT]:
-                robot.change_acceleration(robot.accel + 0.05)
-            elif keys[pygame.K_LEFT]:
-                robot.change_acceleration(robot.accel - 0.05)
+        player_robot = robots[0]
+        if keys[pygame.K_RIGHT]:
+            player_robot.change_acceleration(player_robot.accel + 0.05)
+        elif keys[pygame.K_LEFT]:
+            player_robot.change_acceleration(player_robot.accel - 0.05)
+        else:
+            if player_robot.vel < 0:
+                player_robot.change_acceleration(player_robot.accel + 0.025)
+                if player_robot.vel + player_robot.accel >= 0:
+                    player_robot.change_velocity_cap(0)
+                    player_robot.change_acceleration(0)
+            elif player_robot.vel > 0:
+                player_robot.change_acceleration(player_robot.accel - 0.025)
+                if player_robot.vel + player_robot.accel <= 0:
+                    player_robot.change_velocity_cap(0)
+                    player_robot.change_acceleration(0)
             else:
-                if robot.vel < 0:
-                    robot.change_acceleration(robot.accel + 0.025)
-                    if robot.vel + robot.accel >= 0:
-                        robot.change_velocity_cap(0)
-                        robot.change_acceleration(0)
-                elif robot.vel > 0:
-                    robot.change_acceleration(robot.accel - 0.025)
-                    if robot.vel + robot.accel <= 0:
-                        robot.change_velocity_cap(0)
-                        robot.change_acceleration(0)
-                else:
-                    robot.change_acceleration(0)
+                player_robot.change_acceleration(0)
 
-            robot.change_velocity_cap(robot.vel + robot.accel)
-            movement.move_robot(robot, arena_size, robot.vel)
-            robot.paint_robot(pygame, screen)
+        if frame_count >= change_direction_interval:
+            for i in range(1, len(robots)):
+                # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
+                robots[i].change_acceleration(random.uniform(-1, 1))
+                robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+                # Setze den Zähler zurück
+                frame_count = 0
+                jump[i-1] = random.choice([True, False])
+
+        for i in range(1, len(robots)):
+            # Bewegung des Roboters
+            movement.move_bot(robots[i], arena_size, robots[i].vel, jump[i-1])
+            robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+            jump[i-1] = False
+
+            # Überprüfe die Grenzen und passe die Position an, wenn nötig
+            robots[i].posx = max(min(robots[i].posx, max_x), min_x)
+            robots[i].posy = max(min(robots[i].posy, max_y), min_y)
+            robots[i].paint_robot(pygame, screen)
+
+        player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
+        movement.move_robot(player_robot, arena_size, player_robot.vel)
+        player_robot.paint_robot(pygame, screen)
     else:
         pause_screen()
 
