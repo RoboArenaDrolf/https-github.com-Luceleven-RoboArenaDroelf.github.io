@@ -1,5 +1,6 @@
 import math
 
+
 class Robot:
     posx: int
     posy: int
@@ -47,12 +48,13 @@ class Robot:
                 self.vel = -5
             else:
                 self.vel = 5
+        self.alpha = 270+(90/5)*self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va
 
     def paint_robot(self, pygame, screen):
         pygame.draw.circle(screen, "blue", (self.posx, self.posy), self.radius)
-        new_x = self.radius * (math.cos(self.alpha))
-        new_y = self.radius * (math.sin(self.alpha))
+        new_x = self.radius * (math.cos(math.radians(self.alpha)))
+        new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx+new_x, self.posy+new_y))

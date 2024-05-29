@@ -20,6 +20,7 @@ white = (255, 255, 255)
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
+
 def pause_screen():
     global resume_rect, quit_rect
     font = pygame.font.Font(None, 64)
@@ -30,18 +31,17 @@ def pause_screen():
     text_resume = font.render("Resume", True, white)
     text_quit = font.render("Quit Game", True, white)
 
-
     resume_rect = text_resume.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
     quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
 
     pygame.draw.rect(screen, black, resume_rect)
     pygame.draw.rect(screen, black, quit_rect)
 
-
     screen.blit(text_resume, resume_rect)
     screen.blit(text_quit, quit_rect)
 
     pygame.display.update()
+
 
 def start_screen():
     global one_player_rect, two_player_rect, three_player_rect, four_player_rect
@@ -73,6 +73,7 @@ def start_screen():
     screen.blit(four_player, four_player_rect)
 
     pygame.display.update()
+
 
 movement = Movement()
 arena = Arena("secondMap.json", pygame)
@@ -111,12 +112,14 @@ while run:
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1), Robot(300, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1),
+                              Robot(300, arena_size - 100, 25, 45, 1, 1)]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1), Robot(300, arena_size - 100, 25, 45, 1, 1), Robot(400, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1),
+                              Robot(300, arena_size - 100, 25, 45, 1, 1), Robot(400, arena_size - 100, 25, 45, 1, 1)]
                     jump = [False, False, False]
                     start_game = False
                 if robots:
@@ -124,7 +127,7 @@ while run:
                     max_x = arena_size - robots[0].radius
                     min_y = robots[0].radius
                     max_y = arena_size - robots[0].radius
-                    
+
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
@@ -136,7 +139,7 @@ while run:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE]:
         game_paused = True
-        
+
     if not game_paused and not start_game:
         screen.fill(white)
         frame_count += 1
@@ -190,4 +193,3 @@ while run:
 
 
 pygame.quit()
-
