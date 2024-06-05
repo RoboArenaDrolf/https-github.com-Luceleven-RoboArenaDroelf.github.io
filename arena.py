@@ -21,26 +21,27 @@ class Arena:
             self.image = None
 
         @classmethod
-        def set_values_to_pics(cls, pygame, base_path):
+        def set_values_to_pics(cls, pygame, base_path, tile_size):
             """
             Sets the images of the Enum TileType to the loaded pictures specified by their filename.
             :param pygame: instance of pygame
             :param base_path: base path of picture directory, for example ".\\PixelArt\\"
+            :param tile_size: size of the tiles
             """
             for member in cls:
-                member.image = pygame.image.load(base_path + member.filename)
+                member.image = pygame.transform.scale(pygame.image.load(base_path + member.filename), (tile_size, tile_size))
 
     tile_size = 50
     blocks_base_path = ".\\PixelArt\\"
     maps_base_path = ".\\Maps\\"
 
     def __init__(self, filename, pygame):
-        self.load_map_from_json(filename)
-        self.TileType.set_values_to_pics(pygame, self.blocks_base_path)
+        self.load_map_from_json(filename, pygame)
+        self.TileType.set_values_to_pics(pygame, self.blocks_base_path, self.tile_size)
 
-    def load_map_from_json(self, filename):
+    def load_map_from_json(self, filename, pygame):
         try:
-            self._load_map_from_json_helper(filename)
+            self._load_map_from_json_helper(filename, pygame)
         except (
             FileNotFoundError,
             json.JSONDecodeError,
@@ -48,9 +49,9 @@ class Arena:
             ValueError,
         ):
             print("File not found!")
-            self._load_map_from_json_helper("emptyMap.json")
+            self._load_map_from_json_helper("emptyMap.json", pygame)
 
-    def _load_map_from_json_helper(self, filename):
+    def _load_map_from_json_helper(self, filename, pygame):
         with open(self.maps_base_path + filename, "r") as f:
             data = json.load(f)
             self.num_tiles_x = data["num_tiles_x"]
@@ -58,6 +59,8 @@ class Arena:
             self.tiles = [
                 [Arena.TileType[tile] for tile in row] for row in data["tiles"]
             ]
+            background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
+            self.background_image = pygame.transform.scale(background_image_unscaled, pygame.display.get_window_size())
 
     def paint_arena(self, pygame, screen):
         """
@@ -66,11 +69,12 @@ class Arena:
         :param pygame: pygame instance
         :param screen: screen element of pygame initialized with pygame.display.set_mode()
         """
+        screen.blit(self.background_image, (0, 0))
         y = 0
         for row in self.tiles:
             x = 0
             for tile in row:
-                screen.blit(pygame.transform.scale(tile.image, (self.tile_size, self.tile_size)), (x, y))
+                screen.blit(tile.image, (x, y))
                 x += self.tile_size
             y += self.tile_size
 
