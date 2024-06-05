@@ -60,7 +60,10 @@ class Arena:
                 [Arena.TileType[tile] for tile in row] for row in data["tiles"]
             ]
             background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
-            self.background_image = pygame.transform.scale(background_image_unscaled, pygame.display.get_window_size())
+            self._set_background_image(background_image_unscaled, pygame)
+
+    def _set_background_image(self, image, pygame):
+        self.background_image = pygame.transform.scale(image, (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles)))
 
     def paint_arena(self, pygame, screen):
         """

@@ -1,4 +1,7 @@
 import json
+from tkinter import filedialog, Tk
+import shutil
+import os
 from arena import Arena
 
 
@@ -23,6 +26,7 @@ class ArenaBuilder(Arena):
             [self.TileType.AIR for _ in range(self.num_tiles_x)]
             for _ in range(self.num_tiles_y)
         ]
+        self._background_image_filename = super().maps_base_path + "emptyMap.png"
         filename = "emptyMap.json"
         self.save_to_json(filename)
         return filename
@@ -50,16 +54,21 @@ class ArenaBuilder(Arena):
         self._save_button_rect = self.pygame.Rect(
             self._x_placing_of_legend + 20, 300, 160, 40
         )
-        # Set up text input field for loading
-        self._input_text_loading = ""
-        self._input_active_loading = False
-        self._input_rect_loading = self.pygame.Rect(
+        # Set up text input field for loading map
+        self._input_text_loading_map = ""
+        self._input_active_loading_map = False
+        self._input_rect_loading_map = self.pygame.Rect(
             self._x_placing_of_legend + 20, 350, 160, 30
         )
-        # Set up load button
-        self._load_button_text = self._font.render("Load Map", True, self.WHITE)
-        self._load_button_rect = self.pygame.Rect(
+        # Set up load map button
+        self._load_map_button_text = self._font.render("Load Map", True, self.WHITE)
+        self._load_map_button_rect = self.pygame.Rect(
             self._x_placing_of_legend + 20, 400, 160, 40
+        )
+        # Set up load background image button
+        self._load_background_button_text = self._font.render("Load Image", True, self.WHITE)
+        self._load_background_button_rect = self.pygame.Rect(
+            self._x_placing_of_legend + 20, 450, 160, 40
         )
 
     def main(self):
@@ -67,9 +76,11 @@ class ArenaBuilder(Arena):
         current_tile = self.TileType.GRASS
         mouse_pressed = False
         save_button_clicked = False
-        load_button_clicked = False
+        load_map_button_clicked = False
+        load_background_button_clicked = False
         button_click_time_saving = 0
-        button_click_time_loading = 0
+        button_click_time_loading_map = 0
+        button_click_time_loading_background = 0
 
         # Main loop
         while running:
@@ -77,7 +88,7 @@ class ArenaBuilder(Arena):
             self.screen.fill(self.BLACK)
 
             # Paint the arenaBuilder
-            self._paint_arena_builder(save_button_clicked, load_button_clicked)
+            self._paint_arena_builder(save_button_clicked, load_map_button_clicked, load_background_button_clicked)
 
             # Update the display
             self.pygame.display.flip()
@@ -92,17 +103,21 @@ class ArenaBuilder(Arena):
                     event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1
                 ):  # Left mouse button
                     (
-                        button_click_time_loading,
+                        button_click_time_loading_map,
                         button_click_time_saving,
-                        load_button_clicked,
+                        load_map_button_clicked,
                         mouse_pressed,
                         save_button_clicked,
+                        load_background_button_clicked,
+                        button_click_time_loading_background
                     ) = self._handle_mouse_button_down(
-                        button_click_time_loading,
+                        button_click_time_loading_map,
                         button_click_time_saving,
                         current_time,
-                        load_button_clicked,
+                        load_map_button_clicked,
                         save_button_clicked,
+                        load_background_button_clicked,
+                        button_click_time_loading_background
                     )
                 elif (
                     event.type == self.pygame.MOUSEBUTTONUP and event.button == 1
@@ -117,8 +132,11 @@ class ArenaBuilder(Arena):
             if save_button_clicked and current_time - button_click_time_saving >= 200:
                 save_button_clicked = False
 
-            if load_button_clicked and current_time - button_click_time_loading >= 200:
-                load_button_clicked = False
+            if load_map_button_clicked and current_time - button_click_time_loading_map >= 200:
+                load_map_button_clicked = False
+
+            if load_background_button_clicked and current_time - button_click_time_loading_background >= 200:
+                load_background_button_clicked = False
 
     def _paint_tile(self, current_tile):
         x, y = self.pygame.mouse.get_pos()
@@ -136,14 +154,14 @@ class ArenaBuilder(Arena):
                 self._input_text_saving = self._input_text_saving[:-1]
             else:
                 self._input_text_saving += event.unicode
-        elif self._input_active_loading:
+        elif self._input_active_loading_map:
             if event.key == self.pygame.K_RETURN:
-                self._input_active_loading = False
+                self._input_active_loading_map = False
                 self._load_map()
             elif event.key == self.pygame.K_BACKSPACE:
-                self._input_text_loading = self._input_text_loading[:-1]
+                self._input_text_loading_map = self._input_text_loading_map[:-1]
             else:
-                self._input_text_loading += event.unicode
+                self._input_text_loading_map += event.unicode
         elif event.key == self.pygame.K_1:
             current_tile = self.TileType.AIR
         elif event.key == self.pygame.K_2:
@@ -162,11 +180,13 @@ class ArenaBuilder(Arena):
 
     def _handle_mouse_button_down(
         self,
-        button_click_time_loading,
+        button_click_time_loading_map,
         button_click_time_saving,
         current_time,
-        load_button_clicked,
+        load_map_button_clicked,
         save_button_clicked,
+        load_background_button_clicked,
+        button_click_time_loading_background
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
@@ -174,29 +194,35 @@ class ArenaBuilder(Arena):
             save_button_clicked = True
             button_click_time_saving = current_time
             self._save_map()
-        elif self._load_button_rect.collidepoint(mouse_pos):
-            load_button_clicked = True
-            button_click_time_loading = current_time
+        elif self._load_map_button_rect.collidepoint(mouse_pos):
+            load_map_button_clicked = True
+            button_click_time_loading_map = current_time
             self._load_map()
+        elif self._load_background_button_rect.collidepoint(mouse_pos):
+            load_background_button_clicked = True
+            button_click_time_loading_background = current_time
+            self._load_background()
         elif self._input_rect_saving.collidepoint(mouse_pos):
             self._input_active_saving = True
-            self._input_active_loading = False
-        elif self._input_rect_loading.collidepoint(mouse_pos):
-            self._input_active_loading = True
+            self._input_active_loading_map = False
+        elif self._input_rect_loading_map.collidepoint(mouse_pos):
+            self._input_active_loading_map = True
             self._input_active_saving = False
         else:
             self._input_active_saving = False
-            self._input_active_loading = False
+            self._input_active_loading_map = False
         return (
-            button_click_time_loading,
+            button_click_time_loading_map,
             button_click_time_saving,
-            load_button_clicked,
+            load_map_button_clicked,
             mouse_pressed,
             save_button_clicked,
+            load_background_button_clicked,
+            button_click_time_loading_background
         )
 
     def _load_map(self):
-        map_name = self._input_text_loading
+        map_name = self._input_text_loading_map
         filename = map_name + ".json"
         self._set_up_basics(filename, self.pygame)
         self._set_up_paint_related()
@@ -205,7 +231,7 @@ class ArenaBuilder(Arena):
     def _save_map(self):
         self.save_to_json(self._input_text_saving + ".json")
 
-    def _paint_arena_builder(self, save_button_clicked, load_button_clicked):
+    def _paint_arena_builder(self, save_button_clicked, load_map_button_clicked, load_background_button_clicked):
         """
         Paints the arena defined by tiles with a grid
         and a legend of possible tiles as well as other fields
@@ -214,9 +240,9 @@ class ArenaBuilder(Arena):
         self._draw_grid()
         self._draw_legend()
         self._draw_input_fields()
-        self._draw_buttons(load_button_clicked, save_button_clicked)
+        self._draw_buttons(load_map_button_clicked, save_button_clicked, load_background_button_clicked)
 
-    def _draw_buttons(self, load_button_clicked, save_button_clicked):
+    def _draw_buttons(self, load_map_button_clicked, save_button_clicked, load_background_button_clicked):
         # Draw save button
         if save_button_clicked:
             self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._save_button_rect)
@@ -226,14 +252,23 @@ class ArenaBuilder(Arena):
             self._save_button_text,
             (self._save_button_rect.x + 10, self._save_button_rect.y + 10),
         )
-        # Draw load button
-        if load_button_clicked:
-            self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._load_button_rect)
+        # Draw load map button
+        if load_map_button_clicked:
+            self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._load_map_button_rect)
         else:
-            self.pygame.draw.rect(self.screen, self.GREEN, self._load_button_rect)
+            self.pygame.draw.rect(self.screen, self.GREEN, self._load_map_button_rect)
         self.screen.blit(
-            self._load_button_text,
-            (self._load_button_rect.x + 10, self._load_button_rect.y + 10),
+            self._load_map_button_text,
+            (self._load_map_button_rect.x + 10, self._load_map_button_rect.y + 10),
+        )
+        # Draw load background button
+        if load_background_button_clicked:
+            self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._load_background_button_rect)
+        else:
+            self.pygame.draw.rect(self.screen, self.GREEN, self._load_background_button_rect)
+        self.screen.blit(
+            self._load_background_button_text,
+            (self._load_background_button_rect.x + 10, self._load_background_button_rect.y + 10),
         )
 
     def _draw_input_fields(self):
@@ -247,16 +282,16 @@ class ArenaBuilder(Arena):
             text_surface, (self._input_rect_saving.x + 5, self._input_rect_saving.y + 5)
         )
         # Draw text input field loading
-        self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_loading)
+        self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_loading_map)
         self.pygame.draw.rect(
-            self.screen, self._text_color, self._input_rect_loading, 2
+            self.screen, self._text_color, self._input_rect_loading_map, 2
         )
         text_surface = self._font.render(
-            self._input_text_loading, True, self._text_color
+            self._input_text_loading_map, True, self._text_color
         )
         self.screen.blit(
             text_surface,
-            (self._input_rect_loading.x + 5, self._input_rect_loading.y + 5),
+            (self._input_rect_loading_map.x + 5, self._input_rect_loading_map.y + 5),
         )
 
     def _draw_legend(self):
@@ -282,15 +317,39 @@ class ArenaBuilder(Arena):
                 self.screen, self.GREY, (0, y), (self.screen.get_width(), y)
             )
 
+    def _load_background(self):
+        self._background_image_filename = self._open_file_dialog()
+        image = self.pygame.image.load(self._background_image_filename)
+        super()._set_background_image(image, self.pygame)
+
+    def _open_file_dialog(self):
+        root = Tk()
+        root.withdraw()  # Versteckt das Hauptfenster
+
+        file_path = filedialog.askopenfilename(
+            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")],
+            title="Select an Image"
+        )
+        return file_path
+
     def set_tile(self, x, y, tile_type):
         self.tiles[y][x] = tile_type
 
     # Speichere die Daten in einer JSON-Datei
     def save_to_json(self, filename):
+        _, file_extension = os.path.splitext(self._background_image_filename)
+        map_name, _ = os.path.splitext(filename)
+        try:
+            shutil.copy(self._background_image_filename,
+                        os.getcwd() + super().maps_base_path + map_name + file_extension)
+        except:
+            shutil.move(self._background_image_filename,
+                        os.getcwd() + super().maps_base_path + map_name + file_extension)
         data = {
             "num_tiles_x": self.num_tiles_x,
             "num_tiles_y": self.num_tiles_y,
-            "tiles": [[tile.name for tile in row] for row in self.tiles],
+            "background_image": map_name + file_extension,
+            "tiles": [[tile.name for tile in row] for row in self.tiles]
         }
-        with open(filename, "w") as f:
+        with open(super().maps_base_path + filename, "w") as f:
             json.dump(data, f)
