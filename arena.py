@@ -31,21 +31,16 @@ class Arena:
                 member.image = pygame.image.load(base_path + member.filename)
 
     tile_size = 50
-    base_path = ".\\PixelArt\\"
+    blocks_base_path = ".\\PixelArt\\"
+    maps_base_path = ".\\Maps\\"
 
     def __init__(self, filename, pygame):
         self.load_map_from_json(filename)
-        self.TileType.set_values_to_pics(pygame, self.base_path)
+        self.TileType.set_values_to_pics(pygame, self.blocks_base_path)
 
     def load_map_from_json(self, filename):
         try:
-            with open(filename, "r") as f:
-                data = json.load(f)
-                self.num_tiles_x = data["num_tiles_x"]
-                self.num_tiles_y = data["num_tiles_y"]
-                self.tiles = [
-                    [Arena.TileType[tile] for tile in row] for row in data["tiles"]
-                ]
+            self._load_map_from_json_helper(filename)
         except (
             FileNotFoundError,
             json.JSONDecodeError,
@@ -53,13 +48,16 @@ class Arena:
             ValueError,
         ):
             print("File not found!")
-            with open("emptyMap.json", "r") as f:
-                data = json.load(f)
-                self.num_tiles_x = data["num_tiles_x"]
-                self.num_tiles_y = data["num_tiles_y"]
-                self.tiles = [
-                    [Arena.TileType[tile] for tile in row] for row in data["tiles"]
-                ]
+            self._load_map_from_json_helper("emptyMap.json")
+
+    def _load_map_from_json_helper(self, filename):
+        with open(self.maps_base_path + filename, "r") as f:
+            data = json.load(f)
+            self.num_tiles_x = data["num_tiles_x"]
+            self.num_tiles_y = data["num_tiles_y"]
+            self.tiles = [
+                [Arena.TileType[tile] for tile in row] for row in data["tiles"]
+            ]
 
     def paint_arena(self, pygame, screen):
         """
