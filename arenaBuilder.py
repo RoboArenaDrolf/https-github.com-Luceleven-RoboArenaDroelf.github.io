@@ -10,6 +10,7 @@ class ArenaBuilder(Arena):
     GREEN = (0, 255, 0)
     DARK_GREEN = (0, 200, 0)
     GREY = (100, 100, 100)
+    RED = (255, 0, 0)
 
     def __init__(self, num_tiles_x, num_tiles_y, pygame):
         filename = self._set_up_empty_map(num_tiles_x, num_tiles_y)
@@ -61,6 +62,11 @@ class ArenaBuilder(Arena):
         self._load_button_rect = self.pygame.Rect(
             self._x_placing_of_legend + 20, 400, 160, 40
         )
+        # Set up exit button
+        self._exit_button_text = self._font.render("Exit", True, self.WHITE)
+        self._exit_button_rect = self.pygame.Rect(
+            self._x_placing_of_legend + 20, 500, 160, 40
+        )
 
     def main(self):
         running = True
@@ -97,12 +103,14 @@ class ArenaBuilder(Arena):
                         load_button_clicked,
                         mouse_pressed,
                         save_button_clicked,
+                        running
                     ) = self._handle_mouse_button_down(
                         button_click_time_loading,
                         button_click_time_saving,
                         current_time,
                         load_button_clicked,
                         save_button_clicked,
+                        running
                     )
                 elif (
                     event.type == self.pygame.MOUSEBUTTONUP and event.button == 1
@@ -167,6 +175,7 @@ class ArenaBuilder(Arena):
         current_time,
         load_button_clicked,
         save_button_clicked,
+        running
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
@@ -178,6 +187,8 @@ class ArenaBuilder(Arena):
             load_button_clicked = True
             button_click_time_loading = current_time
             self._load_map()
+        elif self._exit_button_rect.collidepoint(mouse_pos):
+            running = False
         elif self._input_rect_saving.collidepoint(mouse_pos):
             self._input_active_saving = True
             self._input_active_loading = False
@@ -193,6 +204,7 @@ class ArenaBuilder(Arena):
             load_button_clicked,
             mouse_pressed,
             save_button_clicked,
+            running
         )
 
     def _load_map(self):
@@ -234,6 +246,12 @@ class ArenaBuilder(Arena):
         self.screen.blit(
             self._load_button_text,
             (self._load_button_rect.x + 10, self._load_button_rect.y + 10),
+        )
+        # Draw exit button
+        self.pygame.draw.rect(self.screen, self.RED, self._exit_button_rect)
+        self.screen.blit(
+            self._exit_button_text,
+            (self._exit_button_rect.x + 10, self._exit_button_rect.y + 10),
         )
 
     def _draw_input_fields(self):
