@@ -7,6 +7,7 @@ class Arena:
         """
         Enum of different tile types, value of tile represents its filename.
         """
+
         AIR = ("Air.png", False)
         GRASS = ("Grass.png", True)
         ICE = ("Ice.png", True)
@@ -29,7 +30,9 @@ class Arena:
             :param tile_size: size of the tiles
             """
             for member in cls:
-                member.image = pygame.transform.scale(pygame.image.load(base_path + member.filename), (tile_size, tile_size))
+                member.image = pygame.transform.scale(
+                    pygame.image.load(base_path + member.filename), (tile_size, tile_size)
+                )
 
     tile_size = 50
     blocks_base_path = ".\\PixelArt\\"
@@ -56,14 +59,14 @@ class Arena:
             data = json.load(f)
             self.num_tiles_x = data["num_tiles_x"]
             self.num_tiles_y = data["num_tiles_y"]
-            self.tiles = [
-                [Arena.TileType[tile] for tile in row] for row in data["tiles"]
-            ]
+            self.tiles = [[Arena.TileType[tile] for tile in row] for row in data["tiles"]]
             background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
             self._set_background_image(background_image_unscaled, pygame)
 
     def _set_background_image(self, image, pygame):
-        self.background_image = pygame.transform.scale(image, (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles)))
+        self.background_image = pygame.transform.scale(
+            image, (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles))
+        )
 
     def paint_arena(self, pygame, screen):
         """

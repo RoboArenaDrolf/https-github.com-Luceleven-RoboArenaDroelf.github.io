@@ -22,10 +22,7 @@ class ArenaBuilder(Arena):
     def _set_up_empty_map(self, num_tiles_x, num_tiles_y):
         self.num_tiles_x = num_tiles_x
         self.num_tiles_y = num_tiles_y
-        self.tiles = [
-            [self.TileType.AIR for _ in range(self.num_tiles_x)]
-            for _ in range(self.num_tiles_y)
-        ]
+        self.tiles = [[self.TileType.AIR for _ in range(self.num_tiles_x)] for _ in range(self.num_tiles_y)]
         self._background_image_filename = super().maps_base_path + "emptyMap.png"
         filename = "emptyMap.json"
         self.save_to_json(filename)
@@ -46,30 +43,20 @@ class ArenaBuilder(Arena):
         # Set up text input field for saving
         self._input_text_saving = ""
         self._input_active_saving = False
-        self._input_rect_saving = self.pygame.Rect(
-            self._x_placing_of_legend + 20, 250, 160, 30
-        )
+        self._input_rect_saving = self.pygame.Rect(self._x_placing_of_legend + 20, 250, 160, 30)
         # Set up save button
         self._save_button_text = self._font.render("Save Map", True, self.WHITE)
-        self._save_button_rect = self.pygame.Rect(
-            self._x_placing_of_legend + 20, 300, 160, 40
-        )
+        self._save_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 300, 160, 40)
         # Set up text input field for loading map
         self._input_text_loading_map = ""
         self._input_active_loading_map = False
-        self._input_rect_loading_map = self.pygame.Rect(
-            self._x_placing_of_legend + 20, 350, 160, 30
-        )
+        self._input_rect_loading_map = self.pygame.Rect(self._x_placing_of_legend + 20, 350, 160, 30)
         # Set up load map button
         self._load_map_button_text = self._font.render("Load Map", True, self.WHITE)
-        self._load_map_button_rect = self.pygame.Rect(
-            self._x_placing_of_legend + 20, 400, 160, 40
-        )
+        self._load_map_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 400, 160, 40)
         # Set up load background image button
         self._load_background_button_text = self._font.render("Load Image", True, self.WHITE)
-        self._load_background_button_rect = self.pygame.Rect(
-            self._x_placing_of_legend + 20, 450, 160, 40
-        )
+        self._load_background_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 450, 160, 40)
 
     def main(self):
         running = True
@@ -99,9 +86,7 @@ class ArenaBuilder(Arena):
             for event in self.pygame.event.get():
                 if event.type == self.pygame.QUIT:
                     running = False
-                elif (
-                    event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1
-                ):  # Left mouse button
+                elif event.type == self.pygame.MOUSEBUTTONDOWN and event.button == 1:  # Left mouse button
                     (
                         button_click_time_loading_map,
                         button_click_time_saving,
@@ -109,7 +94,7 @@ class ArenaBuilder(Arena):
                         mouse_pressed,
                         save_button_clicked,
                         load_background_button_clicked,
-                        button_click_time_loading_background
+                        button_click_time_loading_background,
                     ) = self._handle_mouse_button_down(
                         button_click_time_loading_map,
                         button_click_time_saving,
@@ -117,11 +102,9 @@ class ArenaBuilder(Arena):
                         load_map_button_clicked,
                         save_button_clicked,
                         load_background_button_clicked,
-                        button_click_time_loading_background
+                        button_click_time_loading_background,
                     )
-                elif (
-                    event.type == self.pygame.MOUSEBUTTONUP and event.button == 1
-                ):  # Left mouse button released
+                elif event.type == self.pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button released
                     mouse_pressed = False
                 elif event.type == self.pygame.KEYDOWN:
                     current_tile = self._handle_key_down(current_tile, event)
@@ -186,7 +169,7 @@ class ArenaBuilder(Arena):
         load_map_button_clicked,
         save_button_clicked,
         load_background_button_clicked,
-        button_click_time_loading_background
+        button_click_time_loading_background,
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
@@ -218,7 +201,7 @@ class ArenaBuilder(Arena):
             mouse_pressed,
             save_button_clicked,
             load_background_button_clicked,
-            button_click_time_loading_background
+            button_click_time_loading_background,
         )
 
     def _load_map(self):
@@ -275,20 +258,12 @@ class ArenaBuilder(Arena):
         # Draw text input field saving
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_saving)
         self.pygame.draw.rect(self.screen, self._text_color, self._input_rect_saving, 2)
-        text_surface = self._font.render(
-            self._input_text_saving, True, self._text_color
-        )
-        self.screen.blit(
-            text_surface, (self._input_rect_saving.x + 5, self._input_rect_saving.y + 5)
-        )
+        text_surface = self._font.render(self._input_text_saving, True, self._text_color)
+        self.screen.blit(text_surface, (self._input_rect_saving.x + 5, self._input_rect_saving.y + 5))
         # Draw text input field loading
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_loading_map)
-        self.pygame.draw.rect(
-            self.screen, self._text_color, self._input_rect_loading_map, 2
-        )
-        text_surface = self._font.render(
-            self._input_text_loading_map, True, self._text_color
-        )
+        self.pygame.draw.rect(self.screen, self._text_color, self._input_rect_loading_map, 2)
+        text_surface = self._font.render(self._input_text_loading_map, True, self._text_color)
         self.screen.blit(
             text_surface,
             (self._input_rect_loading_map.x + 5, self._input_rect_loading_map.y + 5),
@@ -302,20 +277,14 @@ class ArenaBuilder(Arena):
         for idx, tile_type in enumerate(self.TileType):
             legend_text = f"{idx + 1}: {tile_type.name}"
             text_surface = self._font.render(legend_text, True, self._text_color)
-            legend_surface.blit(
-                text_surface, (10, legend_pos[1] + idx * legend_spacing)
-            )
+            legend_surface.blit(text_surface, (10, legend_pos[1] + idx * legend_spacing))
         self.screen.blit(legend_surface, (self._x_placing_of_legend, 0))
 
     def _draw_grid(self):
         for x in range(0, self._x_placing_of_legend, self.tile_size):
-            self.pygame.draw.line(
-                self.screen, self.GREY, (x, 0), (x, self.screen.get_height())
-            )
+            self.pygame.draw.line(self.screen, self.GREY, (x, 0), (x, self.screen.get_height()))
         for y in range(0, self.screen.get_height(), self.tile_size):
-            self.pygame.draw.line(
-                self.screen, self.GREY, (0, y), (self.screen.get_width(), y)
-            )
+            self.pygame.draw.line(self.screen, self.GREY, (0, y), (self.screen.get_width(), y))
 
     def _load_background(self):
         self._background_image_filename = self._open_file_dialog()
@@ -327,8 +296,7 @@ class ArenaBuilder(Arena):
         root.withdraw()  # Versteckt das Hauptfenster
 
         file_path = filedialog.askopenfilename(
-            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")],
-            title="Select an Image"
+            filetypes=[("Image Files", "*.png;*.jpg;*.jpeg;*.bmp;*.gif")], title="Select an Image"
         )
         return file_path
 
@@ -340,16 +308,18 @@ class ArenaBuilder(Arena):
         _, file_extension = os.path.splitext(self._background_image_filename)
         map_name, _ = os.path.splitext(filename)
         try:
-            shutil.copy(self._background_image_filename,
-                        os.getcwd() + super().maps_base_path + map_name + file_extension)
-        except:
-            shutil.move(self._background_image_filename,
-                        os.getcwd() + super().maps_base_path + map_name + file_extension)
+            shutil.copy(
+                self._background_image_filename, os.getcwd() + super().maps_base_path + map_name + file_extension
+            )
+        except shutil.SameFileError:
+            shutil.move(
+                self._background_image_filename, os.getcwd() + super().maps_base_path + map_name + file_extension
+            )
         data = {
             "num_tiles_x": self.num_tiles_x,
             "num_tiles_y": self.num_tiles_y,
             "background_image": map_name + file_extension,
-            "tiles": [[tile.name for tile in row] for row in self.tiles]
+            "tiles": [[tile.name for tile in row] for row in self.tiles],
         }
         with open(super().maps_base_path + filename, "w") as f:
             json.dump(data, f)
