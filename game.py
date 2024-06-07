@@ -23,22 +23,26 @@ quit_rect = pygame.Rect(0, 0, 0, 0)
 
 
 def pause_screen():
-    global resume_rect, quit_rect
+    global resume_rect, quit_rect, main_menu_rect
     font = pygame.font.Font(None, 64)
     text = font.render("Paused Game", True, black)
     screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
 
     font = pygame.font.Font(None, 36)
     text_resume = font.render("Resume", True, white)
+    text_main_menu = font.render("Main Menu", True, white)
     text_quit = font.render("Quit Game", True, white)
 
     resume_rect = text_resume.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
-    quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
+    main_menu_rect = text_main_menu.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
+    quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 150))
 
     pygame.draw.rect(screen, black, resume_rect)
+    pygame.draw.rect(screen, black, main_menu_rect)
     pygame.draw.rect(screen, black, quit_rect)
 
     screen.blit(text_resume, resume_rect)
+    screen.blit(text_main_menu, main_menu_rect)
     screen.blit(text_quit, quit_rect)
 
     pygame.display.update()
@@ -260,6 +264,9 @@ while run:
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
+                game_paused = False
+            elif main_menu_rect.collidepoint(mouse_pos):
+                menu = True
                 game_paused = False
             elif quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
