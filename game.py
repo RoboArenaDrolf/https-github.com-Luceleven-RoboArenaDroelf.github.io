@@ -303,7 +303,7 @@ while run:
 
         for i in range(1, len(robots)):
             # Bewegung des Roboters
-            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i - 1], robots)
+            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i - 1])
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i - 1] = False
 
@@ -313,7 +313,7 @@ while run:
             robots[i].paint_robot(pygame, screen)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, arena_size, arena_size, player_robot.vel, arena, robots)
+        movement.move_robot(player_robot, arena_size, arena_size, player_robot.vel, arena)
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()
