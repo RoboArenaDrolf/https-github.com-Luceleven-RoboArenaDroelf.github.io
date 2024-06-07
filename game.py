@@ -43,6 +43,7 @@ def pause_screen():
 
     pygame.display.update()
 
+
 def main_menu():
     global play_rect, build_arena_rect, exit_rect
     screen.fill(white)
@@ -66,6 +67,7 @@ def main_menu():
 
     pygame.display.update()
 
+
 def build_arena_menu():
     global input_rect_x_tiles, input_rect_y_tiles, start_building_rect
     screen.fill(white)
@@ -75,7 +77,9 @@ def build_arena_menu():
     screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 100))
 
     # Set up text input field for number x tiles
-    input_rect_x_tiles = pygame.Rect(arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 50, 80, 30)
+    input_rect_x_tiles = pygame.Rect(
+        arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 50, 80, 30
+    )
 
     pygame.draw.rect(screen, black, input_rect_x_tiles)
     pygame.draw.rect(screen, white, input_rect_x_tiles, 2)
@@ -87,7 +91,9 @@ def build_arena_menu():
     screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
 
     # Set up text input field for number y tiles
-    input_rect_y_tiles = pygame.Rect(arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 + 50, 80, 30)
+    input_rect_y_tiles = pygame.Rect(
+        arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 + 50, 80, 30
+    )
 
     pygame.draw.rect(screen, black, input_rect_y_tiles)
     pygame.draw.rect(screen, white, input_rect_y_tiles, 2)
@@ -104,6 +110,7 @@ def build_arena_menu():
     screen.blit(start_building_text, start_building_rect)
 
     pygame.display.update()
+
 
 def start_screen():
     global one_player_rect, two_player_rect, three_player_rect, four_player_rect
@@ -198,6 +205,7 @@ while run:
                         menu = True
                         arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                         arenaBuilder.main()
+                        screen = pygame.display.set_mode((arena_size, arena_size))
                     except ValueError:
                         print("There should only be positive numbers in the fields!")
             elif event.type == pygame.KEYDOWN:
@@ -226,14 +234,21 @@ while run:
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1),
-                              Robot(300, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [
+                        Robot(100, arena_size - 100, 25, 45, 1, 1),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1),
+                    ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1),
-                              Robot(300, arena_size - 100, 25, 45, 1, 1), Robot(400, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [
+                        Robot(100, arena_size - 100, 25, 45, 1, 1),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1),
+                        Robot(400, arena_size - 100, 25, 45, 1, 1),
+                    ]
                     jump = [False, False, False]
                     start_game = False
                 if robots:
@@ -284,13 +299,13 @@ while run:
                 robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
                 # Setze den Zähler zurück
                 frame_count = 0
-                jump[i-1] = random.choice([True, False])
+                jump[i - 1] = random.choice([True, False])
 
         for i in range(1, len(robots)):
             # Bewegung des Roboters
-            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i-1], robots)
+            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i - 1], robots)
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
-            jump[i-1] = False
+            jump[i - 1] = False
 
             # Überprüfe die Grenzen und passe die Position an, wenn nötig
             robots[i].posx = max(min(robots[i].posx, max_x), min_x)
