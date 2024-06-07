@@ -273,7 +273,7 @@ while run:
                 sys.exit()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE]:
+    if keys[pygame.K_ESCAPE] and not menu and not start_game and not build_arena:
         game_paused = True
 
     if not game_paused and not start_game and not menu and not build_arena:
