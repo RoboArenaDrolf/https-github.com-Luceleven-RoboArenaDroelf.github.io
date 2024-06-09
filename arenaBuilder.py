@@ -13,6 +13,7 @@ class ArenaBuilder(Arena):
     GREEN = (0, 255, 0)
     DARK_GREEN = (0, 200, 0)
     GREY = (100, 100, 100)
+    RED = (255, 0, 0)
 
     def __init__(self, num_tiles_x, num_tiles_y, pygame):
         filename = self._set_up_empty_map(num_tiles_x, num_tiles_y)
@@ -57,6 +58,9 @@ class ArenaBuilder(Arena):
         # Set up load background image button
         self._load_background_button_text = self._font.render("Load Image", True, self.WHITE)
         self._load_background_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 450, 160, 40)
+        # Set up exit button
+        self._exit_button_text = self._font.render("Exit", True, self.WHITE)
+        self._exit_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 500, 160, 40)
 
     def main(self):
         running = True
@@ -93,16 +97,18 @@ class ArenaBuilder(Arena):
                         load_map_button_clicked,
                         mouse_pressed,
                         save_button_clicked,
+                        running,
                         load_background_button_clicked,
-                        button_click_time_loading_background,
+                        button_click_time_loading_background
                     ) = self._handle_mouse_button_down(
                         button_click_time_loading_map,
                         button_click_time_saving,
                         current_time,
                         load_map_button_clicked,
                         save_button_clicked,
+                        running,
                         load_background_button_clicked,
-                        button_click_time_loading_background,
+                        button_click_time_loading_background
                     )
                 elif event.type == self.pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button released
                     mouse_pressed = False
@@ -168,8 +174,9 @@ class ArenaBuilder(Arena):
         current_time,
         load_map_button_clicked,
         save_button_clicked,
+        running,
         load_background_button_clicked,
-        button_click_time_loading_background,
+        button_click_time_loading_background
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
@@ -181,6 +188,8 @@ class ArenaBuilder(Arena):
             load_map_button_clicked = True
             button_click_time_loading_map = current_time
             self._load_map()
+        elif self._exit_button_rect.collidepoint(mouse_pos):
+            running = False
         elif self._load_background_button_rect.collidepoint(mouse_pos):
             load_background_button_clicked = True
             button_click_time_loading_background = current_time
@@ -200,8 +209,9 @@ class ArenaBuilder(Arena):
             load_map_button_clicked,
             mouse_pressed,
             save_button_clicked,
+            running,
             load_background_button_clicked,
-            button_click_time_loading_background,
+            button_click_time_loading_background
         )
 
     def _load_map(self):
@@ -252,6 +262,12 @@ class ArenaBuilder(Arena):
         self.screen.blit(
             self._load_background_button_text,
             (self._load_background_button_rect.x + 10, self._load_background_button_rect.y + 10),
+        )
+        # Draw exit button
+        self.pygame.draw.rect(self.screen, self.RED, self._exit_button_rect)
+        self.screen.blit(
+            self._exit_button_text,
+            (self._exit_button_rect.x + 10, self._exit_button_rect.y + 10),
         )
 
     def _draw_input_fields(self):
