@@ -281,6 +281,8 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        if keys[pygame.K_g]:
+            player_robot.attack(pygame, screen)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + 0.05)
         elif keys[pygame.K_LEFT]:
