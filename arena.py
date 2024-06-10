@@ -64,9 +64,7 @@ class Arena:
             self._set_background_image(background_image_unscaled, pygame)
 
     def _set_background_image(self, image, pygame):
-        self.background_image = pygame.transform.scale(
-            image, pygame.display.get_window_size()
-        )
+        self.background_image = pygame.transform.scale(image, pygame.display.get_window_size())
 
     def paint_arena(self, pygame, screen):
         """
