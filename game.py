@@ -10,9 +10,10 @@ from arenaBuilder import ArenaBuilder
 
 pygame.init()
 
-arena_size = 1000
+#display_resolution = (700, 700)
+display_resolution = (1000, 1000)
 
-screen = pygame.display.set_mode((arena_size, arena_size))
+screen = pygame.display.set_mode(display_resolution)
 pygame.display.set_caption("Robo Arena")
 
 black = (0, 0, 0)
@@ -21,21 +22,31 @@ white = (255, 255, 255)
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
+dist_between_buttons = display_resolution[1] / 20
+robot_radius = min(display_resolution) / 40
+input_fields_x_size = display_resolution[0] / 12
+input_fields_y_size = display_resolution[1] / 33
+input_text_offset_x = display_resolution[0] / 200
+input_text_offset_y = display_resolution[1] / 200
+rect_inflate_x = display_resolution[0] / 50
+rect_inflate_y = display_resolution[1] / 50
+font_size_big = int(display_resolution[1] / 16)
+font_size_small = int(display_resolution[1] / 25)
 
 def pause_screen():
     global resume_rect, quit_rect, main_menu_rect
-    font = pygame.font.Font(None, 64)
+    font = pygame.font.Font(None, font_size_big)
     text = font.render("Paused Game", True, black)
-    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
+    screen.blit(text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2))
 
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, font_size_small)
     text_resume = font.render("Resume", True, white)
     text_main_menu = font.render("Main Menu", True, white)
     text_quit = font.render("Quit Game", True, white)
 
-    resume_rect = text_resume.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
-    main_menu_rect = text_main_menu.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
-    quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 150))
+    resume_rect = text_resume.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons))
+    main_menu_rect = text_main_menu.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons))
+    quit_rect = text_quit.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons))
 
     pygame.draw.rect(screen, black, resume_rect)
     pygame.draw.rect(screen, black, main_menu_rect)
@@ -52,18 +63,18 @@ def main_menu():
     global play_rect, build_arena_rect, exit_rect
     screen.fill(white)
 
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, font_size_small)
     play_text = font.render("Play", True, white)
     build_arena_text = font.render("Build Arena", True, white)
     exit_text = font.render("Exit", True, white)
 
-    play_rect = play_text.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
-    build_arena_rect = build_arena_text.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
-    exit_rect = exit_text.get_rect(center=(arena_size // 2, arena_size // 2 + 150))
+    play_rect = play_text.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons))
+    build_arena_rect = build_arena_text.get_rect(center=(display_resolution[1] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons))
+    exit_rect = exit_text.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons))
 
-    pygame.draw.rect(screen, black, play_rect.inflate(20, 20))
-    pygame.draw.rect(screen, black, build_arena_rect.inflate(20, 20))
-    pygame.draw.rect(screen, black, exit_rect.inflate(20, 20))
+    pygame.draw.rect(screen, black, play_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, build_arena_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, exit_rect.inflate(rect_inflate_x, rect_inflate_y))
 
     screen.blit(play_text, play_rect)
     screen.blit(build_arena_text, build_arena_rect)
@@ -76,40 +87,38 @@ def build_arena_menu():
     global input_rect_x_tiles, input_rect_y_tiles, start_building_rect
     screen.fill(white)
 
-    font = pygame.font.Font(None, 64)
+    font = pygame.font.Font(None, font_size_big)
     text = font.render("Number x tiles:", True, black)
-    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 100))
+    screen.blit(text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_buttons))
 
     # Set up text input field for number x tiles
     input_rect_x_tiles = pygame.Rect(
-        arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 50, 80, 30
+        display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 - dist_between_buttons, input_fields_x_size, input_fields_y_size
     )
 
     pygame.draw.rect(screen, black, input_rect_x_tiles)
-    pygame.draw.rect(screen, white, input_rect_x_tiles, 2)
     text_surface = pygame.font.SysFont(None, 24).render(x_tiles, True, white)
-    screen.blit(text_surface, (input_rect_x_tiles.x + 5, input_rect_x_tiles.y + 5))
+    screen.blit(text_surface, (input_rect_x_tiles.x + input_text_offset_x, input_rect_x_tiles.y + input_text_offset_y))
 
-    font = pygame.font.Font(None, 64)
+    font = pygame.font.Font(None, font_size_big)
     text = font.render("Number y tiles:", True, black)
-    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
+    screen.blit(text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2))
 
     # Set up text input field for number y tiles
     input_rect_y_tiles = pygame.Rect(
-        arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 + 50, 80, 30
+        display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 + dist_between_buttons, input_fields_x_size, input_fields_y_size
     )
 
     pygame.draw.rect(screen, black, input_rect_y_tiles)
-    pygame.draw.rect(screen, white, input_rect_y_tiles, 2)
     text_surface = pygame.font.SysFont(None, 24).render(y_tiles, True, white)
-    screen.blit(text_surface, (input_rect_y_tiles.x + 5, input_rect_y_tiles.y + 5))
+    screen.blit(text_surface, (input_rect_y_tiles.x + input_text_offset_x, input_rect_y_tiles.y + input_text_offset_y))
 
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, font_size_small)
     start_building_text = font.render("Start Building", True, white)
 
-    start_building_rect = start_building_text.get_rect(center=(arena_size // 2, arena_size // 2 + 150))
+    start_building_rect = start_building_text.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons))
 
-    pygame.draw.rect(screen, black, start_building_rect.inflate(20, 20))
+    pygame.draw.rect(screen, black, start_building_rect.inflate(rect_inflate_x, rect_inflate_y))
 
     screen.blit(start_building_text, start_building_rect)
 
@@ -120,25 +129,25 @@ def start_screen():
     global one_player_rect, two_player_rect, three_player_rect, four_player_rect
     screen.fill(white)
 
-    font = pygame.font.Font(None, 64)
+    font = pygame.font.Font(None, font_size_big)
     text = font.render("Wie viele Spieler?", True, black)
-    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2 - 100))
+    screen.blit(text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_buttons))
 
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, font_size_small)
     one_player = font.render("1", True, white)
     two_player = font.render("2", True, white)
     three_player = font.render("3", True, white)
     four_player = font.render("4", True, white)
 
-    one_player_rect = one_player.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
-    two_player_rect = two_player.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
-    three_player_rect = three_player.get_rect(center=(arena_size // 2, arena_size // 2 + 150))
-    four_player_rect = four_player.get_rect(center=(arena_size // 2, arena_size // 2 + 200))
+    one_player_rect = one_player.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons))
+    two_player_rect = two_player.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons))
+    three_player_rect = three_player.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons))
+    four_player_rect = four_player.get_rect(center=(display_resolution[0] // 2, display_resolution[1] // 2 + 4 * dist_between_buttons))
 
-    pygame.draw.rect(screen, black, one_player_rect.inflate(20, 20))
-    pygame.draw.rect(screen, black, two_player_rect.inflate(20, 20))
-    pygame.draw.rect(screen, black, three_player_rect.inflate(20, 20))
-    pygame.draw.rect(screen, black, four_player_rect.inflate(20, 20))
+    pygame.draw.rect(screen, black, one_player_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, two_player_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, three_player_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, four_player_rect.inflate(rect_inflate_x, rect_inflate_y))
 
     screen.blit(one_player, one_player_rect)
     screen.blit(two_player, two_player_rect)
@@ -209,7 +218,7 @@ while run:
                         menu = True
                         arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                         arenaBuilder.main()
-                        screen = pygame.display.set_mode((arena_size, arena_size))
+                        screen = pygame.display.set_mode(display_resolution)
                     except ValueError:
                         print("There should only be positive numbers in the fields!")
             elif event.type == pygame.KEYDOWN:
@@ -229,37 +238,37 @@ while run:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
                     player_count = 1
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1)]
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1), Robot(200, display_resolution[0] - 100, 25, 45, 1, 1)]
                     jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(200, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(300, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
                     ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
-                        Robot(400, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(200, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(300, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(400, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
                     ]
                     jump = [False, False, False]
                     start_game = False
                 if robots:
                     min_x = robots[0].radius
-                    max_x = arena_size - robots[0].radius
+                    max_x = display_resolution[0] - robots[0].radius
                     min_y = robots[0].radius
-                    max_y = arena_size - robots[0].radius
+                    max_y = display_resolution[1] - robots[0].radius
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
@@ -310,7 +319,7 @@ while run:
 
         for i in range(1, len(robots)):
             # Bewegung des Roboters
-            movement.move_bot(robots[i], arena_size, arena_size, robots[i].vel, arena, jump[i - 1])
+            movement.move_bot(robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1])
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i - 1] = False
 
@@ -320,7 +329,7 @@ while run:
             robots[i].paint_robot(pygame, screen)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, arena_size, arena_size, player_robot.vel, arena)
+        movement.move_robot(player_robot, display_resolution[1], display_resolution[1], player_robot.vel, arena)
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()

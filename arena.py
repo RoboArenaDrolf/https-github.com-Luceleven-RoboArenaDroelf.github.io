@@ -34,12 +34,12 @@ class Arena:
                     pygame.image.load(base_path + member.filename), (tile_size, tile_size)
                 )
 
-    tile_size = 50
     blocks_base_path = ".\\PixelArt\\"
     maps_base_path = ".\\Maps\\"
 
     def __init__(self, filename, pygame):
         self.load_map_from_json(filename, pygame)
+        self.tile_size = int(min(pygame.display.get_window_size()) / max(len(self.tiles[0]), len(self.tiles)))
         self.TileType.set_values_to_pics(pygame, self.blocks_base_path, self.tile_size)
 
     def load_map_from_json(self, filename, pygame):
@@ -65,7 +65,7 @@ class Arena:
 
     def _set_background_image(self, image, pygame):
         self.background_image = pygame.transform.scale(
-            image, (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles))
+            image, pygame.display.get_window_size()
         )
 
     def paint_arena(self, pygame, screen):
