@@ -88,11 +88,19 @@ class Movement:
 
         # Kollision mit dem Boden überprüfen
         if self.check_collision_y(robot, arena):
-            robot.posy = (((robot.posy - arena.y_offset) // arena.tile_size) + 1) * arena.tile_size - robot.radius + arena.y_offset
+            robot.posy = (
+                (((robot.posy - arena.y_offset) // arena.tile_size) + 1) * arena.tile_size
+                - robot.radius
+                + arena.y_offset
+            )
             robot.vertical_speed = 0
 
         if self.check_collision_x(robot, arena):
-            robot.posx = (((robot.posx - arena.x_offset) // arena.tile_size) + 1) * arena.tile_size - robot.radius + arena.x_offset
+            robot.posx = (
+                (((robot.posx - arena.x_offset) // arena.tile_size) + 1) * arena.tile_size
+                - robot.radius
+                + arena.x_offset
+            )
             robot.change_acceleration(0)
             robot.change_velocity(0)
 
@@ -105,22 +113,34 @@ class Movement:
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
-        x_positions = (round((robot.posx + robot.radius - arena.x_offset) // arena.tile_size),
-                       round((robot.posx - robot.radius - arena.x_offset) // arena.tile_size), round((robot.posx - arena.x_offset) // arena.tile_size))
-        y_positions = (round((robot.posy + robot.radius - arena.y_offset) // arena.tile_size),
-                       round((robot.posy - robot.radius - arena.y_offset) // arena.tile_size), round((robot.posy - arena.y_offset) // arena.tile_size))
+        x_positions = (
+            round((robot.posx + robot.radius - arena.x_offset) // arena.tile_size),
+            round((robot.posx - robot.radius - arena.x_offset) // arena.tile_size),
+            round((robot.posx - arena.x_offset) // arena.tile_size),
+        )
+        y_positions = (
+            round((robot.posy + robot.radius - arena.y_offset) // arena.tile_size),
+            round((robot.posy - robot.radius - arena.y_offset) // arena.tile_size),
+            round((robot.posy - arena.y_offset) // arena.tile_size),
+        )
         return arena.is_solid(x_positions, y_positions) or robot.vertical_speed > 0
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
         x_positions = [(round((robot.posx - arena.x_offset) // arena.tile_size))]
-        y_positions = [round((robot.posy + robot.radius - arena.y_offset) // arena.tile_size),
-                       round((robot.posy - robot.radius - arena.y_offset) // arena.tile_size), round((robot.posy - arena.y_offset) // arena.tile_size)]
+        y_positions = [
+            round((robot.posy + robot.radius - arena.y_offset) // arena.tile_size),
+            round((robot.posy - robot.radius - arena.y_offset) // arena.tile_size),
+            round((robot.posy - arena.y_offset) // arena.tile_size),
+        ]
         return arena.is_solid(x_positions, y_positions)
 
     def check_collision_x(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf x-Achse
-        x_positions = [round((robot.posx + robot.radius - arena.x_offset) // arena.tile_size),
-                       round((robot.posx - robot.radius - arena.x_offset) // arena.tile_size), round((robot.posx - arena.x_offset) // arena.tile_size)]
+        x_positions = [
+            round((robot.posx + robot.radius - arena.x_offset) // arena.tile_size),
+            round((robot.posx - robot.radius - arena.x_offset) // arena.tile_size),
+            round((robot.posx - arena.x_offset) // arena.tile_size),
+        ]
         y_positions = [(round((robot.posy - arena.y_offset) // arena.tile_size))]
         return arena.is_solid(x_positions, y_positions)
