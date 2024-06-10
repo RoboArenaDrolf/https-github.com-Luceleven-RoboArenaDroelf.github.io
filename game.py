@@ -10,8 +10,7 @@ from arenaBuilder import ArenaBuilder
 
 pygame.init()
 
-# display_resolution = (700, 700)
-display_resolution = (1000, 1000)
+display_resolution = (720, 720)
 
 screen = pygame.display.set_mode(display_resolution)
 pygame.display.set_caption("Robo Arena")
@@ -22,7 +21,7 @@ white = (255, 255, 255)
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
-dist_between_buttons = display_resolution[1] / 20
+dist_between_elements = display_resolution[1] / 20
 robot_radius = min(display_resolution) / 40
 input_fields_x_size = display_resolution[0] / 12
 input_fields_y_size = display_resolution[1] / 33
@@ -48,13 +47,13 @@ def pause_screen():
     text_quit = font.render("Quit Game", True, white)
 
     resume_rect = text_resume.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_elements)
     )
     main_menu_rect = text_main_menu.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
     )
     quit_rect = text_quit.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
     )
 
     pygame.draw.rect(screen, black, resume_rect)
@@ -78,13 +77,13 @@ def main_menu():
     exit_text = font.render("Exit", True, white)
 
     play_rect = play_text.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_elements)
     )
     build_arena_rect = build_arena_text.get_rect(
-        center=(display_resolution[1] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
     )
     exit_rect = exit_text.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
     )
 
     pygame.draw.rect(screen, black, play_rect.inflate(rect_inflate_x, rect_inflate_y))
@@ -108,14 +107,14 @@ def build_arena_menu():
         text,
         (
             display_resolution[0] // 2 - text.get_width() // 2,
-            display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_buttons,
+            display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_elements,
         ),
     )
 
     # Set up text input field for number x tiles
     input_rect_x_tiles = pygame.Rect(
         display_resolution[0] // 2 - text.get_width() // 2,
-        display_resolution[1] // 2 - text.get_height() // 2 - dist_between_buttons,
+        display_resolution[1] // 2 - text.get_height() // 2 - dist_between_elements,
         input_fields_x_size,
         input_fields_y_size,
     )
@@ -133,7 +132,7 @@ def build_arena_menu():
     # Set up text input field for number y tiles
     input_rect_y_tiles = pygame.Rect(
         display_resolution[0] // 2 - text.get_width() // 2,
-        display_resolution[1] // 2 - text.get_height() // 2 + dist_between_buttons,
+        display_resolution[1] // 2 - text.get_height() // 2 + dist_between_elements,
         input_fields_x_size,
         input_fields_y_size,
     )
@@ -146,7 +145,7 @@ def build_arena_menu():
     start_building_text = font.render("Start Building", True, white)
 
     start_building_rect = start_building_text.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
     )
 
     pygame.draw.rect(screen, black, start_building_rect.inflate(rect_inflate_x, rect_inflate_y))
@@ -166,7 +165,7 @@ def start_screen():
         text,
         (
             display_resolution[0] // 2 - text.get_width() // 2,
-            display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_buttons,
+            display_resolution[1] // 2 - text.get_height() // 2 - 2 * dist_between_elements,
         ),
     )
 
@@ -177,16 +176,16 @@ def start_screen():
     four_player = font.render("4", True, white)
 
     one_player_rect = one_player.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_between_elements)
     )
     two_player_rect = two_player.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
     )
     three_player_rect = three_player.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
     )
     four_player_rect = four_player.get_rect(
-        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 4 * dist_between_buttons)
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 4 * dist_between_elements)
     )
 
     pygame.draw.rect(screen, black, one_player_rect.inflate(rect_inflate_x, rect_inflate_y))
@@ -283,12 +282,12 @@ while run:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
                     player_count = 1
-                    robots = [Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1)]
+                    robots = [Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1)]
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
                     robots = [
-                        Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
                         Robot(200, display_resolution[0] - 100, 25, 45, 1, 1),
                     ]
                     jump = [False]
@@ -296,19 +295,19 @@ while run:
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
-                        Robot(100, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
-                        Robot(200, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
-                        Robot(300, display_resolution[1] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(200, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(300, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
                     ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
-                        Robot(100, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
-                        Robot(200, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
-                        Robot(300, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
-                        Robot(400, display_resolution[0] - 2 * dist_between_buttons, robot_radius, 45, 1, 1),
+                        Robot(100, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(200, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(300, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(400, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
                     ]
                     jump = [False, False, False]
                     start_game = False
