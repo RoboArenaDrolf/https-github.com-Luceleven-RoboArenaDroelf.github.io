@@ -17,7 +17,7 @@ class Robot:
     vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
     health_max: int
     health: int
-    color: ""
+    color: str
     player_number = count(0)
 
     def __init__(self, x, y, r, a, am, aam, hm, c):
@@ -81,3 +81,4 @@ class Robot:
         player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 1000 - 100))
         pygame.draw.rect(screen, "black", player_rect.inflate(20, 20))
         screen.blit(player_health, player_rect)
+
