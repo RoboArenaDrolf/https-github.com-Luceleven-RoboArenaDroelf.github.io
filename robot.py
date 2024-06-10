@@ -1,7 +1,6 @@
 import math
 from itertools import count
 
-player_count = 0
 
 class Robot:
     posx: int
@@ -81,4 +80,3 @@ class Robot:
         player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 1000 - 100))
         pygame.draw.rect(screen, "black", player_rect.inflate(20, 20))
         screen.blit(player_health, player_rect)
-
