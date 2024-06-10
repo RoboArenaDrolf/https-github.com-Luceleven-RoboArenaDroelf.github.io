@@ -41,6 +41,10 @@ class Arena:
         self.load_map_from_json(filename, pygame)
         self.tile_size = int(min(pygame.display.get_window_size()) / max(len(self.tiles[0]), len(self.tiles)))
         self.TileType.set_values_to_pics(pygame, self.blocks_base_path, self.tile_size)
+        self.map_size = (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles))
+        self._set_background_image(self._background_image_unscaled, pygame)
+        self.x_offset = int((pygame.display.get_window_size()[0] - self.map_size[0]) / 2)
+        self.y_offset = int((pygame.display.get_window_size()[1] - self.map_size[1]) / 2)
 
     def load_map_from_json(self, filename, pygame):
         try:
@@ -60,8 +64,10 @@ class Arena:
             self.num_tiles_x = data["num_tiles_x"]
             self.num_tiles_y = data["num_tiles_y"]
             self.tiles = [[Arena.TileType[tile] for tile in row] for row in data["tiles"]]
-            background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
-            self.background_image = pygame.transform.scale(background_image_unscaled, pygame.display.get_window_size())
+            self._background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
+
+    def _set_background_image(self, image, pygame):
+        self.background_image = pygame.transform.scale(image, self.map_size)
 
     def paint_arena(self, pygame, screen):
         """
@@ -70,12 +76,12 @@ class Arena:
         :param pygame: pygame instance
         :param screen: screen element of pygame initialized with pygame.display.set_mode()
         """
-        screen.blit(self.background_image, (0, 0))
+        screen.blit(self.background_image, (self.x_offset, self.y_offset))
         y = 0
         for row in self.tiles:
             x = 0
             for tile in row:
-                screen.blit(tile.image, (x, y))
+                screen.blit(tile.image, (self.x_offset + x, self.y_offset + y))
                 x += self.tile_size
             y += self.tile_size
 

@@ -31,6 +31,7 @@ rect_inflate_x = display_resolution[0] / 50
 rect_inflate_y = display_resolution[1] / 50
 font_size_big = int(display_resolution[1] / 16)
 font_size_small = int(display_resolution[1] / 25)
+robot_spawn_distance = display_resolution[0] / 10
 
 
 def pause_screen():
@@ -282,40 +283,105 @@ while run:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
                     player_count = 1
-                    robots = [Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1)]
+                    robots = [
+                        Robot(
+                            arena.x_offset + 100,
+                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        )
+                    ]
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
                     robots = [
-                        Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(200, display_resolution[0] - 100, 25, 45, 1, 1),
+                        Robot(
+                            robot_spawn_distance,
+                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(2 * robot_spawn_distance, display_resolution[0] - 100, 25, 45, 1, 1),
                     ]
                     jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
-                        Robot(100, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(200, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(300, display_resolution[1] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(
+                            robot_spawn_distance,
+                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(
+                            2 * robot_spawn_distance,
+                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(
+                            3 * robot_spawn_distance,
+                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
                     ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
-                        Robot(100, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(200, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(300, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
-                        Robot(400, display_resolution[0] - 2 * dist_between_elements, robot_radius, 45, 1, 1),
+                        Robot(
+                            robot_spawn_distance,
+                            display_resolution[0] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(
+                            2 * robot_spawn_distance,
+                            display_resolution[0] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(
+                            3 * robot_spawn_distance,
+                            display_resolution[0] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
+                        Robot(
+                            4 * robot_spawn_distance,
+                            display_resolution[0] - 2 * dist_between_elements,
+                            robot_radius,
+                            45,
+                            1,
+                            1,
+                        ),
                     ]
                     jump = [False, False, False]
                     start_game = False
                 if robots:
-                    min_x = robots[0].radius
-                    max_x = display_resolution[0] - robots[0].radius
-                    min_y = robots[0].radius
-                    max_y = display_resolution[1] - robots[0].radius
+                    min_x = robots[0].radius + arena.x_offset
+                    max_x = display_resolution[0] - robots[0].radius - arena.x_offset
+                    min_y = robots[0].radius + arena.y_offset
+                    max_y = display_resolution[1] - robots[0].radius - arena.y_offset
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
@@ -373,12 +439,12 @@ while run:
             jump[i - 1] = False
 
             # Überprüfe die Grenzen und passe die Position an, wenn nötig
-            robots[i].posx = max(min(robots[i].posx, max_x), min_x)
-            robots[i].posy = max(min(robots[i].posy, max_y), min_y)
+            # robots[i].posx = max(min(robots[i].posx, max_x), min_x)
+            # robots[i].posy = max(min(robots[i].posy, max_y), min_y)
             robots[i].paint_robot(pygame, screen)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, display_resolution[1], display_resolution[1], player_robot.vel, arena)
+        movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena)
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()
