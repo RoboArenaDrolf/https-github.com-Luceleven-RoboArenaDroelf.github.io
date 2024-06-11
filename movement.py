@@ -1,5 +1,6 @@
 import pygame
 
+
 class Movement:
     gravity = 0.5  # Schwerkraftkonstante
 
@@ -23,9 +24,12 @@ class Movement:
             robot.change_velocity(0)
             robot.change_acceleration(0)
 
+        if self.on_ground(robot, arena):
+            robot.jump_counter = 0
+
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP]:
-            if self.on_ground(robot, arena):
+            if robot.jump_counter == 0:
                 robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den ersten Sprung setzen
                 robot.jump_counter = 1
             elif robot.can_jump_again:
@@ -38,13 +42,11 @@ class Movement:
                 if event.key == pygame.K_UP and robot.jump_counter == 1:
                     robot.can_jump_again = True
 
-        
         # Vertikale Bewegung
         robot.vertical_speed += self.gravity
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
-
 
         # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
         if robot.posy - robot.radius < 0:
@@ -56,7 +58,6 @@ class Movement:
             if robot.vertical_speed > 0:
                 robot.vertical_speed = 0
 
-
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
             if robot.vertical_speed > 0:  # Kollision von oben
@@ -66,7 +67,6 @@ class Movement:
             robot.vertical_speed = 0
             self.can_double_jump = True  # Doppelsprung erlauben, wenn der Boden berührt wird
             self.jump_count = 0  # Sprungstatus zurücksetzen, wenn der Boden berührt wird
-
 
         # Kollisionen in x-Richtung überprüfen und behandeln
         if self.check_collision_x(robot, arena):
@@ -83,8 +83,6 @@ class Movement:
             robot.vertical_speed = 0
         elif robot.posy < 0:
             robot.posy = robot.radius
-
-
 
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
         robot.posx += x
@@ -142,25 +140,36 @@ class Movement:
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
-        x_positions = (int((robot.posx + robot.radius) // arena.tile_size),
-                       int((robot.posx - robot.radius) // arena.tile_size), int(robot.posx // arena.tile_size))
-        y_positions = (int((robot.posy + robot.radius) // arena.tile_size),
-                       int((robot.posy - robot.radius) // arena.tile_size), int(robot.posy // arena.tile_size))
+        x_positions = (
+            int((robot.posx + robot.radius / 2) // arena.tile_size),
+            int((robot.posx - robot.radius / 2) // arena.tile_size),
+            int(robot.posx // arena.tile_size),
+        )
+        y_positions = (int((robot.posy + robot.radius) // arena.tile_size),)
         return arena.is_solid(x_positions, y_positions)
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
-        x_positions = [int(robot.posx // arena.tile_size), int((robot.posx + robot.radius / 2) // arena.tile_size),
-                       int((robot.posx - robot.radius / 2) // arena.tile_size)]
-        y_positions = [int((robot.posy + robot.radius) // arena.tile_size),
-                       int((robot.posy - robot.radius) // arena.tile_size)]
+        x_positions = [
+            int(robot.posx // arena.tile_size),
+            int((robot.posx + robot.radius / 2) // arena.tile_size),
+            int((robot.posx - robot.radius / 2) // arena.tile_size),
+        ]
+        y_positions = [
+            int((robot.posy + robot.radius) // arena.tile_size),
+            int((robot.posy - robot.radius) // arena.tile_size),
+        ]
         return arena.is_solid(x_positions, y_positions)
 
     def check_collision_x(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf x-Achse
-        x_positions = [int((robot.posx + robot.radius) // arena.tile_size),
-                       int((robot.posx - robot.radius) // arena.tile_size)]
-        y_positions = [int(robot.posy // arena.tile_size), int((robot.posy + robot.radius / 2) // arena.tile_size),
-                       int((robot.posy - robot.radius / 2) // arena.tile_size)]
+        x_positions = [
+            int((robot.posx + robot.radius) // arena.tile_size),
+            int((robot.posx - robot.radius) // arena.tile_size),
+        ]
+        y_positions = [
+            int(robot.posy // arena.tile_size),
+            int((robot.posy + robot.radius / 2) // arena.tile_size),
+            int((robot.posy - robot.radius / 2) // arena.tile_size),
+        ]
         return arena.is_solid(x_positions, y_positions)
-    
