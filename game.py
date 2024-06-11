@@ -69,6 +69,7 @@ def pause_screen():
     screen.blit(text_main_menu, main_menu_rect)
     screen.blit(text_quit, quit_rect)
 
+
 def main_menu():
     global play_rect, build_arena_rect, exit_rect, settings_rect
     screen.fill(white)
@@ -102,6 +103,7 @@ def main_menu():
     screen.blit(settings_text, settings_rect)
     screen.blit(exit_text, exit_rect)
 
+
 def settings_menu():
     global resolution_rects, fullscreen_rect, back_rect
     screen.fill(white)
@@ -109,7 +111,11 @@ def settings_menu():
     font = pygame.font.Font(None, font_size_big)
     text = font.render("Settings", True, black)
     screen.blit(
-        text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 - 3 * dist_between_elements)
+        text,
+        (
+            display_resolution[0] // 2 - text.get_width() // 2,
+            display_resolution[1] // 2 - text.get_height() // 2 - 3 * dist_between_elements,
+        ),
     )
 
     resolution_rects = []
@@ -117,7 +123,10 @@ def settings_menu():
     for i, res in enumerate(available_resolutions):
         res_text = font.render(f"{res[0]}x{res[1]}", True, white)
         res_rect = res_text.get_rect(
-            center=(display_resolution[0] // 2, display_resolution[1] // 2 - dist_between_elements + i * dist_between_elements)
+            center=(
+                display_resolution[0] // 2,
+                display_resolution[1] // 2 - dist_between_elements + i * dist_between_elements,
+            )
         )
         pygame.draw.rect(screen, black, res_rect.inflate(rect_inflate_x, rect_inflate_y))
         screen.blit(res_text, res_rect)
@@ -136,6 +145,7 @@ def settings_menu():
     )
     pygame.draw.rect(screen, black, back_rect.inflate(rect_inflate_x, rect_inflate_y))
     screen.blit(back_text, back_rect)
+
 
 def build_arena_menu():
     global input_rect_x_tiles, input_rect_y_tiles, start_building_rect
@@ -191,6 +201,7 @@ def build_arena_menu():
     pygame.draw.rect(screen, black, start_building_rect.inflate(rect_inflate_x, rect_inflate_y))
 
     screen.blit(start_building_text, start_building_rect)
+
 
 def start_screen():
     global one_player_rect, two_player_rect, three_player_rect, four_player_rect
