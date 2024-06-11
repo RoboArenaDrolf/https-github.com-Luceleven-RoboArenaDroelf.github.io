@@ -173,8 +173,8 @@ jump = []
 
 clock = pygame.time.Clock()
 while run:
-    pygame.time.delay(10)
-    clock.tick(60)
+    pygame.time.delay(0)
+    clock.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -230,29 +230,30 @@ while run:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
                     player_count = 1
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue")]
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                              Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red")]
                     jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red"),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1, 100, "green"),
                     ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
-                        Robot(400, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red"),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1, 100, "green"),
+                        Robot(400, arena_size - 100, 25, 45, 1, 1, 100, "yellow"),
                     ]
                     jump = [False, False, False]
                     start_game = False
@@ -291,6 +292,8 @@ while run:
                 or (attack_cooldown < 30 and attack_cooldown != 0)):  # attack will stay for a certain duration
             player_robot.attack(pygame, screen)
             attack_cooldown += 1
+        if keys[pygame.K_f]:
+            player_robot.take_damage_debug(10)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + 0.05)
         elif keys[pygame.K_LEFT]:
