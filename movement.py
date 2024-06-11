@@ -23,9 +23,12 @@ class Movement:
             robot.change_velocity(0)
             robot.change_acceleration(0)
 
+        if self.on_ground(robot, arena):
+            robot.jump_counter = 0
+
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP]:
-            if self.on_ground(robot, arena):
+            if robot.jump_counter == 0:
                 robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den ersten Sprung setzen
                 robot.jump_counter = 1
             elif robot.can_jump_again:
