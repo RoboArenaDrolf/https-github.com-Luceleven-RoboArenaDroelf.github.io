@@ -75,8 +75,8 @@ class Robot:
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx+new_x, self.posy+new_y))
         # corresponding health ui
-        health_font = pygame.font.Font(None, 20)
+        health_font = pygame.font.Font(None, 24)
         player_health = health_font.render(f'{self.health}', True, f'{self.color}')
-        player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 1000 - 100))
-        pygame.draw.rect(screen, "black", player_rect.inflate(20, 20))
+        player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 50))
+        pygame.draw.rect(screen, (0, 30, 50, 0.5), player_rect.inflate(30, 20))
         screen.blit(player_health, player_rect)
