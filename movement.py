@@ -23,14 +23,19 @@ class Movement:
 
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP]:
-            if self.on_ground(robot, arena) and self.jump_count == 0:
+            if self.on_ground(robot, arena):
                 robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den ersten Sprung setzen
-                self.can_double_jump = True  # Doppelsprung verfügbar machen
-                self.jump_count = 1  # Der erste Sprung wurde ausgeführt
-            elif self.can_double_jump and self.jump_count == 1:
+                robot.jump_counter = 1
+            elif robot.can_jump_again:
                 robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den Doppelsprung setzen
-                self.can_double_jump = False  # Doppelsprung wurde benutzt
-                self.jump_count = 2  # Der zweite Sprung wurde ausgeführt
+                robot.can_jump_again = False
+                robot.jump_counter = 2
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_UP and robot.jump_counter == 1:
+                    robot.can_jump_again = True
+
         
         # Vertikale Bewegung
         robot.vertical_speed += self.gravity
