@@ -119,23 +119,25 @@ class Movement:
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
-        x_positions = (round((robot.posx + robot.radius) // arena.tile_size),
-                       round((robot.posx - robot.radius) // arena.tile_size), round(robot.posx // arena.tile_size))
-        y_positions = (round((robot.posy + robot.radius) // arena.tile_size),
-                       round((robot.posy - robot.radius) // arena.tile_size), round(robot.posy // arena.tile_size))
+        x_positions = (int((robot.posx + robot.radius) // arena.tile_size),
+                       int((robot.posx - robot.radius) // arena.tile_size), int(robot.posx // arena.tile_size))
+        y_positions = (int((robot.posy + robot.radius) // arena.tile_size),
+                       int((robot.posy - robot.radius) // arena.tile_size), int(robot.posy // arena.tile_size))
         return arena.is_solid(x_positions, y_positions) or robot.vertical_speed > 0
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
-        x_positions = [(round(robot.posx // arena.tile_size))]
-        y_positions = [round((robot.posy + robot.radius) // arena.tile_size),
-                       round((robot.posy - robot.radius) // arena.tile_size), round(robot.posy // arena.tile_size)]
+        x_positions = [int(robot.posx // arena.tile_size), int((robot.posx + robot.radius / 2) // arena.tile_size),
+                       int((robot.posx - robot.radius / 2) // arena.tile_size)]
+        y_positions = [int((robot.posy + robot.radius) // arena.tile_size),
+                       int((robot.posy - robot.radius) // arena.tile_size)]
         return arena.is_solid(x_positions, y_positions)
 
     def check_collision_x(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf x-Achse
-        x_positions = [round((robot.posx + robot.radius) // arena.tile_size),
-                       round((robot.posx - robot.radius) // arena.tile_size), round(robot.posx // arena.tile_size)]
-        y_positions = [(round(robot.posy // arena.tile_size))]
+        x_positions = [int((robot.posx + robot.radius) // arena.tile_size),
+                       int((robot.posx - robot.radius) // arena.tile_size)]
+        y_positions = [int(robot.posy // arena.tile_size), int((robot.posy + robot.radius / 2) // arena.tile_size),
+                       int((robot.posy - robot.radius / 2) // arena.tile_size)]
         return arena.is_solid(x_positions, y_positions)
     
