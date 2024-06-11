@@ -64,6 +64,11 @@ class Robot:
     def change_turn_velocity(self, va):
         self.vel = va
 
+    def attack(self, pygame, screen):
+        new_x = self.radius * (math.cos(math.radians(self.alpha)))
+        new_y = self.radius * (math.sin(math.radians(self.alpha)))
+        pygame.draw.line(screen, "red", (self.posx, self.posy), (self.posx+new_x*2, self.posy+new_y*2), width=4)
+
     def take_damage_debug(self, d):
         if d <= self.health:
             self.health = self.health-d
