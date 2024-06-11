@@ -1,7 +1,7 @@
 import random
-
 import pygame
 import sys
+from screeninfo import get_monitors
 
 from robot import Robot
 from movement import Movement
@@ -11,6 +11,10 @@ from arenaBuilder import ArenaBuilder
 pygame.init()
 
 display_resolution = (720, 720)
+available_resolutions = [(720, 720), (1280, 720), (1280, 1080), (1920, 1080)]
+monitor = get_monitors()[0]
+fullscreen_res = (monitor.width, monitor.height)
+fullscreen = False
 
 screen = pygame.display.set_mode(display_resolution)
 pygame.display.set_caption("Robo Arena")
@@ -66,12 +70,13 @@ def pause_screen():
     screen.blit(text_quit, quit_rect)
 
 def main_menu():
-    global play_rect, build_arena_rect, exit_rect
+    global play_rect, build_arena_rect, exit_rect, settings_rect
     screen.fill(white)
 
     font = pygame.font.Font(None, font_size_small)
     play_text = font.render("Play", True, white)
     build_arena_text = font.render("Build Arena", True, white)
+    settings_text = font.render("Settings", True, white)
     exit_text = font.render("Exit", True, white)
 
     play_rect = play_text.get_rect(
@@ -80,17 +85,57 @@ def main_menu():
     build_arena_rect = build_arena_text.get_rect(
         center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
     )
-    exit_rect = exit_text.get_rect(
+    settings_rect = settings_text.get_rect(
         center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
+    )
+    exit_rect = exit_text.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 4 * dist_between_elements)
     )
 
     pygame.draw.rect(screen, black, play_rect.inflate(rect_inflate_x, rect_inflate_y))
     pygame.draw.rect(screen, black, build_arena_rect.inflate(rect_inflate_x, rect_inflate_y))
+    pygame.draw.rect(screen, black, settings_rect.inflate(rect_inflate_x, rect_inflate_y))
     pygame.draw.rect(screen, black, exit_rect.inflate(rect_inflate_x, rect_inflate_y))
 
     screen.blit(play_text, play_rect)
     screen.blit(build_arena_text, build_arena_rect)
+    screen.blit(settings_text, settings_rect)
     screen.blit(exit_text, exit_rect)
+
+def settings_menu():
+    global resolution_rects, fullscreen_rect, back_rect
+    screen.fill(white)
+
+    font = pygame.font.Font(None, font_size_big)
+    text = font.render("Settings", True, black)
+    screen.blit(
+        text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2 - 3 * dist_between_elements)
+    )
+
+    resolution_rects = []
+    font = pygame.font.Font(None, font_size_small)
+    for i, res in enumerate(available_resolutions):
+        res_text = font.render(f"{res[0]}x{res[1]}", True, white)
+        res_rect = res_text.get_rect(
+            center=(display_resolution[0] // 2, display_resolution[1] // 2 - dist_between_elements + i * dist_between_elements)
+        )
+        pygame.draw.rect(screen, black, res_rect.inflate(rect_inflate_x, rect_inflate_y))
+        screen.blit(res_text, res_rect)
+        resolution_rects.append(res_rect)
+
+    fullscreen_text = font.render("Fullscreen", True, white)
+    fullscreen_rect = fullscreen_text.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
+    )
+    pygame.draw.rect(screen, black, fullscreen_rect.inflate(rect_inflate_x, rect_inflate_y))
+    screen.blit(fullscreen_text, fullscreen_rect)
+
+    back_text = font.render("Back", True, white)
+    back_rect = fullscreen_text.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 4 * dist_between_elements)
+    )
+    pygame.draw.rect(screen, black, back_rect.inflate(rect_inflate_x, rect_inflate_y))
+    screen.blit(back_text, back_rect)
 
 def build_arena_menu():
     global input_rect_x_tiles, input_rect_y_tiles, start_building_rect
@@ -199,6 +244,8 @@ run = True
 start_game = False
 menu = True
 build_arena = False
+settings = False
+playing = False
 player_count = 0
 robots = []
 
@@ -230,6 +277,9 @@ while run:
                 elif build_arena_rect.collidepoint(mouse_pos):
                     build_arena = True
                     menu = False
+                elif settings_rect.collidepoint(mouse_pos):
+                    settings = True
+                    menu = False
                 elif exit_rect.collidepoint(mouse_pos):
                     run = False
         elif build_arena:
@@ -252,7 +302,6 @@ while run:
                         menu = True
                         arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                         arenaBuilder.main()
-                        screen = pygame.display.set_mode(display_resolution)
                     except ValueError:
                         print("There should only be positive numbers in the fields!")
             elif event.type == pygame.KEYDOWN:
@@ -266,6 +315,42 @@ while run:
                         y_tiles = y_tiles[:-1]
                     else:
                         y_tiles += event.unicode
+        elif settings:
+            settings_menu()
+            dis_res_changed = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if fullscreen_rect.collidepoint(mouse_pos):
+                    display_resolution = fullscreen_res
+                    fullscreen = True
+                    dis_res_changed = True
+                elif back_rect.collidepoint(mouse_pos):
+                    menu = True
+                    settings = False
+                for i, res_rect in enumerate(resolution_rects):
+                    if res_rect.collidepoint(mouse_pos):
+                        display_resolution = available_resolutions[i]
+                        fullscreen = False
+                        dis_res_changed = True
+                        break
+            if dis_res_changed:
+                dis_res_changed = False
+                if fullscreen:
+                    screen = pygame.display.set_mode(display_resolution, pygame.FULLSCREEN)
+                else:
+                    screen = pygame.display.set_mode(display_resolution)
+                dist_between_elements = display_resolution[1] / 20
+                robot_radius = min(display_resolution) / 40
+                input_fields_x_size = display_resolution[0] / 12
+                input_fields_y_size = display_resolution[1] / 33
+                input_text_offset_x = display_resolution[0] / 200
+                input_text_offset_y = display_resolution[1] / 200
+                rect_inflate_x = display_resolution[0] / 50
+                rect_inflate_y = display_resolution[1] / 50
+                font_size_big = int(display_resolution[1] / 16)
+                font_size_small = int(display_resolution[1] / 25)
+                robot_spawn_distance = display_resolution[0] / 10
+                arena = Arena("secondMap.json", pygame)
         elif start_game:
             start_screen()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -282,7 +367,6 @@ while run:
                             1,
                         )
                     ]
-                    start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
                     robots = [
@@ -297,7 +381,6 @@ while run:
                         Robot(2 * robot_spawn_distance, display_resolution[0] - 100, 25, 45, 1, 1),
                     ]
                     jump = [False]
-                    start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
@@ -327,7 +410,6 @@ while run:
                         ),
                     ]
                     jump = [False, False]
-                    start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
@@ -365,12 +447,14 @@ while run:
                         ),
                     ]
                     jump = [False, False, False]
-                    start_game = False
+
                 if robots:
                     min_x = robots[0].radius + arena.x_offset
                     max_x = display_resolution[0] - robots[0].radius - arena.x_offset
                     min_y = robots[0].radius + arena.y_offset
                     max_y = display_resolution[1] - robots[0].radius - arena.y_offset
+                    start_game = False
+                    playing = True
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
@@ -379,15 +463,16 @@ while run:
             elif main_menu_rect.collidepoint(mouse_pos):
                 menu = True
                 game_paused = False
+                playing = False
             elif quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
                 sys.exit()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE] and not menu and not start_game and not build_arena:
+    if keys[pygame.K_ESCAPE] and playing:
         game_paused = True
 
-    if not game_paused and not start_game and not menu and not build_arena:
+    if playing and not game_paused:
         screen.fill(white)
         frame_count += 1
         arena.paint_arena(pygame, screen)
