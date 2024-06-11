@@ -29,13 +29,6 @@ class Movement:
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
 
-        # Kollisionen in y-Richtung überprüfen und behandeln
-        if self.check_collision_y(robot, arena):
-            if robot.vertical_speed > 0:  # Kollision von oben
-                robot.posy = ((robot.posy // arena.tile_size) + 1) * arena.tile_size - robot.radius
-            else:  # Kollision von unten
-                robot.posy = ((robot.posy // arena.tile_size)) * arena.tile_size + robot.radius
-            robot.vertical_speed = 0
 
         # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
         if robot.posy - robot.radius < 0:
@@ -46,6 +39,16 @@ class Movement:
             robot.posy = screen_height - robot.radius
             if robot.vertical_speed > 0:
                 robot.vertical_speed = 0
+
+
+        # Kollisionen in y-Richtung überprüfen und behandeln
+        if self.check_collision_y(robot, arena):
+            if robot.vertical_speed > 0:  # Kollision von oben
+                robot.posy = ((robot.posy // arena.tile_size) + 1) * arena.tile_size - robot.radius
+            else:  # Kollision von unten
+                robot.posy = ((robot.posy // arena.tile_size)) * arena.tile_size + robot.radius
+            robot.vertical_speed = 0
+
 
         # Kollisionen in x-Richtung überprüfen und behandeln
         if self.check_collision_x(robot, arena):
