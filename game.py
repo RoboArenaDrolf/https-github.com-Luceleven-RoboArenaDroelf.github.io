@@ -65,9 +65,6 @@ def pause_screen():
     screen.blit(text_main_menu, main_menu_rect)
     screen.blit(text_quit, quit_rect)
 
-    pygame.display.update()
-
-
 def main_menu():
     global play_rect, build_arena_rect, exit_rect
     screen.fill(white)
@@ -94,9 +91,6 @@ def main_menu():
     screen.blit(play_text, play_rect)
     screen.blit(build_arena_text, build_arena_rect)
     screen.blit(exit_text, exit_rect)
-
-    pygame.display.update()
-
 
 def build_arena_menu():
     global input_rect_x_tiles, input_rect_y_tiles, start_building_rect
@@ -153,9 +147,6 @@ def build_arena_menu():
 
     screen.blit(start_building_text, start_building_rect)
 
-    pygame.display.update()
-
-
 def start_screen():
     global one_player_rect, two_player_rect, three_player_rect, four_player_rect
     screen.fill(white)
@@ -198,8 +189,6 @@ def start_screen():
     screen.blit(two_player, two_player_rect)
     screen.blit(three_player, three_player_rect)
     screen.blit(four_player, four_player_rect)
-
-    pygame.display.update()
 
 
 movement = Movement()
