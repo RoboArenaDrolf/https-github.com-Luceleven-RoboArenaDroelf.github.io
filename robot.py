@@ -13,6 +13,8 @@ class Robot:
     vel = 0
     vel_alpha = 0
     vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
+    can_jump_again = False
+    jump_counter = 0
 
     def __init__(self, x, y, r, a, am, aam):
         self.posx = x
