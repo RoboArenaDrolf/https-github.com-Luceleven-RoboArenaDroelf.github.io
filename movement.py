@@ -142,10 +142,9 @@ class Movement:
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
-        x_positions = (int((robot.posx + robot.radius) // arena.tile_size),
-                       int((robot.posx - robot.radius) // arena.tile_size), int(robot.posx // arena.tile_size))
-        y_positions = (int((robot.posy + robot.radius) // arena.tile_size),
-                       int((robot.posy - robot.radius) // arena.tile_size), int(robot.posy // arena.tile_size))
+        x_positions = (int((robot.posx + robot.radius / 2) // arena.tile_size),
+                       int((robot.posx - robot.radius / 2) // arena.tile_size), int(robot.posx // arena.tile_size))
+        y_positions = (int((robot.posy + robot.radius) // arena.tile_size),)
         return arena.is_solid(x_positions, y_positions)
 
     def check_collision_y(self, robot, arena):
