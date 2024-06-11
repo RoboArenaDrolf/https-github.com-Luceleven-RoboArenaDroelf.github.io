@@ -229,29 +229,30 @@ while run:
                 mouse_pos = pygame.mouse.get_pos()
                 if one_player_rect.collidepoint(mouse_pos):
                     player_count = 1
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue")]
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1), Robot(200, arena_size - 100, 25, 45, 1, 1)]
+                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                              Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red")]
                     jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red"),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1, 100, "green"),
                     ]
                     jump = [False, False]
                     start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
-                        Robot(100, arena_size - 100, 25, 45, 1, 1),
-                        Robot(200, arena_size - 100, 25, 45, 1, 1),
-                        Robot(300, arena_size - 100, 25, 45, 1, 1),
-                        Robot(400, arena_size - 100, 25, 45, 1, 1),
+                        Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red"),
+                        Robot(300, arena_size - 100, 25, 45, 1, 1, 100, "green"),
+                        Robot(400, arena_size - 100, 25, 45, 1, 1, 100, "yellow"),
                     ]
                     jump = [False, False, False]
                     start_game = False
@@ -281,6 +282,8 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        if keys[pygame.K_f]:
+            player_robot.take_damage_debug(10)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + 0.05)
         elif keys[pygame.K_LEFT]:

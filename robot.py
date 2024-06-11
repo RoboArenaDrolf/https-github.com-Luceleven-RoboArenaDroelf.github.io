@@ -1,4 +1,5 @@
 import math
+from itertools import count
 
 
 class Robot:
@@ -13,16 +14,24 @@ class Robot:
     vel = 0
     vel_alpha = 0
     vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
+    health_max: int
+    health: int
+    color: str
+    player_number = count(0)
     can_jump_again = False
     jump_counter = 0
 
-    def __init__(self, x, y, r, a, am, aam):
+    def __init__(self, x, y, r, a, am, aam, hm, c):
         self.posx = x
         self.posy = y
         self.radius = r
         self.alpha = a % 360  # thanks to mod 360 this will no longer break
         self.accel_max = am
         self.accel_alpha_max = aam
+        self.health_max = hm
+        self.health = self.health_max  # we start at full health
+        self.color = c
+        self.player_number = next(self.player_number)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -55,8 +64,21 @@ class Robot:
     def change_turn_velocity(self, va):
         self.vel = va
 
+    def take_damage_debug(self, d):
+        if d <= self.health:
+            self.health = self.health-d
+        else:
+            self.health = 0
+
     def paint_robot(self, pygame, screen):
-        pygame.draw.circle(screen, "blue", (self.posx, self.posy), self.radius)
+        # robot
+        pygame.draw.circle(screen, self.color, (self.posx, self.posy), self.radius)
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx+new_x, self.posy+new_y))
+        # corresponding health ui
+        health_font = pygame.font.Font(None, 24)
+        player_health = health_font.render(f'{self.health}', True, f'{self.color}')
+        player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 50))
+        pygame.draw.rect(screen, (0, 30, 50, 0.5), player_rect.inflate(30, 20))
+        screen.blit(player_health, player_rect)
