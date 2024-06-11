@@ -370,24 +370,24 @@ while run:
                     player_count = 1
                     robots = [
                         Robot(
-                            arena.x_offset + 100,
-                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_spawn_distance + arena.x_offset,
+                            display_resolution[1] - 1.5 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
                     robots = [
                         Robot(
-                            robot_spawn_distance,
-                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_spawn_distance + arena.x_offset,
+                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(2 * robot_spawn_distance, display_resolution[0] - 100, 25, 45, 1, 1),
                     ]
@@ -396,28 +396,28 @@ while run:
                     player_count = 3
                     robots = [
                         Robot(
-                            robot_spawn_distance,
-                            display_resolution[1] - 2 * dist_between_elements,
+                            robot_spawn_distance + arena.x_offset,
+                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(
-                            2 * robot_spawn_distance,
-                            display_resolution[1] - 2 * dist_between_elements,
+                            2 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(
-                            3 * robot_spawn_distance,
-                            display_resolution[1] - 2 * dist_between_elements,
+                            3 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                     ]
                     jump = [False, False]
@@ -425,36 +425,36 @@ while run:
                     player_count = 4
                     robots = [
                         Robot(
-                            robot_spawn_distance,
-                            display_resolution[0] - 2 * dist_between_elements,
+                            robot_spawn_distance + arena.x_offset,
+                            display_resolution[0] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(
-                            2 * robot_spawn_distance,
-                            display_resolution[0] - 2 * dist_between_elements,
+                            2 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[0] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(
-                            3 * robot_spawn_distance,
-                            display_resolution[0] - 2 * dist_between_elements,
+                            3 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[0] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                         Robot(
-                            4 * robot_spawn_distance,
-                            display_resolution[0] - 2 * dist_between_elements,
+                            4 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[0] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
                             1,
-                            1,
+                            1
                         ),
                     ]
                     jump = [False, False, False]
