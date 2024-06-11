@@ -18,6 +18,8 @@ class Robot:
     health: int
     color: str
     player_number = count(0)
+    can_jump_again = False
+    jump_counter = 0
 
     def __init__(self, x, y, r, a, am, aam, hm, c):
         self.posx = x

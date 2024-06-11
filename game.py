@@ -172,8 +172,8 @@ jump = []
 
 clock = pygame.time.Clock()
 while run:
-    pygame.time.delay(10)
-    clock.tick(60)
+    pygame.time.delay(0)
+    clock.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
