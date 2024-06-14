@@ -47,10 +47,8 @@ def recalculate_robot_values():
             robot.radius = robot_radius
             robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
             robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
-            robot.accel_max = arena.map_size[0
-] / float(1000)
-            robot.accel_alpha_max = arena.map_size[0
-    ] / float(1000)
+            robot.accel_max = arena.map_size[0] / float(1000)
+            robot.accel_alpha_max = arena.map_size[0] / float(1000)
 
 
 def pause_screen():

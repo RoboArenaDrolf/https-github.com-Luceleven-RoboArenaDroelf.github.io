@@ -6,7 +6,6 @@ class Movement:
     def __init__(self, gravity):
         self.gravity = gravity
 
-
     def move_robot(self, robot, screen_height, screen_width, x, arena):
         keys = pygame.key.get_pressed()
 
@@ -72,7 +71,9 @@ class Movement:
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP]:
             if robot.jump_counter == 0:
-                robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den ersten Sprung setzen
+                robot.vertical_speed = (
+                    -arena.map_size[1] / 100
+                )  # Vertikale Geschwindigkeit für den ersten Sprung setzen
                 robot.jump_counter = 1
             elif robot.can_jump_again:
                 robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den Doppelsprung setzen
