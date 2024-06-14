@@ -9,7 +9,7 @@ class Robot:
     alpha = 0
     accel = 0
     accel_max = 1
-    accel_alpha = 0     # this might just be useless for us
+    accel_alpha = 0  # this might just be useless for us
     accel_alpha_max = 1  # this feels VERY useless
     vel = 0
     vel_alpha = 0
@@ -59,7 +59,7 @@ class Robot:
                 self.vel = -5
             else:
                 self.vel = 5
-        self.alpha = 270+(90/5)*self.vel
+        self.alpha = 270 + (90 / 5) * self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va
@@ -67,11 +67,11 @@ class Robot:
     def attack(self, pygame, screen):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "red", (self.posx, self.posy), (self.posx+new_x*2, self.posy+new_y*2), width=4)
+        pygame.draw.line(screen, "red", (self.posx, self.posy), (self.posx + new_x * 2, self.posy + new_y * 2), width=4)
 
     def take_damage_debug(self, d):
         if d <= self.health:
-            self.health = self.health-d
+            self.health = self.health - d
         else:
             self.health = 0
 
@@ -80,10 +80,10 @@ class Robot:
         pygame.draw.circle(screen, self.color, (self.posx, self.posy), self.radius)
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx+new_x, self.posy+new_y))
+        pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx + new_x, self.posy + new_y))
         # corresponding health ui
         health_font = pygame.font.Font(None, 24)
-        player_health = health_font.render(f'{self.health}', True, f'{self.color}')
-        player_rect = player_health.get_rect(center=(200 + 200*self.player_number, 50))
+        player_health = health_font.render(f"{self.health}", True, f"{self.color}")
+        player_rect = player_health.get_rect(center=(200 + 200 * self.player_number, 50))
         pygame.draw.rect(screen, (0, 30, 50, 0.5), player_rect.inflate(30, 20))
         screen.blit(player_health, player_rect)

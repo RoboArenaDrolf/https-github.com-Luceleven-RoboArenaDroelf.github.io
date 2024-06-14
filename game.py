@@ -389,7 +389,7 @@ while run:
                             1,
                             1,
                             100,
-                            "blue"
+                            "blue",
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
@@ -403,10 +403,18 @@ while run:
                             1,
                             1,
                             100,
-                            "blue"
+                            "blue",
                         ),
-                        Robot(2 * robot_spawn_distance + arena.x_offset, display_resolution[0] - 100, 25, 45, 1, 1, 100,
-                            "red"),
+                        Robot(
+                            2 * robot_spawn_distance + arena.x_offset,
+                            display_resolution[0] - 100,
+                            25,
+                            45,
+                            1,
+                            1,
+                            100,
+                            "red",
+                        ),
                     ]
                     jump = [False]
                 elif three_player_rect.collidepoint(mouse_pos):
@@ -420,7 +428,7 @@ while run:
                             1,
                             1,
                             100,
-                            "blue"
+                            "blue",
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -430,7 +438,7 @@ while run:
                             1,
                             1,
                             100,
-                            "red"
+                            "red",
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -440,7 +448,7 @@ while run:
                             1,
                             1,
                             100,
-                            "green"
+                            "green",
                         ),
                     ]
                     jump = [False, False]
@@ -456,7 +464,7 @@ while run:
                             1,
                             1,
                             100,
-                            "blue"
+                            "blue",
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -466,7 +474,7 @@ while run:
                             1,
                             1,
                             100,
-                            "red"
+                            "red",
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -476,7 +484,7 @@ while run:
                             1,
                             1,
                             100,
-                            "green"
+                            "green",
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -486,7 +494,7 @@ while run:
                             1,
                             1,
                             100,
-                            "yellow"
+                            "yellow",
                         ),
                     ]
                     jump = [False, False, False]
@@ -512,8 +520,6 @@ while run:
         game_paused = True
 
     if playing and not game_paused:
-        for robot in robots:
-            print(robot.posx, robot.posy, robot.radius)
         screen.fill(white)
         frame_count += 1
         arena.paint_arena(pygame, screen)
@@ -523,8 +529,9 @@ while run:
                 attack_cooldown = 0
             else:
                 attack_cooldown += 1
-        if ((keys[pygame.K_g] and attack_cooldown == 0)  # we can attack if we have no cooldown and press the button
-                or (attack_cooldown < 30 and attack_cooldown != 0)):  # attack will stay for a certain duration
+        if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
+            attack_cooldown < 30 and attack_cooldown != 0
+        ):  # attack will stay for a certain duration
             player_robot.attack(pygame, screen)
             attack_cooldown += 1
         if keys[pygame.K_f]:
