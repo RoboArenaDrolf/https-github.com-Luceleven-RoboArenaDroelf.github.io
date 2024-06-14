@@ -279,13 +279,14 @@ y_tiles = ""
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
 change_direction_interval = 40  # Ändere die Richtung alle 40 Frames
 frame_count = 0
+attack_cooldown = 0
 
 jump = []
 
 clock = pygame.time.Clock()
 while run:
-    pygame.time.delay(10)
-    clock.tick(60)
+    pygame.time.delay(0)
+    clock.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -387,6 +388,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "blue"
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
@@ -399,8 +402,11 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "blue"
                         ),
-                        Robot(2 * robot_spawn_distance + arena.x_offset, display_resolution[0] - 100, 25, 45, 1, 1),
+                        Robot(2 * robot_spawn_distance + arena.x_offset, display_resolution[0] - 100, 25, 45, 1, 1, 100,
+                            "red"),
                     ]
                     jump = [False]
                 elif three_player_rect.collidepoint(mouse_pos):
@@ -413,6 +419,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "blue"
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -421,6 +429,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "red"
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -429,9 +439,12 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "green"
                         ),
                     ]
                     jump = [False, False]
+                    start_game = False
                 elif four_player_rect.collidepoint(mouse_pos):
                     player_count = 4
                     robots = [
@@ -442,6 +455,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "blue"
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -450,6 +465,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "red"
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -458,6 +475,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "green"
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -466,6 +485,8 @@ while run:
                             45,
                             1,
                             1,
+                            100,
+                            "yellow"
                         ),
                     ]
                     jump = [False, False, False]
@@ -497,6 +518,17 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        if attack_cooldown != 0:
+            if attack_cooldown == 60:
+                attack_cooldown = 0
+            else:
+                attack_cooldown += 1
+        if ((keys[pygame.K_g] and attack_cooldown == 0)  # we can attack if we have no cooldown and press the button
+                or (attack_cooldown < 30 and attack_cooldown != 0)):  # attack will stay for a certain duration
+            player_robot.attack(pygame, screen)
+            attack_cooldown += 1
+        if keys[pygame.K_f]:
+            player_robot.take_damage_debug(10)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + 0.05)
         elif keys[pygame.K_LEFT]:
