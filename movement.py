@@ -47,13 +47,6 @@ class Movement:
             robot.change_acceleration(0)
             robot.change_velocity(0)
 
-        # Grenzen für die vertikale Position (optional)
-        if robot.posy > screen_height:
-            robot.posy = screen_height
-            robot.vertical_speed = 0
-        elif robot.posy < 0:
-            robot.posy = 0
-
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
         robot.posx += x
 
@@ -103,13 +96,6 @@ class Movement:
             )
             robot.change_acceleration(0)
             robot.change_velocity(0)
-
-        # Grenzen für die vertikale Position (optional)
-        if robot.posy > screen_height:
-            robot.posy = screen_height
-            robot.vertical_speed = 0
-        elif robot.posy < 0:
-            robot.posy = 0
 
     def on_ground(self, robot, arena):
         # Überprüfen, ob der Roboter auf dem Boden steht
