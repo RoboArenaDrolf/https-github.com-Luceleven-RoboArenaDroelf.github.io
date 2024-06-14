@@ -38,7 +38,7 @@ font_size_small = int(display_resolution[1] / 25)
 robot_spawn_distance = display_resolution[0] / 10
 
 
-def recalculate_robot_positions_and_sizes():
+def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
     robot_radius = min(display_resolution) / 40
     robot_spawn_distance = display_resolution[0] / 10
@@ -47,6 +47,10 @@ def recalculate_robot_positions_and_sizes():
             robot.radius = robot_radius
             robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
             robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            robot.accel_max = arena.map_size[0
+] / float(1000)
+            robot.accel_alpha_max = arena.map_size[0
+    ] / float(1000)
 
 
 def pause_screen():
@@ -258,7 +262,7 @@ def start_screen():
     screen.blit(four_player, four_player_rect)
 
 
-movement = Movement()
+movement = Movement(display_resolution[1] / 2000)
 arena = Arena("secondMap.json", pygame)
 
 game_paused = False
@@ -373,7 +377,8 @@ while run:
                 font_size_big = int(display_resolution[1] / 16)
                 font_size_small = int(display_resolution[1] / 25)
                 arena = Arena("secondMap.json", pygame)
-                recalculate_robot_positions_and_sizes()
+                movement = Movement(display_resolution[1] / 2000)
+                recalculate_robot_values()
         elif start_game:
             start_screen()
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -386,8 +391,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "blue",
                         )
@@ -400,8 +405,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "blue",
                         ),
@@ -410,8 +415,8 @@ while run:
                             display_resolution[0] - 100,
                             25,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "red",
                         ),
@@ -425,8 +430,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "blue",
                         ),
@@ -435,8 +440,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "red",
                         ),
@@ -445,8 +450,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "green",
                         ),
@@ -461,8 +466,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "blue",
                         ),
@@ -471,8 +476,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "red",
                         ),
@@ -481,8 +486,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "green",
                         ),
@@ -491,8 +496,8 @@ while run:
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
                             45,
-                            1,
-                            1,
+                            arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(1000),
                             100,
                             "yellow",
                         ),
@@ -537,17 +542,17 @@ while run:
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)
         if keys[pygame.K_RIGHT]:
-            player_robot.change_acceleration(player_robot.accel + 0.05)
+            player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
         elif keys[pygame.K_LEFT]:
-            player_robot.change_acceleration(player_robot.accel - 0.05)
+            player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
         else:
             if player_robot.vel < 0:
-                player_robot.change_acceleration(player_robot.accel + 0.025)
+                player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
                 if player_robot.vel + player_robot.accel >= 0:
                     player_robot.change_velocity_cap(0)
                     player_robot.change_acceleration(0)
             elif player_robot.vel > 0:
-                player_robot.change_acceleration(player_robot.accel - 0.025)
+                player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 40000)
                 if player_robot.vel + player_robot.accel <= 0:
                     player_robot.change_velocity_cap(0)
                     player_robot.change_acceleration(0)

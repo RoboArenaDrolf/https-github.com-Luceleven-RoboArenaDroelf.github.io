@@ -2,7 +2,10 @@ import pygame
 
 
 class Movement:
-    gravity = 0.5  # Schwerkraftkonstante
+
+    def __init__(self, gravity):
+        self.gravity = gravity
+
 
     def move_robot(self, robot, screen_height, screen_width, x, arena):
         keys = pygame.key.get_pressed()
@@ -69,10 +72,10 @@ class Movement:
         # Tastatureingaben verarbeiten
         if keys[pygame.K_UP]:
             if robot.jump_counter == 0:
-                robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den ersten Sprung setzen
+                robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den ersten Sprung setzen
                 robot.jump_counter = 1
             elif robot.can_jump_again:
-                robot.vertical_speed = -10  # Vertikale Geschwindigkeit für den Doppelsprung setzen
+                robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den Doppelsprung setzen
                 robot.can_jump_again = False
                 robot.jump_counter = 2
 
@@ -144,7 +147,7 @@ class Movement:
 
         # Tastatureingaben verarbeiten
         if jump:
-            robot.vertical_speed = -10  # Vertikale Geschwindigkeit für Sprung setzen
+            robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für Sprung setzen
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
