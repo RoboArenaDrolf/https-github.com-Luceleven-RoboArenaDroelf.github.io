@@ -37,6 +37,7 @@ font_size_big = int(display_resolution[1] / 16)
 font_size_small = int(display_resolution[1] / 25)
 robot_spawn_distance = display_resolution[0] / 10
 
+
 def recalculate_robot_positions_and_sizes():
     global robots, robot_radius, robot_spawn_distance
     robot_radius = min(display_resolution) / 40
@@ -46,6 +47,7 @@ def recalculate_robot_positions_and_sizes():
             robot.radius = robot_radius
             robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
             robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+
 
 def pause_screen():
     global resume_rect, quit_rect, main_menu_rect
@@ -384,7 +386,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
@@ -396,7 +398,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(2 * robot_spawn_distance + arena.x_offset, display_resolution[0] - 100, 25, 45, 1, 1),
                     ]
@@ -410,7 +412,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -418,7 +420,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -426,7 +428,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                     ]
                     jump = [False, False]
@@ -439,7 +441,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -447,7 +449,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -455,7 +457,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -463,7 +465,7 @@ while run:
                             robot_radius,
                             45,
                             1,
-                            1
+                            1,
                         ),
                     ]
                     jump = [False, False, False]
