@@ -26,7 +26,6 @@ resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
 dist_between_elements = display_resolution[1] / 20
-robot_radius = min(display_resolution) / 40
 input_fields_x_size = display_resolution[0] / 12
 input_fields_y_size = display_resolution[1] / 33
 input_text_offset_x = display_resolution[0] / 200
@@ -40,13 +39,13 @@ robot_spawn_distance = display_resolution[0] / 10
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
-    robot_radius = min(display_resolution) / 40
+    robot_radius = arena.tile_size / 2
     robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
             robot.radius = robot_radius
-            robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            # robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
+            # robot.posy = display_resolution[1] - 1.4 * arena.tile_size - arena.y_offset
             robot.accel_max = arena.map_size[0] / float(1000)
             robot.accel_alpha_max = arena.map_size[0] / float(1000)
             robot.vel_max = arena.map_size[0] / float(200)
@@ -262,7 +261,8 @@ def start_screen():
 
 
 movement = Movement(display_resolution[1] / 2000)
-arena = Arena("secondMap.json", pygame)
+arena = Arena("thirdMap.json", pygame)
+robot_radius = arena.tile_size / 2
 
 game_paused = False
 run = True
@@ -375,7 +375,7 @@ while run:
                 rect_inflate_y = display_resolution[1] / 50
                 font_size_big = int(display_resolution[1] / 16)
                 font_size_small = int(display_resolution[1] / 25)
-                arena = Arena("secondMap.json", pygame)
+                arena = Arena("thirdMap.json", pygame)
                 movement = Movement(display_resolution[1] / 2000)
                 recalculate_robot_values()
         elif start_game:
@@ -386,8 +386,8 @@ while run:
                     player_count = 1
                     robots = [
                         Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            10 * arena.tile_size + arena.x_offset,
+                            14 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -402,8 +402,8 @@ while run:
                     player_count = 2
                     robots = [
                         Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            10 * arena.tile_size + arena.x_offset,
+                            14 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -414,8 +414,8 @@ while run:
                             0,
                         ),
                         Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            16 * arena.tile_size + arena.x_offset,
+                            4 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -431,8 +431,8 @@ while run:
                     player_count = 3
                     robots = [
                         Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            10 * arena.tile_size + arena.x_offset,
+                            14 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -443,8 +443,8 @@ while run:
                             0,
                         ),
                         Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            16 * arena.tile_size + arena.x_offset,
+                            4 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -455,8 +455,8 @@ while run:
                             1,
                         ),
                         Robot(
-                            3 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            39 * arena.tile_size + arena.x_offset,
+                            3 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -473,8 +473,8 @@ while run:
                     player_count = 4
                     robots = [
                         Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            10 * arena.tile_size + arena.x_offset,
+                            14 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -485,8 +485,8 @@ while run:
                             0,
                         ),
                         Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            16 * arena.tile_size + arena.x_offset,
+                            4 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -497,8 +497,8 @@ while run:
                             1,
                         ),
                         Robot(
-                            3 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            40 * arena.tile_size + arena.x_offset,
+                            3 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
@@ -509,8 +509,8 @@ while run:
                             2,
                         ),
                         Robot(
-                            4 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+                            30 * arena.tile_size + arena.x_offset,
+                            20 * arena.tile_size + arena.y_offset,
                             robot_radius,
                             45,
                             arena.map_size[0] / float(1000),
