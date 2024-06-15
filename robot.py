@@ -7,13 +7,13 @@ class Robot:
     posy: int
     radius = 0
     alpha = 0
-    accel = 0
-    accel_max = 1
-    accel_alpha = 0  # this might just be useless for us
-    accel_alpha_max = 1  # this feels VERY useless
-    vel = 0
-    vel_alpha = 0
-    vertical_speed = 0  # Anfangsgeschwindigkeit in der vertikalen Richtung
+    accel = float(0)
+    # accel_max = 1
+    accel_alpha = float(0)  # this might just be useless for us
+    # accel_alpha_max = 1  # this feels VERY useless
+    vel = float(0)
+    vel_alpha = float(0)
+    vertical_speed = float(0)  # Anfangsgeschwindigkeit in der vertikalen Richtung
     health_max: int
     health: int
     color: str
@@ -21,13 +21,14 @@ class Robot:
     can_jump_again = False
     jump_counter = 0
 
-    def __init__(self, x, y, r, a, am, aam, hm, c):
+    def __init__(self, x, y, r, a, am, aam, vm, hm, c):
         self.posx = x
         self.posy = y
         self.radius = r
         self.alpha = a % 360  # thanks to mod 360 this will no longer break
         self.accel_max = am
         self.accel_alpha_max = aam
+        self.vel_max = vm
         self.health_max = hm
         self.health = self.health_max  # we start at full health
         self.color = c
@@ -52,14 +53,14 @@ class Robot:
         self.vel = v
 
     def change_velocity_cap(self, v):
-        if abs(v) < 5:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
+        if abs(v) < self.vel_max:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
             self.vel = v
         else:
             if v < 0:
-                self.vel = -5
+                self.vel = -self.vel_max
             else:
-                self.vel = 5
-        self.alpha = 270 + (90 / 5) * self.vel
+                self.vel = self.vel_max
+        self.alpha = 270 + (90 / self.vel_max) * self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va

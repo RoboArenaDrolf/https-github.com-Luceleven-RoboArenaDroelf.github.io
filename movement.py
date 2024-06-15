@@ -7,6 +7,7 @@ class Movement:
         self.gravity = gravity
 
     def move_robot(self, robot, screen_height, screen_width, x, arena):
+        print(arena.map_size)
         keys = pygame.key.get_pressed()
 
         # Bewegung in x-Richtung
@@ -32,11 +33,11 @@ class Movement:
         if robot.posy - robot.radius < arena.y_offset:
             robot.posy = robot.radius + arena.y_offset
             if robot.vertical_speed < 0:
-                robot.vertical_speed = 0
+                robot.vertical_speed = float(0)
         elif robot.posy + robot.radius > screen_height - arena.y_offset:
             robot.posy = screen_height - robot.radius - arena.y_offset
             if robot.vertical_speed > 0:
-                robot.vertical_speed = 0
+                robot.vertical_speed = float(0)
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
@@ -51,7 +52,7 @@ class Movement:
                 robot.posy = (
                     ((robot.posy - arena.y_offset) // arena.tile_size) * arena.tile_size + robot.radius + arena.y_offset
                 )
-            robot.vertical_speed = 0
+            robot.vertical_speed = float(0)
 
         # Kollisionen in x-Richtung überprüfen und behandeln
         if self.check_collision_x(robot, arena):
@@ -110,11 +111,11 @@ class Movement:
         if robot.posy - robot.radius < arena.y_offset:
             robot.posy = robot.radius + arena.y_offset
             if robot.vertical_speed < 0:
-                robot.vertical_speed = 0
+                robot.vertical_speed = float(0)
         elif robot.posy + robot.radius > screen_height - arena.y_offset:
             robot.posy = screen_height - robot.radius - arena.y_offset
             if robot.vertical_speed > 0:
-                robot.vertical_speed = 0
+                robot.vertical_speed = float(0)
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
@@ -129,7 +130,7 @@ class Movement:
                 robot.posy = (
                     ((robot.posy - arena.y_offset) // arena.tile_size) * arena.tile_size + robot.radius + arena.y_offset
                 )
-            robot.vertical_speed = 0
+            robot.vertical_speed = float(0)
 
         # Kollisionen in x-Richtung überprüfen und behandeln
         if self.check_collision_x(robot, arena):

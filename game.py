@@ -49,6 +49,7 @@ def recalculate_robot_values():
             robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
             robot.accel_max = arena.map_size[0] / float(1000)
             robot.accel_alpha_max = arena.map_size[0] / float(1000)
+            robot.vel_max = arena.map_size[0] / float(200)
 
 
 def pause_screen():
@@ -391,6 +392,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "blue",
                         )
@@ -405,6 +407,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "blue",
                         ),
@@ -415,6 +418,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "red",
                         ),
@@ -430,6 +434,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "blue",
                         ),
@@ -440,6 +445,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "red",
                         ),
@@ -450,6 +456,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "green",
                         ),
@@ -466,6 +473,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "blue",
                         ),
@@ -476,6 +484,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "red",
                         ),
@@ -486,6 +495,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "green",
                         ),
@@ -496,6 +506,7 @@ while run:
                             45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
+                            arena.map_size[0] / float(200),
                             100,
                             "yellow",
                         ),
