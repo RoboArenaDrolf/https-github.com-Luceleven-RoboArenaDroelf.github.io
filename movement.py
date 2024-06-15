@@ -7,7 +7,6 @@ class Movement:
         self.gravity = gravity
 
     def move_robot(self, robot, screen_height, screen_width, x, arena):
-        print(arena.map_size)
         keys = pygame.key.get_pressed()
 
         # Bewegung in x-Richtung
