@@ -55,16 +55,22 @@ def recalculate_robot_values():
 def death_screen():
     global quit_rect, main_menu_rect
     screen.fill(black)
-    font = pygame.font.Font(None, 64)
+    font = pygame.font.Font(None, font_size_big)
     text = font.render("You Died!", True, (101, 28, 50))
-    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
+    screen.blit(
+        text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2)
+    )
 
-    font = pygame.font.Font(None, 36)
+    font = pygame.font.Font(None, font_size_small)
     text_main_menu = font.render("Main Menu", True, black)
     text_quit = font.render("Quit Game", True, black)
 
-    main_menu_rect = text_main_menu.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
-    quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
+    main_menu_rect = text_main_menu.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
+    )
+    quit_rect = text_quit.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
+    )
 
     pygame.draw.rect(screen, white, main_menu_rect)
     pygame.draw.rect(screen, white, quit_rect)
@@ -579,6 +585,7 @@ while run:
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
         if player_robot.health <= 0:
+            playing = False
             death = True
         if attack_cooldown != 0:
             if attack_cooldown == 60:
