@@ -1,5 +1,4 @@
 import math
-from itertools import count
 
 
 class Robot:
