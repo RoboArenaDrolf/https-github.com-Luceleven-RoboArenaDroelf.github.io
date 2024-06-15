@@ -416,8 +416,8 @@ while run:
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            25,
                             robot_radius,
+                            45,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
