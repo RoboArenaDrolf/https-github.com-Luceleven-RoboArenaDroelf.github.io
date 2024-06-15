@@ -30,37 +30,73 @@ class ArenaBuilder(Arena):
         return filename
 
     def _set_up_basics(self, filename, pygame):
+        screen_size = pygame.display.get_window_size()
+        flags = pygame.display.get_surface().get_flags()
+        self._legend_space = screen_size[0] / 5
+        pygame.display.set_mode((screen_size[0] - self._legend_space, screen_size[1]))
         super().__init__(filename, pygame)
+        self.x_offset = 0
+        self.y_offset = 0
         self.pygame = pygame
-        self.screen = self.pygame.display.set_mode(
-            (self.num_tiles_x * self.tile_size + 200, self.num_tiles_y * self.tile_size)
-        )
+        if bool(flags & pygame.FULLSCREEN):
+            self.screen = self.pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
+        else:
+            self.screen = self.pygame.display.set_mode(screen_size)
 
     def _set_up_paint_related(self):
-        self._x_placing_of_legend = self.num_tiles_x * self.tile_size
+        # Set up scaled sizes
+        display_resolution = self.pygame.display.get_window_size()
+        self._max_x_of_map = self.num_tiles_x * self.tile_size
+        self._max_y_of_map = self.num_tiles_y * self.tile_size
+        self._x_of_legend = self._max_x_of_map + display_resolution[0] / 50
+        self._y_of_legend_end = display_resolution[0] / 5
+        self._dist_between_elements = display_resolution[1] / 20
+        elements_x_size = display_resolution[0] / 6
+        input_fields_y_size = display_resolution[1] / 33
+        buttons_y_size = display_resolution[1] / 25
+        self._button_text_x_offset = display_resolution[0] / 100
+        self._button_text_y_offset = display_resolution[1] / 100
+        self._input_text_x_offset = display_resolution[0] / 200
+        self._input_text_y_offset = display_resolution[1] / 200
+        self._legend_spacing = display_resolution[1] / 50
         # Set up font
-        self._font = self.pygame.font.SysFont(None, 24)
+        self._font = self.pygame.font.SysFont(None, int(display_resolution[1] / 40))
         self._text_color = self.WHITE
         # Set up text input field for saving
         self._input_text_saving = ""
         self._input_active_saving = False
-        self._input_rect_saving = self.pygame.Rect(self._x_placing_of_legend + 20, 250, 160, 30)
+        self._input_rect_saving = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end + self._dist_between_elements, elements_x_size, input_fields_y_size
+        )
         # Set up save button
         self._save_button_text = self._font.render("Save Map", True, self.WHITE)
-        self._save_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 300, 160, 40)
+        self._save_button_rect = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end + 2 * self._dist_between_elements, elements_x_size, buttons_y_size
+        )
         # Set up text input field for loading map
         self._input_text_loading_map = ""
         self._input_active_loading_map = False
-        self._input_rect_loading_map = self.pygame.Rect(self._x_placing_of_legend + 20, 350, 160, 30)
+        self._input_rect_loading_map = self.pygame.Rect(
+            self._x_of_legend,
+            self._y_of_legend_end + 3 * self._dist_between_elements,
+            elements_x_size,
+            input_fields_y_size,
+        )
         # Set up load map button
         self._load_map_button_text = self._font.render("Load Map", True, self.WHITE)
-        self._load_map_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 400, 160, 40)
+        self._load_map_button_rect = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end + 4 * self._dist_between_elements, elements_x_size, buttons_y_size
+        )
         # Set up load background image button
         self._load_background_button_text = self._font.render("Load Image", True, self.WHITE)
-        self._load_background_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 450, 160, 40)
+        self._load_background_button_rect = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end + 5 * self._dist_between_elements, elements_x_size, buttons_y_size
+        )
         # Set up exit button
         self._exit_button_text = self._font.render("Exit", True, self.WHITE)
-        self._exit_button_rect = self.pygame.Rect(self._x_placing_of_legend + 20, 500, 160, 40)
+        self._exit_button_rect = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end + 6 * self._dist_between_elements, elements_x_size, buttons_y_size
+        )
 
     def main(self):
         running = True
@@ -243,7 +279,10 @@ class ArenaBuilder(Arena):
             self.pygame.draw.rect(self.screen, self.GREEN, self._save_button_rect)
         self.screen.blit(
             self._save_button_text,
-            (self._save_button_rect.x + 10, self._save_button_rect.y + 10),
+            (
+                self._save_button_rect.x + self._button_text_x_offset,
+                self._save_button_rect.y + self._button_text_y_offset,
+            ),
         )
         # Draw load map button
         if load_map_button_clicked:
@@ -252,7 +291,10 @@ class ArenaBuilder(Arena):
             self.pygame.draw.rect(self.screen, self.GREEN, self._load_map_button_rect)
         self.screen.blit(
             self._load_map_button_text,
-            (self._load_map_button_rect.x + 10, self._load_map_button_rect.y + 10),
+            (
+                self._load_map_button_rect.x + self._button_text_x_offset,
+                self._load_map_button_rect.y + self._button_text_y_offset,
+            ),
         )
         # Draw load background button
         if load_background_button_clicked:
@@ -261,13 +303,19 @@ class ArenaBuilder(Arena):
             self.pygame.draw.rect(self.screen, self.GREEN, self._load_background_button_rect)
         self.screen.blit(
             self._load_background_button_text,
-            (self._load_background_button_rect.x + 10, self._load_background_button_rect.y + 10),
+            (
+                self._load_background_button_rect.x + self._button_text_x_offset,
+                self._load_background_button_rect.y + self._button_text_y_offset,
+            ),
         )
         # Draw exit button
         self.pygame.draw.rect(self.screen, self.RED, self._exit_button_rect)
         self.screen.blit(
             self._exit_button_text,
-            (self._exit_button_rect.x + 10, self._exit_button_rect.y + 10),
+            (
+                self._exit_button_rect.x + self._button_text_x_offset,
+                self._exit_button_rect.y + self._button_text_y_offset,
+            ),
         )
 
     def _draw_input_fields(self):
@@ -275,37 +323,45 @@ class ArenaBuilder(Arena):
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_saving)
         self.pygame.draw.rect(self.screen, self._text_color, self._input_rect_saving, 2)
         text_surface = self._font.render(self._input_text_saving, True, self._text_color)
-        self.screen.blit(text_surface, (self._input_rect_saving.x + 5, self._input_rect_saving.y + 5))
+        self.screen.blit(
+            text_surface,
+            (
+                self._input_rect_saving.x + self._input_text_x_offset,
+                self._input_rect_saving.y + self._input_text_y_offset,
+            ),
+        )
         # Draw text input field loading
         self.pygame.draw.rect(self.screen, self.BLACK, self._input_rect_loading_map)
         self.pygame.draw.rect(self.screen, self._text_color, self._input_rect_loading_map, 2)
         text_surface = self._font.render(self._input_text_loading_map, True, self._text_color)
         self.screen.blit(
             text_surface,
-            (self._input_rect_loading_map.x + 5, self._input_rect_loading_map.y + 5),
+            (
+                self._input_rect_loading_map.x + self._input_text_y_offset,
+                self._input_rect_loading_map.y + self._input_text_y_offset,
+            ),
         )
 
     def _draw_legend(self):
-        legend_surface = self.pygame.Surface((200, self.screen.get_height()))
+        legend_surface = self.pygame.Surface((self._legend_space, self.screen.get_height()))
         legend_surface.fill((0, 0, 0))
-        legend_pos = (self._x_placing_of_legend + 20, 10)
-        legend_spacing = 20
+        legend_pos = (self._x_of_legend, self._button_text_y_offset)
         for idx, tile_type in enumerate(self.TileType):
             legend_text = f"{idx + 1}: {tile_type.name}"
             text_surface = self._font.render(legend_text, True, self._text_color)
-            legend_surface.blit(text_surface, (10, legend_pos[1] + idx * legend_spacing))
-        self.screen.blit(legend_surface, (self._x_placing_of_legend, 0))
+            legend_surface.blit(text_surface, (self._button_text_x_offset, legend_pos[1] + idx * self._legend_spacing))
+        self.screen.blit(legend_surface, (self._max_x_of_map, 0))
 
     def _draw_grid(self):
-        for x in range(0, self._x_placing_of_legend, self.tile_size):
-            self.pygame.draw.line(self.screen, self.GREY, (x, 0), (x, self.screen.get_height()))
-        for y in range(0, self.screen.get_height(), self.tile_size):
-            self.pygame.draw.line(self.screen, self.GREY, (0, y), (self.screen.get_width(), y))
+        for x in range(0, self._max_x_of_map, self.tile_size):
+            self.pygame.draw.line(self.screen, self.GREY, (x, 0), (x, self._max_y_of_map))
+        for y in range(0, self._max_y_of_map + self.tile_size, self.tile_size):
+            self.pygame.draw.line(self.screen, self.GREY, (0, y), (self._max_x_of_map, y))
 
     def _load_background(self):
         self._background_image_filename = self._open_file_dialog()
         image = self.pygame.image.load(self._background_image_filename)
-        super()._set_background_image(image, self.pygame)
+        self._set_background_image(image, self.pygame)
 
     def _open_file_dialog(self):
         root = Tk()
@@ -324,18 +380,14 @@ class ArenaBuilder(Arena):
         _, file_extension = os.path.splitext(self._background_image_filename)
         map_name, _ = os.path.splitext(filename)
         try:
-            shutil.copy(
-                self._background_image_filename, os.getcwd() + super().maps_base_path + map_name + file_extension
-            )
+            shutil.copy(self._background_image_filename, os.getcwd() + self.maps_base_path + map_name + file_extension)
         except shutil.SameFileError:
-            shutil.move(
-                self._background_image_filename, os.getcwd() + super().maps_base_path + map_name + file_extension
-            )
+            shutil.move(self._background_image_filename, os.getcwd() + self.maps_base_path + map_name + file_extension)
         data = {
             "num_tiles_x": self.num_tiles_x,
             "num_tiles_y": self.num_tiles_y,
             "background_image": map_name + file_extension,
             "tiles": [[tile.name for tile in row] for row in self.tiles],
         }
-        with open(super().maps_base_path + filename, "w") as f:
+        with open(self.maps_base_path + filename, "w") as f:
             json.dump(data, f)
