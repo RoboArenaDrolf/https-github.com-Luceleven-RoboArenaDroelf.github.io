@@ -15,14 +15,10 @@ class Movement:
         robot.posx += x
 
         # Überprüfen, ob der Roboter die seitlichen Grenzen der Arena erreicht hat
-        if robot.posx < robot.radius:
-            robot.posx = robot.radius
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
-        elif robot.posx > screen_width - robot.radius:
-            robot.posx = screen_width - robot.radius
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
+        if robot.posx + robot.radius < 0:
+            robot.health = 0
+        elif robot.posx - robot.radius > screen_width:
+            robot.health = 0
 
         if self.on_ground(robot, arena):
             robot.jump_counter = 0
@@ -49,14 +45,10 @@ class Movement:
         robot.posy += robot.vertical_speed
 
         # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
-        if robot.posy - robot.radius < 0:
-            robot.posy = robot.radius
-            if robot.vertical_speed < 0:
-                robot.vertical_speed = 0
-        elif robot.posy + robot.radius > screen_height:
-            robot.posy = screen_height - robot.radius
-            if robot.vertical_speed > 0:
-                robot.vertical_speed = 0
+        if robot.posy + robot.radius < 0:
+            robot.health = 0
+        elif robot.posy - robot.radius > screen_height:
+            robot.health = 0
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
@@ -76,13 +68,6 @@ class Movement:
                 robot.posx = ((robot.posx // arena.tile_size)) * arena.tile_size + robot.radius
             robot.change_acceleration(0)
             robot.change_velocity(0)
-
-        # Grenzen für die vertikale Position (optional)
-        if robot.posy > screen_height:
-            robot.posy = screen_height - robot.radius
-            robot.vertical_speed = 0
-        elif robot.posy < 0:
-            robot.posy = robot.radius
 
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
         robot.posx += x

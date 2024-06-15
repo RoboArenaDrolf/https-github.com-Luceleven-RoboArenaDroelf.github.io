@@ -287,7 +287,6 @@ while run:
                     min_y = robots[0].radius
                     max_y = arena_size - robots[0].radius
         elif death:
-            death_screen()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if main_menu_rect.collidepoint(mouse_pos):
@@ -374,6 +373,8 @@ while run:
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()
+    elif death:
+        death_screen()
 
     pygame.display.update()
 
