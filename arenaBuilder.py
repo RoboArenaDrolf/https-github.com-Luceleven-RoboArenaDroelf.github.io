@@ -99,7 +99,7 @@ class ArenaBuilder(Arena):
                         save_button_clicked,
                         running,
                         load_background_button_clicked,
-                        button_click_time_loading_background
+                        button_click_time_loading_background,
                     ) = self._handle_mouse_button_down(
                         button_click_time_loading_map,
                         button_click_time_saving,
@@ -108,7 +108,7 @@ class ArenaBuilder(Arena):
                         save_button_clicked,
                         running,
                         load_background_button_clicked,
-                        button_click_time_loading_background
+                        button_click_time_loading_background,
                     )
                 elif event.type == self.pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button released
                     mouse_pressed = False
@@ -176,7 +176,7 @@ class ArenaBuilder(Arena):
         save_button_clicked,
         running,
         load_background_button_clicked,
-        button_click_time_loading_background
+        button_click_time_loading_background,
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
@@ -211,7 +211,7 @@ class ArenaBuilder(Arena):
             save_button_clicked,
             running,
             load_background_button_clicked,
-            button_click_time_loading_background
+            button_click_time_loading_background,
         )
 
     def _load_map(self):

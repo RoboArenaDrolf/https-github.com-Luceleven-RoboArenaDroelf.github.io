@@ -21,11 +21,12 @@ white = (255, 255, 255)
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
+
 def death_screen():
     global quit_rect, main_menu_rect
     screen.fill(black)
     font = pygame.font.Font(None, 64)
-    text = font.render("You Died!", True, (101,28,50))
+    text = font.render("You Died!", True, (101, 28, 50))
     screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
 
     font = pygame.font.Font(None, 36)
@@ -255,8 +256,10 @@ while run:
                     start_game = False
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
-                    robots = [Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
-                              Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red")]
+                    robots = [
+                        Robot(100, arena_size - 100, 25, 45, 1, 1, 100, "blue"),
+                        Robot(200, arena_size - 100, 25, 45, 1, 1, 100, "red"),
+                    ]
                     jump = [False]
                     start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
@@ -321,8 +324,9 @@ while run:
                 attack_cooldown = 0
             else:
                 attack_cooldown += 1
-        if ((keys[pygame.K_g] and attack_cooldown == 0)  # we can attack if we have no cooldown and press the button
-                or (attack_cooldown < 30 and attack_cooldown != 0)):  # attack will stay for a certain duration
+        if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
+            attack_cooldown < 30 and attack_cooldown != 0
+        ):  # attack will stay for a certain duration
             player_robot.attack(pygame, screen)
             attack_cooldown += 1
         if keys[pygame.K_f]:
