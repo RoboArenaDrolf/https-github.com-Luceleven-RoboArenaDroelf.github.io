@@ -21,6 +21,26 @@ white = (255, 255, 255)
 resume_rect = pygame.Rect(0, 0, 0, 0)
 quit_rect = pygame.Rect(0, 0, 0, 0)
 
+def death_screen():
+    global quit_rect, main_menu_rect
+    screen.fill(black)
+    font = pygame.font.Font(None, 64)
+    text = font.render("You Died!", True, (101,28,50))
+    screen.blit(text, (arena_size // 2 - text.get_width() // 2, arena_size // 2 - text.get_height() // 2))
+
+    font = pygame.font.Font(None, 36)
+    text_main_menu = font.render("Main Menu", True, black)
+    text_quit = font.render("Quit Game", True, black)
+
+    main_menu_rect = text_main_menu.get_rect(center=(arena_size // 2, arena_size // 2 + 50))
+    quit_rect = text_quit.get_rect(center=(arena_size // 2, arena_size // 2 + 100))
+
+    pygame.draw.rect(screen, white, main_menu_rect)
+    pygame.draw.rect(screen, white, quit_rect)
+
+    screen.blit(text_main_menu, main_menu_rect)
+    screen.blit(text_quit, quit_rect)
+
 
 def pause_screen():
     global resume_rect, quit_rect, main_menu_rect
@@ -157,6 +177,7 @@ start_game = False
 menu = True
 build_arena = False
 player_count = 0
+death = False
 robots = []
 
 input_active_x = False
@@ -262,6 +283,16 @@ while run:
                     max_x = arena_size - robots[0].radius
                     min_y = robots[0].radius
                     max_y = arena_size - robots[0].radius
+        elif death:
+            death_screen()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if main_menu_rect.collidepoint(mouse_pos):
+                    menu = True
+                    death = False
+                elif quit_rect.collidepoint(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
 
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
@@ -278,11 +309,13 @@ while run:
     if keys[pygame.K_ESCAPE] and not menu and not start_game and not build_arena:
         game_paused = True
 
-    if not game_paused and not start_game and not menu and not build_arena:
+    if not game_paused and not start_game and not menu and not build_arena and not death:
         screen.fill(white)
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        if player_robot.health <= 0:
+            death = True
         if attack_cooldown != 0:
             if attack_cooldown == 60:
                 attack_cooldown = 0
