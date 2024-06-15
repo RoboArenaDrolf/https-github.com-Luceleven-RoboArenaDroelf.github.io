@@ -31,13 +31,17 @@ class ArenaBuilder(Arena):
 
     def _set_up_basics(self, filename, pygame):
         screen_size = pygame.display.get_window_size()
+        flags = pygame.display.get_surface().get_flags()
         self._legend_space = screen_size[0] / 5
         pygame.display.set_mode((screen_size[0] - self._legend_space, screen_size[1]))
         super().__init__(filename, pygame)
         self.x_offset = 0
         self.y_offset = 0
         self.pygame = pygame
-        self.screen = self.pygame.display.set_mode(screen_size)
+        if bool(flags & pygame.FULLSCREEN):
+            self.screen = self.pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
+        else:
+            self.screen = self.pygame.display.set_mode(screen_size)
 
     def _set_up_paint_related(self):
         # Set up scaled sizes
