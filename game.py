@@ -395,6 +395,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "blue",
+                            0,
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
@@ -410,6 +411,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "blue",
+                            0,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -421,6 +423,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "red",
+                            1,
                         ),
                     ]
                     jump = [False]
@@ -437,6 +440,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "blue",
+                            0,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -448,6 +452,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "red",
+                            1,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -459,6 +464,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "green",
+                            2,
                         ),
                     ]
                     jump = [False, False]
@@ -476,6 +482,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "blue",
+                            0,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -487,6 +494,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "red",
+                            1,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -498,6 +506,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "green",
+                            2,
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -509,6 +518,7 @@ while run:
                             arena.map_size[0] / float(200),
                             100,
                             "yellow",
+                            3,
                         ),
                     ]
                     jump = [False, False, False]

@@ -17,11 +17,10 @@ class Robot:
     health_max: int
     health: int
     color: str
-    player_number = count(0)
     can_jump_again = False
     jump_counter = 0
 
-    def __init__(self, x, y, r, a, am, aam, vm, hm, c):
+    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
         self.posy = y
         self.radius = r
@@ -32,7 +31,7 @@ class Robot:
         self.health_max = hm
         self.health = self.health_max  # we start at full health
         self.color = c
-        self.player_number = next(self.player_number)
+        self.player_number = pn
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -83,8 +82,18 @@ class Robot:
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx + new_x, self.posy + new_y))
         # corresponding health ui
-        health_font = pygame.font.Font(None, 24)
+        health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
         player_health = health_font.render(f"{self.health}", True, f"{self.color}")
-        player_rect = player_health.get_rect(center=(200 + 200 * self.player_number, 50))
-        pygame.draw.rect(screen, (0, 30, 50, 0.5), player_rect.inflate(30, 20))
+        player_rect = player_health.get_rect(
+            center=(
+                pygame.display.get_window_size()[0] / 5
+                + (pygame.display.get_window_size()[0] / 5) * self.player_number,
+                pygame.display.get_window_size()[1] / 20,
+            )
+        )
+        pygame.draw.rect(
+            screen,
+            (0, 30, 50, 0.5),
+            player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
+        )
         screen.blit(player_health, player_rect)
