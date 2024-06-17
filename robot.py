@@ -72,25 +72,45 @@ class Robot:
     def attack(self, pygame, screen, robots):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "red", (self.posx+new_x, self.posy+new_y),
-                         (self.posx + new_x * 2, self.posy + new_y * 2), width=4)
+        line_start = (self.posx + new_x, self.posy + new_y)
+        line_end = (self.posx + new_x * 2, self.posy + new_y * 2)
+        pygame.draw.line(screen, "red", line_start, line_end, width=4)
 
-        for i in range(1, len(robots)):  # issue: own robot will be checked for collision
-            if i != self.player_number:  # this way we shouldn't look at our self
-                # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
-                # Line defined by two points
-                if (abs((self.posy + new_y * 2 - self.posy)*robots[i].posx
-                        - (self.posx + new_x * 2 - self.posx)*robots[i].posy
-                        + self.posx + new_x * 2*self.posy
-                        - self.posy + new_y * 2*self.posx)
-                        / math.sqrt((self.posy + new_y * 2 - self.posy)
-                                    * (self.posy + new_y * 2 - self.posy)
-                                    + (self.posx + new_x * 2 - self.posx)
-                                    * (self.posx + new_x * 2 - self.posx))
-                        <= robots[i].radius):  # if the distance from this line to the center of a robot
-                    # is smaller than it's radius, we have a hit and that robot takes some damage
-                    # print(i, "hit")
-                    robots[i].take_damage_debug(1)
+        for i in range(1, len(robots)):
+            # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
+            # Line defined by two points
+            if (self.distance_from_segment(line_start[0], line_start[1], line_end[0], line_end[1],
+                                           robots[i].posx, robots[i].posy)
+                    <= robots[i].radius):  # if the distance from this line to the center of a robot
+                # is smaller than it's radius, we have a hit and that robot takes some damage
+                # print(i, "hit")
+                robots[i].take_damage_debug(1)
+
+    def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
+        # Vektoren berechnen
+        px, py = x2 - x1, y2 - y1
+        norm = px * px + py * py
+
+        # Punkt auf die Linie projizieren
+        u = ((x3 - x1) * px + (y3 - y1) * py) / norm
+
+        # Überprüfen, ob die Projektion innerhalb der Strecke liegt
+        if u < 0:
+            # Nächster Punkt ist P1
+            closest_x, closest_y = x1, y1
+        elif u > 1:
+            # Nächster Punkt ist P2
+            closest_x, closest_y = x2, y2
+        else:
+            # Projektion auf die Strecke
+            closest_x = x1 + u * px
+            closest_y = y1 + u * py
+
+        # Abstand zwischen P3 und dem nächstgelegenen Punkt berechnen
+        dx, dy = x3 - closest_x, y3 - closest_y
+        distance = math.sqrt(dx * dx + dy * dy)
+
+        return distance
 
     def paint_robot(self, pygame, screen):
         # robot
