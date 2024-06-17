@@ -63,16 +63,34 @@ class Robot:
     def change_turn_velocity(self, va):
         self.vel = va
 
-    def attack(self, pygame, screen):
-        new_x = self.radius * (math.cos(math.radians(self.alpha)))
-        new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "red", (self.posx, self.posy), (self.posx + new_x * 2, self.posy + new_y * 2), width=4)
-
     def take_damage_debug(self, d):
         if d <= self.health:
             self.health = self.health - d
         else:
             self.health = 0
+
+    def attack(self, pygame, screen, robots):
+        new_x = self.radius * (math.cos(math.radians(self.alpha)))
+        new_y = self.radius * (math.sin(math.radians(self.alpha)))
+        pygame.draw.line(screen, "red", (self.posx+new_x, self.posy+new_y),
+                         (self.posx + new_x * 2, self.posy + new_y * 2), width=4)
+
+        for i in range(1, len(robots)):  # issue: own robot will be checked for collision
+            if i != self.player_number:  # this way we shouldn't look at our self
+                # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
+                # Line defined by two points
+                if (abs((self.posy + new_y * 2 - self.posy)*robots[i].posx
+                        - (self.posx + new_x * 2 - self.posx)*robots[i].posy
+                        + self.posx + new_x * 2*self.posy
+                        - self.posy + new_y * 2*self.posx)
+                        / math.sqrt((self.posy + new_y * 2 - self.posy)
+                                    * (self.posy + new_y * 2 - self.posy)
+                                    + (self.posx + new_x * 2 - self.posx)
+                                    * (self.posx + new_x * 2 - self.posx))
+                        <= robots[i].radius):  # if the distance from this line to the center of a robot
+                    # is smaller than it's radius, we have a hit and that robot takes some damage
+                    # print(i, "hit")
+                    robots[i].take_damage_debug(1)
 
     def paint_robot(self, pygame, screen):
         # robot
