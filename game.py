@@ -556,7 +556,7 @@ while run:
         if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
             attack_cooldown < 30 and attack_cooldown != 0
         ):  # attack will stay for a certain duration
-            player_robot.attack(pygame, screen)
+            player_robot.attack(pygame, screen, robots)
             attack_cooldown += 1
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)
