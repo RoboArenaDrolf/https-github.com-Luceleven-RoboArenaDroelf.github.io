@@ -18,6 +18,8 @@ class Robot:
     color: str
     can_jump_again = False
     jump_counter = 0
+    recoil_percent = 0.1
+    hit_cooldown = 0
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
@@ -69,7 +71,7 @@ class Robot:
         else:
             self.health = 0
 
-    def attack(self, pygame, screen, robots):
+    def attack(self, pygame, screen, robots, arena, movement):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         line_start = (self.posx + new_x, self.posy + new_y)
@@ -85,6 +87,24 @@ class Robot:
                 # is smaller than it's radius, we have a hit and that robot takes some damage
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
+                if robots[i].hit_cooldown <= 0:
+                    robots[i].hit_cooldown = 20 # setting this so the robot doesn't get launched into space
+                    # cause recoil
+                    robots[i].vertical_speed +=  -arena.map_size[1] / 40 * robots[i].recoil_percent # recoil up
+                    # check if we face left, right or upwards
+                    if self.alpha > 315: # facing right
+                        robots[i].change_acceleration(
+                            robots[i].accel + (arena.map_size[0] / 40) * robots[i].recoil_percent)
+                    elif self.alpha < 225: # facing left
+                        robots[i].change_acceleration(
+                            robots[i].accel - (arena.map_size[0] / 40) * robots[i].recoil_percent)
+                    else: # facing upwards
+                        robots[i].vertical_speed += -arena.map_size[1] / 100 * robots[i].recoil_percent  # recoil up again
+
+                    #robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+                    #display_resolution = pygame.display.get_window_size()
+                    #movement.move_robot(robots[i], display_resolution[1], display_resolution[0], robots[i].vel, arena)
+                    robots[i].recoil_percent += 0.05
 
     def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
         # Vektoren berechnen
@@ -111,6 +131,10 @@ class Robot:
         distance = math.sqrt(dx * dx + dy * dy)
 
         return distance
+
+    def decrease_hit_cooldown(self):
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
 
     def paint_robot(self, pygame, screen):
         # robot
