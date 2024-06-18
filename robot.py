@@ -1,5 +1,5 @@
 import math
-
+import pygame
 
 class Robot:
     posx: int
@@ -7,12 +7,10 @@ class Robot:
     radius = 0
     alpha = 0
     accel = float(0)
-    # accel_max = 1
-    accel_alpha = float(0)  # this might just be useless for us
-    # accel_alpha_max = 1  # this feels VERY useless
+    accel_alpha = float(0)
     vel = float(0)
     vel_alpha = float(0)
-    vertical_speed = float(0)  # Anfangsgeschwindigkeit in der vertikalen Richtung
+    vertical_speed = float(0)
     health_max: int
     health: int
     color: str
@@ -23,14 +21,17 @@ class Robot:
         self.posx = x
         self.posy = y
         self.radius = r
-        self.alpha = a % 360  # thanks to mod 360 this will no longer break
+        self.alpha = a % 360
         self.accel_max = am
         self.accel_alpha_max = aam
         self.vel_max = vm
         self.health_max = hm
-        self.health = self.health_max  # we start at full health
+        self.health = self.health_max
         self.color = c
         self.player_number = pn
+        self.robot_image = pygame.image.load("Robots/playerRobot.png")
+        self.robot_image = pygame.transform.scale(self.robot_image, (50, 50))
+        self.robot_image_scaled = pygame.transform.flip(self.robot_image, True, False)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -51,7 +52,7 @@ class Robot:
         self.vel = v
 
     def change_velocity_cap(self, v):
-        if abs(v) < self.vel_max:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
+        if abs(v) < self.vel_max:
             self.vel = v
         else:
             if v < 0:
@@ -75,12 +76,18 @@ class Robot:
             self.health = 0
 
     def paint_robot(self, pygame, screen):
-        # robot
-        pygame.draw.circle(screen, self.color, (self.posx, self.posy), self.radius)
+        # Bild des Roboters zeichnen
+        image_rect = self.robot_image.get_rect(center=(self.posx, self.posy))
+        if self.accel > 0:
+            screen.blit(self.robot_image, image_rect)
+        elif self.accel <= 0:
+            screen.blit(self.robot_image_scaled, image_rect)
+
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx + new_x, self.posy + new_y))
-        # corresponding health ui
+
+        # corresponding health UI
         health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
         player_health = health_font.render(f"{self.health}", True, f"{self.color}")
         player_rect = player_health.get_rect(
@@ -96,3 +103,7 @@ class Robot:
             player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
         )
         screen.blit(player_health, player_rect)
+
+
+
+
