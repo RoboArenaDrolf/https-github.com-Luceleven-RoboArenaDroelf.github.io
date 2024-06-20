@@ -164,7 +164,6 @@ class Robot:
                 for n in to_delete:  # after the j loop we delete them from back to front
                     self.projectiles.pop(n)
 
-
     def paint_robot(self, pygame, screen):
         # robot
         pygame.draw.circle(screen, self.color, (self.posx, self.posy), self.radius)
