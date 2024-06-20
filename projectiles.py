@@ -8,7 +8,7 @@ class Projectile:
     x_speed: int
     y_speed: int
     # type: str
-    player_number:int
+    player_number: int
 
     def __init__(self, x, y, c, r, xs, ys, pn):
         self.x = x
