@@ -181,7 +181,7 @@ def build_arena_menu():
         display_resolution[1] // 2 - text.get_height() // 2 - dist_between_elements,
         input_fields_x_size,
         input_fields_y_size,
-    )
+        )
 
     pygame.draw.rect(screen, black, input_rect_x_tiles)
     text_surface = pygame.font.SysFont(None, 24).render(x_tiles, True, white)
@@ -199,7 +199,7 @@ def build_arena_menu():
         display_resolution[1] // 2 - text.get_height() // 2 + dist_between_elements,
         input_fields_x_size,
         input_fields_y_size,
-    )
+        )
 
     pygame.draw.rect(screen, black, input_rect_y_tiles)
     text_surface = pygame.font.SysFont(None, 24).render(y_tiles, True, white)
@@ -396,7 +396,7 @@ while run:
                             100,
                             "blue",
                             0,
-                        )
+                            )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
                     player_count = 2
@@ -412,7 +412,7 @@ while run:
                             100,
                             "blue",
                             0,
-                        ),
+                            ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -424,7 +424,7 @@ while run:
                             100,
                             "red",
                             1,
-                        ),
+                            ),
                     ]
                     jump = [False]
                 elif three_player_rect.collidepoint(mouse_pos):
@@ -441,7 +441,7 @@ while run:
                             100,
                             "blue",
                             0,
-                        ),
+                            ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -453,7 +453,7 @@ while run:
                             100,
                             "red",
                             1,
-                        ),
+                            ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -465,7 +465,7 @@ while run:
                             100,
                             "green",
                             2,
-                        ),
+                            ),
                     ]
                     jump = [False, False]
                     start_game = False
@@ -483,7 +483,7 @@ while run:
                             100,
                             "blue",
                             0,
-                        ),
+                            ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -495,7 +495,7 @@ while run:
                             100,
                             "red",
                             1,
-                        ),
+                            ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -507,7 +507,7 @@ while run:
                             100,
                             "green",
                             2,
-                        ),
+                            ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
@@ -519,7 +519,7 @@ while run:
                             100,
                             "yellow",
                             3,
-                        ),
+                            ),
                     ]
                     jump = [False, False, False]
 
@@ -554,9 +554,9 @@ while run:
             else:
                 attack_cooldown += 1
         if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
-            attack_cooldown < 30 and attack_cooldown != 0
+                attack_cooldown < 30 and attack_cooldown != 0
         ):  # attack will stay for a certain duration
-            player_robot.attack(pygame, screen, robots)
+            player_robot.melee_attack(pygame, screen, robots)
             attack_cooldown += 1
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)

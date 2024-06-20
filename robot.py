@@ -1,5 +1,7 @@
 import math
 
+from projectiles import Projectile
+
 
 class Robot:
     posx: int
@@ -18,6 +20,7 @@ class Robot:
     color: str
     can_jump_again = False
     jump_counter = 0
+    projectiles = []
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
@@ -69,7 +72,7 @@ class Robot:
         else:
             self.health = 0
 
-    def attack(self, pygame, screen, robots):
+    def melee_attack(self, pygame, screen, robots):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         line_start = (self.posx + new_x, self.posy + new_y)
@@ -111,6 +114,9 @@ class Robot:
         distance = math.sqrt(dx * dx + dy * dy)
 
         return distance
+
+    def ranged_attack(self, pygame, screen):
+        self.projectiles.append(Projectile(x,y,c,r,xs,ys,t))
 
     def paint_robot(self, pygame, screen):
         # robot
