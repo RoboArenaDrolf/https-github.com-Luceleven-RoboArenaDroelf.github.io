@@ -282,7 +282,6 @@ y_tiles = ""
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
 change_direction_interval = 40  # Ändere die Richtung alle 40 Frames
 frame_count = 0
-attack_cooldown = 0
 
 jump = []
 
@@ -549,21 +548,20 @@ while run:
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
         player_robot.ranged_hit_reg(robots)  #
-        if attack_cooldown != 0:
-            if attack_cooldown == 60:
-                attack_cooldown = 0
+        if player_robot.melee_cd != 0:
+            if player_robot.melee_cd == 60:
+                player_robot.melee_cd = 0
             else:
-                attack_cooldown += 1
+                player_robot.melee_cd += 1
         if player_robot.ranged_cd != 0:
             if player_robot.ranged_cd == 100:
                 player_robot.ranged_cd = 0
             else:
                 player_robot.ranged_cd += 1
-        if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
-                attack_cooldown < 30 and attack_cooldown != 0
-        ):  # attack will stay for a certain duration
+        if ((keys[pygame.K_g] and player_robot.melee_cd == 0)  # we can attack if we have no cooldown and press the button
+                or (player_robot.melee_cd < 30 and player_robot.melee_cd != 0)):  # attack will stay for a certain duration
             player_robot.melee_attack(pygame, screen, robots)
-            attack_cooldown += 1
+            player_robot.melee_cd += 1
         if ((keys[pygame.K_r] and player_robot.ranged_cd == 0)
                 or (player_robot.ranged_cd < 100 and player_robot.ranged_cd != 0)):
             player_robot.ranged_attack()
