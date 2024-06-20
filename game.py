@@ -446,7 +446,7 @@ while run:
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -458,7 +458,7 @@ while run:
                             3 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -476,7 +476,7 @@ while run:
                             robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -488,7 +488,7 @@ while run:
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -500,7 +500,7 @@ while run:
                             3 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -512,7 +512,7 @@ while run:
                             4 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -560,6 +560,8 @@ while run:
             attack_cooldown += 1
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)
+        if keys[pygame.K_r]:
+            player_robot.ranged_attack()
         if keys[pygame.K_UP]:
             player_robot.change_alpha(270)
         elif keys[pygame.K_DOWN]:
@@ -583,6 +585,8 @@ while run:
                     player_robot.change_acceleration(0)
             else:
                 player_robot.change_acceleration(0)
+        for i in range(0, len(robots)):
+            robots[i].ranged_hit_reg(robots)
 
         if frame_count >= change_direction_interval:
             for i in range(1, len(robots)):

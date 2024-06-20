@@ -120,12 +120,48 @@ class Robot:
 
     def ranged_attack(self):
         r = self.radius/4
-        xs = self.vel_max
-        ys = self.vel_max
+        if self.alpha == 0:  # right
+            xs = self.vel_max
+            ys = 0
+            x = self.posx + self.radius + r
+            y = self.posy
+        elif self.alpha == 90:  # down
+            xs = 0
+            ys = self.vel_max
+            x = self.posx
+            y = self.posy + self.radius + r
+        elif self.alpha == 180:  # left
+            xs = -self.vel_max
+            ys = 0
+            x = self.posx - self.radius - r
+            y = self.posy
+        elif self.alpha == 270:  # up
+            xs = 0
+            ys = -self.vel_max
+            x = self.posx
+            y = self.posy - self.radius - r
+        else:  # failsafe
+            print(f"how did you do this?, alpha=", self.alpha)
         c = "black"
-        x = self.posx + self.radius + r
-        y = self.posy + self.radius + r
         self.projectiles.append(Projectile(x, y, c, r, xs, ys))
+
+    def ranged_hit_reg(self, robots):
+        for i in range(0, len(robots)):
+            to_delete = []
+            if i != self.player_number:
+                for j in range(0, len(self.projectiles)):
+                    distance = abs(robots[i].posx-self.projectiles[j].x)+abs(robots[i].posy-self.projectiles[j].y)
+                    if distance < (robots[i].radius + self.projectiles[j].radius):
+                        robots[i].take_damage_debug(1)
+                        print("hit", i, self.player_number, "robot(x,y,r)", robots[i].posx, robots[i].posy, robots[i].radius,
+                              "projectile(x,y,r)", self.projectiles[j].x, self.projectiles[j].y, self.projectiles[j].radius)
+                        # self.projectiles.pop(j)  # delete the projectile that hit a robot
+                        # DO NOT REMOVE IT INSIDE THE LOOP instead
+                        to_delete.append(j)  # save the index (might be multiple)
+                to_delete = reversed(to_delete)
+                for n in to_delete:  # after the j loop we delete them from back to front
+                    self.projectiles.pop(n)
+
 
     def paint_robot(self, pygame, screen):
         # robot
@@ -149,3 +185,7 @@ class Robot:
             player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
         )
         screen.blit(player_health, player_rect)
+        # projectiles
+        for i in self.projectiles:
+            i.paint_projectile(pygame, screen)
+            i.move_projectile()

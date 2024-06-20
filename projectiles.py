@@ -18,6 +18,10 @@ class Projectile:
         self.y_speed = ys
         # self.type = t
 
+    def move_projectile(self):
+        self.x = self.x + self.x_speed
+        self.y = self.y + self.y_speed
+
     def paint_projectile(self, pygame, screen):
         # if self.type == "small":
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
