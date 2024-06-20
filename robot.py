@@ -21,6 +21,8 @@ class Robot:
     can_jump_again = False
     jump_counter = 0
     projectiles = []
+    melee_cd = 0
+    ranged_cd = 0
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
@@ -119,34 +121,35 @@ class Robot:
         return distance
 
     def ranged_attack(self):
-        r = self.radius/4
-        if self.alpha == 0:  # right
-            xs = self.vel_max
-            ys = 0
-            x = self.posx + self.radius + r
-            y = self.posy
-        elif self.alpha == 90:  # down
-            xs = 0
-            ys = self.vel_max
-            x = self.posx
-            y = self.posy + self.radius + r
-        elif self.alpha == 180:  # left
-            xs = -self.vel_max
-            ys = 0
-            x = self.posx - self.radius - r
-            y = self.posy
-        elif self.alpha == 270:  # up
-            xs = 0
-            ys = -self.vel_max
-            x = self.posx
-            y = self.posy - self.radius - r
-        else:  # failsafe
-            print("how did you do this? alpha=", self.alpha)
-        c = "black"
-        pn = self.player_number  # projectile created by player number x
-        # this shouldn't be needed since the robot that owns the projectiles array has this number,
-        # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
-        self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
+        if self.ranged_cd == 0 or self.ranged_cd == 10:
+            r = self.radius/4
+            if self.alpha == 0:  # right
+                xs = self.vel_max
+                ys = 0
+                x = self.posx + self.radius + r
+                y = self.posy
+            elif self.alpha == 90:  # down
+                xs = 0
+                ys = self.vel_max
+                x = self.posx
+                y = self.posy + self.radius + r
+            elif self.alpha == 180:  # left
+                xs = -self.vel_max
+                ys = 0
+                x = self.posx - self.radius - r
+                y = self.posy
+            elif self.alpha == 270:  # up
+                xs = 0
+                ys = -self.vel_max
+                x = self.posx
+                y = self.posy - self.radius - r
+            else:  # failsafe
+                print("how did you do this? alpha=", self.alpha)
+            c = "black"
+            pn = self.player_number  # projectile created by player number x
+            # this shouldn't be needed since the robot that owns the projectiles array has this number,
+            # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
+            self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
 
     def ranged_hit_reg(self, robots):
         for i in range(0, len(robots)):
