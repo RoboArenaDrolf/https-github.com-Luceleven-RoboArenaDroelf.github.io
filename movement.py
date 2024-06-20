@@ -175,4 +175,3 @@ class Movement:
             int((robot.posy - arena.y_offset - robot.radius / 2) // arena.tile_size),
         ]
         return arena.is_solid(x_positions, y_positions)
-    
