@@ -141,7 +141,7 @@ class Robot:
             x = self.posx
             y = self.posy - self.radius - r
         else:  # failsafe
-            print(f"how did you do this?, alpha=", self.alpha)
+            print("how did you do this? alpha=", self.alpha)
         c = "black"
         self.projectiles.append(Projectile(x, y, c, r, xs, ys))
 
@@ -153,12 +153,14 @@ class Robot:
                     distance = abs(robots[i].posx-self.projectiles[j].x)+abs(robots[i].posy-self.projectiles[j].y)
                     if distance < (robots[i].radius + self.projectiles[j].radius):
                         robots[i].take_damage_debug(1)
-                        print("hit", i, self.player_number, "robot(x,y,r)", robots[i].posx, robots[i].posy, robots[i].radius,
-                              "projectile(x,y,r)", self.projectiles[j].x, self.projectiles[j].y, self.projectiles[j].radius)
+                        print("hit", i, self.player_number,
+                              "robot(x,y,r)", robots[i].posx, robots[i].posy, robots[i].radius,
+                              "projectile(x,y,r)", self.projectiles[j].x, self.projectiles[j].y,
+                              self.projectiles[j].radius)
                         # self.projectiles.pop(j)  # delete the projectile that hit a robot
                         # DO NOT REMOVE IT INSIDE THE LOOP instead
                         to_delete.append(j)  # save the index (might be multiple)
-                to_delete = reversed(to_delete)
+                to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
                 for n in to_delete:  # after the j loop we delete them from back to front
                     self.projectiles.pop(n)
 
