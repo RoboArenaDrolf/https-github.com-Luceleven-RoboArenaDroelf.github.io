@@ -598,7 +598,7 @@ while run:
             )
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i - 1] = False
-            robots[i].paint_robot(pygame, screen)
+            robots[i].paint_robot(pygame, screen, direction_left)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
         movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena)

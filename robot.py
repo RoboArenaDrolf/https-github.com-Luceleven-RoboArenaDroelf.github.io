@@ -78,7 +78,7 @@ class Robot:
 
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
-        image_rect = self.robot_image.get_rect(center=(self.posx, self.posy))
+        image_rect = self.robot_image.get_rect(center=(self.posx, self.posy-7))
 
         if not direction_left:
             screen.blit(self.robot_image, image_rect)
