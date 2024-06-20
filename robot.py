@@ -75,12 +75,13 @@ class Robot:
         else:
             self.health = 0
 
-    def paint_robot(self, pygame, screen):
+    def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.robot_image.get_rect(center=(self.posx, self.posy))
-        if self.accel > 0:
+
+        if not direction_left:
             screen.blit(self.robot_image, image_rect)
-        elif self.accel <= 0:
+        elif direction_left:
             screen.blit(self.robot_image_scaled, image_rect)
 
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
