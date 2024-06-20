@@ -143,26 +143,27 @@ class Robot:
         else:  # failsafe
             print("how did you do this? alpha=", self.alpha)
         c = "black"
-        self.projectiles.append(Projectile(x, y, c, r, xs, ys))
+        pn = self.player_number  # projectile created by player number x
+        # this shouldn't be needed since the robot that owns the projectiles array has this number,
+        # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
+        self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
 
     def ranged_hit_reg(self, robots):
         for i in range(0, len(robots)):
             to_delete = []
-            if i != self.player_number:
-                for j in range(0, len(self.projectiles)):
-                    distance = abs(robots[i].posx-self.projectiles[j].x)+abs(robots[i].posy-self.projectiles[j].y)
-                    if distance < (robots[i].radius + self.projectiles[j].radius):
+            for j in range(0, len(robots[i].projectiles)):
+                if i != robots[i].projectiles[j].player_number:  # do not hit yourself
+                    # get distance from projectile center to robot center
+                    distance = (abs(robots[i].posx-robots[i].projectiles[j].x)
+                                + abs(robots[i].posy-robots[i].projectiles[j].y))
+                    if distance < (robots[i].radius + robots[i].projectiles[j].radius):
+                        # we have a hit
                         robots[i].take_damage_debug(1)
-                        print("hit", i, self.player_number,
-                              "robot(x,y,r)", robots[i].posx, robots[i].posy, robots[i].radius,
-                              "projectile(x,y,r)", self.projectiles[j].x, self.projectiles[j].y,
-                              self.projectiles[j].radius)
-                        # self.projectiles.pop(j)  # delete the projectile that hit a robot
-                        # DO NOT REMOVE IT INSIDE THE LOOP instead
+                        # DO NOT REMOVE PROJECTILES INSIDE THE LOOP instead
                         to_delete.append(j)  # save the index (might be multiple)
-                to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
-                for n in to_delete:  # after the j loop we delete them from back to front
-                    self.projectiles.pop(n)
+            to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
+            for n in to_delete:  # after the j loop we delete them
+                robots[i].projectiles.pop(n)
 
     def paint_robot(self, pygame, screen):
         # robot

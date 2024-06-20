@@ -548,6 +548,7 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        player_robot.ranged_hit_reg(robots)  #
         if attack_cooldown != 0:
             if attack_cooldown == 60:
                 attack_cooldown = 0
@@ -585,8 +586,6 @@ while run:
                     player_robot.change_acceleration(0)
             else:
                 player_robot.change_acceleration(0)
-        for i in range(0, len(robots)):
-            robots[i].ranged_hit_reg(robots)
 
         if frame_count >= change_direction_interval:
             for i in range(1, len(robots)):
