@@ -389,7 +389,7 @@ while run:
                             robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -405,7 +405,7 @@ while run:
                             robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -417,7 +417,7 @@ while run:
                             2 * robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -434,7 +434,7 @@ while run:
                             robot_spawn_distance + arena.x_offset,
                             display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
                             robot_radius,
-                            45,
+                            270,
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(1000),
                             arena.map_size[0] / float(200),
@@ -560,10 +560,16 @@ while run:
             attack_cooldown += 1
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)
+        if keys[pygame.K_UP]:
+            player_robot.change_alpha(270)
+        elif keys[pygame.K_DOWN]:
+            player_robot.change_alpha(90)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+            player_robot.change_alpha(0)
         elif keys[pygame.K_LEFT]:
             player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+            player_robot.change_alpha(180)
         else:
             if player_robot.vel < 0:
                 player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)

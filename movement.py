@@ -69,7 +69,7 @@ class Movement:
             robot.change_velocity(0)
 
         # Tastatureingaben verarbeiten
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_SPACE]:
             if robot.jump_counter == 0:
                 robot.vertical_speed = (
                     -arena.map_size[1] / 100
@@ -81,8 +81,8 @@ class Movement:
                 robot.jump_counter = 2
 
         for event in pygame.event.get():
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP and robot.jump_counter == 1:
+            if event.type == pygame.KEYUP:  # changed to spacebar need to fix later -bjoern
+                if event.key == pygame.K_SPACE and robot.jump_counter == 1:
                     robot.can_jump_again = True
 
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):

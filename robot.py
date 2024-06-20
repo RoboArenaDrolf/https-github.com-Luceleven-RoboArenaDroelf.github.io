@@ -53,6 +53,9 @@ class Robot:
     def change_velocity(self, v):
         self.vel = v
 
+    def change_alpha(self, a):
+        self.alpha = a
+
     def change_velocity_cap(self, v):
         if abs(v) < self.vel_max:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
             self.vel = v
@@ -61,7 +64,7 @@ class Robot:
                 self.vel = -self.vel_max
             else:
                 self.vel = self.vel_max
-        self.alpha = 270 + (90 / self.vel_max) * self.vel
+        # self.alpha = 270 + (90 / self.vel_max) * self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va
@@ -115,8 +118,14 @@ class Robot:
 
         return distance
 
-    def ranged_attack(self, pygame, screen):
-        self.projectiles.append(Projectile(x,y,c,r,xs,ys,t))
+    def ranged_attack(self):
+        r = self.radius/4
+        xs = self.vel_max
+        ys = self.vel_max
+        c = "black"
+        x = self.posx + self.radius + r
+        y = self.posy + self.radius + r
+        self.projectiles.append(Projectile(x, y, c, r, xs, ys))
 
     def paint_robot(self, pygame, screen):
         # robot
