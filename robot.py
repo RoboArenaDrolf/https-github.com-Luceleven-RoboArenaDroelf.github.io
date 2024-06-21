@@ -158,3 +158,19 @@ class Robot:
             player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
         )
         screen.blit(player_health, player_rect)
+        # corresponding recoil ui
+        recoil_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
+        player_recoil = recoil_font.render(f"{int(self.recoil_percent * 100)} %", True, f"{self.color}")
+        player_rect = player_recoil.get_rect(
+            center=(
+                pygame.display.get_window_size()[0] / 5
+                + (pygame.display.get_window_size()[0] / 5) * self.player_number,
+                pygame.display.get_window_size()[1] / 10,
+            )
+        )
+        pygame.draw.rect(
+            screen,
+            (0, 30, 50, 0.5),
+            player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
+        )
+        screen.blit(player_recoil, player_rect)
