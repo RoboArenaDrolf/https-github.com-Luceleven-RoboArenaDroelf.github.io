@@ -151,7 +151,7 @@ class Robot:
             # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
             self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
 
-    def ranged_hit_reg(self, robots):
+    def ranged_hit_reg(self, robots, screen_height, screen_width, arena):
         for i in range(0, len(robots)):
             to_delete = []
             for j in range(0, len(robots[i].projectiles)):
@@ -164,6 +164,26 @@ class Robot:
                         robots[i].take_damage_debug(1)
                         # DO NOT REMOVE PROJECTILES INSIDE THE LOOP instead
                         to_delete.append(j)  # save the index (might be multiple)
+                # Überprüfen, ob die Projectile die seitlichen Grenzen der Arena erreicht hat
+                if robots[i].projectiles[j].x < robots[i].projectiles[j].radius + arena.x_offset:
+                    to_delete.append(j)
+                    # print("we delete this") #  shoot the left wall and see this
+                elif robots[i].projectiles[j].x > screen_width - robots[i].projectiles[j].radius - arena.x_offset:
+                    to_delete.append(j)
+                # Überprüfen, ob die Projectile die oberen und unteren Grenzen der Arena erreicht hat
+                elif robots[i].projectiles[j].y - robots[i].projectiles[j].radius < arena.y_offset:
+                    to_delete.append(j)
+                elif robots[i].projectiles[j].y + robots[i].projectiles[j].radius > screen_height - arena.y_offset:
+                    to_delete.append(j)
+                # Kollisionen in y-Richtung überprüfen und behandeln
+                elif robots[i].projectiles[j].check_collision_y(arena):
+                    to_delete.append(j)
+                # Kollisionen in x-Richtung überprüfen und behandeln
+                elif robots[i].projectiles[j].check_collision_x(arena):
+                    to_delete.append(j)
+            # im not 100% sure if it's possible for a projectile to be added to the to_delete array twice,
+            # so I might have to add a duplicate remover here
+
             to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
             for n in to_delete:  # after the j loop we delete them
                 robots[i].projectiles.pop(n)
@@ -191,6 +211,6 @@ class Robot:
         )
         screen.blit(player_health, player_rect)
         # projectiles
-        for i in self.projectiles:
+        for i in self.projectiles:  # each robot will paint the projectiles it has created
             i.paint_projectile(pygame, screen)
             i.move_projectile()

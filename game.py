@@ -547,7 +547,7 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
-        player_robot.ranged_hit_reg(robots)  #
+        player_robot.ranged_hit_reg(robots, display_resolution[1], display_resolution[0], arena)  #
         if player_robot.melee_cd != 0:
             if player_robot.melee_cd == 60:
                 player_robot.melee_cd = 0

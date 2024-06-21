@@ -28,3 +28,28 @@ class Projectile:
         # if self.type == "small":
         pygame.draw.circle(screen, self.color, (self.x, self.y), self.radius)
         # if self.type == "big":
+    def check_collision_y(self, arena):
+        # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
+        x_positions = [
+            int((self.x - arena.x_offset) // arena.tile_size),
+            int((self.x - arena.x_offset + self.radius / 2) // arena.tile_size),
+            int((self.x - arena.x_offset - self.radius / 2) // arena.tile_size),
+        ]
+        y_positions = [
+            int((self.y - arena.y_offset + self.radius) // arena.tile_size),
+            int((self.y - arena.y_offset - self.radius) // arena.tile_size),
+        ]
+        return arena.is_solid(x_positions, y_positions)
+
+    def check_collision_x(self, arena):
+        # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf x-Achse
+        x_positions = [
+            int((self.x - arena.x_offset + self.radius) // arena.tile_size),
+            int((self.x - arena.x_offset - self.radius) // arena.tile_size),
+        ]
+        y_positions = [
+            int((self.y - arena.y_offset) // arena.tile_size),
+            int((self.y - arena.y_offset + self.radius / 2) // arena.tile_size),
+            int((self.y - arena.y_offset - self.radius / 2) // arena.tile_size),
+        ]
+        return arena.is_solid(x_positions, y_positions)
