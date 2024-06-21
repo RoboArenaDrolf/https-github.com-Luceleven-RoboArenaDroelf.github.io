@@ -558,8 +558,8 @@ while run:
                 player_robot.ranged_cd = 0
             else:
                 player_robot.ranged_cd += 1
-        if ((keys[pygame.K_g] and player_robot.melee_cd == 0)  # we can attack if we have no cooldown and press the button
-                or (player_robot.melee_cd < 30 and player_robot.melee_cd != 0)):  # attack will stay for a certain duration
+        if ((keys[pygame.K_g] and player_robot.melee_cd == 0)  # we can attack if we have no cooldown
+                or (player_robot.melee_cd < 30 and player_robot.melee_cd != 0)):  # attack will stay for some time
             player_robot.melee_attack(pygame, screen, robots)
             player_robot.melee_cd += 1
         if ((keys[pygame.K_r] and player_robot.ranged_cd == 0)
