@@ -556,7 +556,7 @@ while run:
         if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
             attack_cooldown < 30 and attack_cooldown != 0
         ):  # attack will stay for a certain duration
-            player_robot.attack(pygame, screen, robots)
+            player_robot.attack(pygame, screen, robots, arena, movement)
             attack_cooldown += 1
         if keys[pygame.K_f]:
             player_robot.take_damage_debug(10)
@@ -581,18 +581,31 @@ while run:
         if frame_count >= change_direction_interval:
             for i in range(1, len(robots)):
                 # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
-                robots[i].change_acceleration(random.uniform(-1, 1))
-                robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+                robots[i].change_acceleration(robots[i].accel + random.uniform(-1, 1))
+                #robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
                 # Setze den Zähler zurück
                 frame_count = 0
                 jump[i - 1] = random.choice([True, False])
 
         for i in range(1, len(robots)):
+            robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+            robots[i].decrease_hit_cooldown()
+            if robots[i].vel < 0:
+                robots[i].change_acceleration(robots[i].accel + arena.map_size[0] / 40000)
+                if robots[i].vel + robots[i].accel >= 0:
+                    robots[i].change_velocity_cap(0)
+                    robots[i].change_acceleration(0)
+            elif robots[i].vel > 0:
+                robots[i].change_acceleration(robots[i].accel - arena.map_size[0] / 40000)
+                if robots[i].vel + robots[i].accel <= 0:
+                    robots[i].change_velocity_cap(0)
+                    robots[i].change_acceleration(0)
+            else:
+                robots[i].change_acceleration(0)
             # Bewegung des Roboters
             movement.move_bot(
-                robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1]
+                robots[i], display_resolution[1], display_resolution[0], robots[i].vel, arena, jump[i - 1]
             )
-            robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i - 1] = False
             robots[i].paint_robot(pygame, screen)
 
