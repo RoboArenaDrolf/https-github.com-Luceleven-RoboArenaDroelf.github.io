@@ -65,7 +65,9 @@ class Arena:
             self.num_tiles_x = data["num_tiles_x"]
             self.num_tiles_y = data["num_tiles_y"]
             self.tiles = [[Arena.TileType[tile] for tile in row] for row in data["tiles"]]
-            self._background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"]).convert()
+            self._background_image_unscaled = pygame.image.load(
+                self.maps_base_path + data["background_image"]
+            ).convert()
 
     def _set_background_image(self, image, pygame):
         self.background_image = pygame.transform.scale(image, self.map_size)

@@ -79,9 +79,12 @@ class Robot:
         for i in range(1, len(robots)):
             # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
             # Line defined by two points
-            if (self.distance_from_segment(line_start[0], line_start[1], line_end[0], line_end[1],
-                                           robots[i].posx, robots[i].posy)
-                    <= robots[i].radius):  # if the distance from this line to the center of a robot
+            if (
+                self.distance_from_segment(
+                    line_start[0], line_start[1], line_end[0], line_end[1], robots[i].posx, robots[i].posy
+                )
+                <= robots[i].radius
+            ):  # if the distance from this line to the center of a robot
                 # is smaller than it's radius, we have a hit and that robot takes some damage
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
