@@ -360,7 +360,7 @@ class ArenaBuilder(Arena):
 
     def _load_background(self):
         self._background_image_filename = self._open_file_dialog()
-        image = self.pygame.image.load(self._background_image_filename)
+        image = self.pygame.image.load(self._background_image_filename).convert()
         self._set_background_image(image, self.pygame)
 
     def _open_file_dialog(self):

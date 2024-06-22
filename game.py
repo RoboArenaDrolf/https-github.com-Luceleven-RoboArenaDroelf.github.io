@@ -555,6 +555,7 @@ while run:
                 if robots:
                     start_game = False
                     playing = True
+                    arena.render_arena(pygame)
         elif death:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -570,19 +571,19 @@ while run:
                 game_paused = False
             elif main_menu_rect.collidepoint(mouse_pos):
                 menu = True
+                playing = False
                 game_paused = False
             elif quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
                 sys.exit()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE] and not menu and not start_game and not build_arena:
+    if keys[pygame.K_ESCAPE] and playing:
         game_paused = True
 
     if playing and not game_paused:
-        screen.fill(white)
+        arena.paint_arena(screen)
         frame_count += 1
-        arena.paint_arena(pygame, screen)
         player_robot = robots[0]
         if player_robot.health <= 0:
             playing = False
