@@ -317,7 +317,7 @@ jump = []
 clock = pygame.time.Clock()
 while run:
     pygame.time.delay(0)
-    clock.tick(120)
+    dt = clock.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
@@ -576,6 +576,9 @@ while run:
             elif quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
                 sys.exit()
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_UP and robots[0].jump_counter == 1:
+                robots[0].can_jump_again = True
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_ESCAPE] and playing:
@@ -637,7 +640,7 @@ while run:
             robots[i].paint_robot(pygame, screen)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena)
+        movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena, dt)
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()

@@ -6,14 +6,15 @@ class Movement:
     def __init__(self, gravity):
         self.gravity = gravity
 
-    def move_robot(self, robot, screen_height, screen_width, x, arena):
+    def move_robot(self, robot, screen_height, screen_width, x, arena, dt):
+        dt_scaled = dt / 15.0
         keys = pygame.key.get_pressed()
 
         # Bewegung in x-Richtung
-        robot.posx += x
+        robot.posx += x * dt_scaled
 
         # Vertikale Bewegung
-        robot.vertical_speed += self.gravity
+        robot.vertical_speed += self.gravity * dt_scaled
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
@@ -64,18 +65,20 @@ class Movement:
         if keys[pygame.K_UP]:
             if robot.jump_counter == 0:
                 robot.vertical_speed = (
-                    -arena.map_size[1] / 100
-                )  # Vertikale Geschwindigkeit für den ersten Sprung setzen
+                    -arena.map_size[1] / 75
+                ) * dt_scaled  # Vertikale Geschwindigkeit für den ersten Sprung setzen
                 robot.jump_counter = 1
             elif robot.can_jump_again:
-                robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den Doppelsprung setzen
+                robot.vertical_speed = (
+                    -arena.map_size[1] / 75
+                ) * dt_scaled  # Vertikale Geschwindigkeit für den Doppelsprung setzen
                 robot.can_jump_again = False
                 robot.jump_counter = 2
 
-        for event in pygame.event.get():
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP and robot.jump_counter == 1:
-                    robot.can_jump_again = True
+        # for event in pygame.event.get():
+        #     if event.type == pygame.KEYUP:
+        #         if event.key == pygame.K_UP and robot.jump_counter == 1:
+        #             robot.can_jump_again = True
 
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
 
