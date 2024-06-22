@@ -52,6 +52,33 @@ def recalculate_robot_values():
             robot.vel_max = arena.map_size[0] / float(200)
 
 
+def death_screen():
+    global quit_rect, main_menu_rect
+    screen.fill(black)
+    font = pygame.font.Font(None, font_size_big)
+    text = font.render("You Died!", True, (101, 28, 50))
+    screen.blit(
+        text, (display_resolution[0] // 2 - text.get_width() // 2, display_resolution[1] // 2 - text.get_height() // 2)
+    )
+
+    font = pygame.font.Font(None, font_size_small)
+    text_main_menu = font.render("Main Menu", True, black)
+    text_quit = font.render("Quit Game", True, black)
+
+    main_menu_rect = text_main_menu.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 2 * dist_between_elements)
+    )
+    quit_rect = text_quit.get_rect(
+        center=(display_resolution[0] // 2, display_resolution[1] // 2 + 3 * dist_between_elements)
+    )
+
+    pygame.draw.rect(screen, white, main_menu_rect)
+    pygame.draw.rect(screen, white, quit_rect)
+
+    screen.blit(text_main_menu, main_menu_rect)
+    screen.blit(text_quit, quit_rect)
+
+
 def pause_screen():
     global resume_rect, quit_rect, main_menu_rect
     font = pygame.font.Font(None, font_size_big)
@@ -272,6 +299,7 @@ build_arena = False
 settings = False
 playing = False
 player_count = 0
+death = False
 robots = []
 
 input_active_x = False
@@ -427,6 +455,7 @@ while run:
                         ),
                     ]
                     jump = [False]
+                    start_game = False
                 elif three_player_rect.collidepoint(mouse_pos):
                     player_count = 3
                     robots = [
@@ -526,7 +555,15 @@ while run:
                 if robots:
                     start_game = False
                     playing = True
-
+        elif death:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if main_menu_rect.collidepoint(mouse_pos):
+                    menu = True
+                    death = False
+                elif quit_rect.collidepoint(mouse_pos):
+                    pygame.quit()
+                    sys.exit()
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
@@ -534,13 +571,12 @@ while run:
             elif main_menu_rect.collidepoint(mouse_pos):
                 menu = True
                 game_paused = False
-                playing = False
             elif quit_rect.collidepoint(mouse_pos):
                 pygame.quit()
                 sys.exit()
 
     keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE] and playing:
+    if keys[pygame.K_ESCAPE] and not menu and not start_game and not build_arena:
         game_paused = True
 
     if playing and not game_paused:
@@ -548,6 +584,9 @@ while run:
         frame_count += 1
         arena.paint_arena(pygame, screen)
         player_robot = robots[0]
+        if player_robot.health <= 0:
+            playing = False
+            death = True
         if attack_cooldown != 0:
             if attack_cooldown == 60:
                 attack_cooldown = 0
@@ -601,6 +640,8 @@ while run:
         player_robot.paint_robot(pygame, screen)
     elif game_paused:
         pause_screen()
+    elif death:
+        death_screen()
 
     pygame.display.update()
 
