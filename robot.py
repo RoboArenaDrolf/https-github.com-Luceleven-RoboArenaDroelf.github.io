@@ -31,7 +31,7 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.robot_image = pygame.image.load("Robots/playerRobot.png")
-        self.robot_image = pygame.transform.scale(self.robot_image, (50, 50))
+        self.robot_image = pygame.transform.scale(self.robot_image, pygame.display.get_window_size() )
         self.robot_image_scaled = pygame.transform.flip(self.robot_image, True, False)
 
     def change_acceleration(self, a):
@@ -79,6 +79,8 @@ class Robot:
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.robot_image.get_rect(center=(self.posx, self.posy-7))
+
+        print(pygame.display.get_window_size())
 
         if not direction_left:
             screen.blit(self.robot_image, image_rect)

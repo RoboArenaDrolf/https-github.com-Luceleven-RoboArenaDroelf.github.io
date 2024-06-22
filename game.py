@@ -39,7 +39,6 @@ robot_spawn_distance = display_resolution[0] / 10
 
 direction_left = False
 
-
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
     robot_radius = min(display_resolution) / 40
