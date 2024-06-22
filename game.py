@@ -582,7 +582,7 @@ while run:
             for i in range(1, len(robots)):
                 # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
                 robots[i].change_acceleration(robots[i].accel + random.uniform(-1, 1))
-                #robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+                # robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
                 # Setze den Zähler zurück
                 frame_count = 0
                 jump[i - 1] = random.choice([True, False])

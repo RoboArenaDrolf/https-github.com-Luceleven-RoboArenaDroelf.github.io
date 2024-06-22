@@ -81,29 +81,36 @@ class Robot:
         for i in range(1, len(robots)):
             # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
             # Line defined by two points
-            if (self.distance_from_segment(line_start[0], line_start[1], line_end[0], line_end[1],
-                                           robots[i].posx, robots[i].posy)
-                    <= robots[i].radius):  # if the distance from this line to the center of a robot
+            if (
+                self.distance_from_segment(
+                    line_start[0], line_start[1], line_end[0], line_end[1], robots[i].posx, robots[i].posy
+                )
+                <= robots[i].radius
+            ):  # if the distance from this line to the center of a robot
                 # is smaller than it's radius, we have a hit and that robot takes some damage
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
                 if robots[i].hit_cooldown <= 0:
-                    robots[i].hit_cooldown = 20 # setting this so the robot doesn't get launched into space
+                    robots[i].hit_cooldown = 20  # setting this so the robot doesn't get launched into space
                     # cause recoil
-                    robots[i].vertical_speed +=  -arena.map_size[1] / 40 * robots[i].recoil_percent # recoil up
+                    robots[i].vertical_speed += -arena.map_size[1] / 40 * robots[i].recoil_percent  # recoil up
                     # check if we face left, right or upwards
-                    if self.alpha > 315: # facing right
+                    if self.alpha > 315:  # facing right
                         robots[i].change_acceleration(
-                            robots[i].accel + (arena.map_size[0] / 40) * robots[i].recoil_percent)
-                    elif self.alpha < 225: # facing left
+                            robots[i].accel + (arena.map_size[0] / 40) * robots[i].recoil_percent
+                        )
+                    elif self.alpha < 225:  # facing left
                         robots[i].change_acceleration(
-                            robots[i].accel - (arena.map_size[0] / 40) * robots[i].recoil_percent)
-                    else: # facing upwards
-                        robots[i].vertical_speed += -arena.map_size[1] / 100 * robots[i].recoil_percent  # recoil up again
+                            robots[i].accel - (arena.map_size[0] / 40) * robots[i].recoil_percent
+                        )
+                    else:  # facing upwards
+                        robots[i].vertical_speed += (
+                            -arena.map_size[1] / 100 * robots[i].recoil_percent
+                        )  # recoil up again
 
-                    #robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
-                    #display_resolution = pygame.display.get_window_size()
-                    #movement.move_robot(robots[i], display_resolution[1], display_resolution[0], robots[i].vel, arena)
+                    # robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+                    # display_resolution = pygame.display.get_window_size()
+                    # movement.move_robot(robots[i], display_resolution[1], display_resolution[0], robots[i].vel, arena)
                     robots[i].recoil_percent += 0.05
 
     def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
