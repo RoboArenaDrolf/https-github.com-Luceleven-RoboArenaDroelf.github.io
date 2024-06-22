@@ -315,337 +315,323 @@ attack_cooldown = 0
 jump = []
 
 clock = pygame.time.Clock()
+
+
+def handle_main_menu_events():
+    global robots, start_game, menu, build_arena, settings, run
+
+    if play_rect.collidepoint(mouse_pos):
+        robots = []
+        start_game = True
+        menu = False
+    elif build_arena_rect.collidepoint(mouse_pos):
+        build_arena = True
+        menu = False
+    elif settings_rect.collidepoint(mouse_pos):
+        settings = True
+        menu = False
+    elif exit_rect.collidepoint(mouse_pos):
+        run = False
+
+
+def handle_build_arena_menu_events(event):
+    global input_active_x, input_active_y, build_arena, menu, arenaBuilder, x_tiles, y_tiles
+
+    if event.type == pygame.MOUSEBUTTONDOWN:
+        if input_rect_x_tiles.collidepoint(mouse_pos):
+            input_active_x = True
+            input_active_y = False
+        elif input_rect_y_tiles.collidepoint(mouse_pos):
+            input_active_y = True
+            input_active_x = False
+        elif start_building_rect.collidepoint(mouse_pos):
+            try:
+                num_x = int(x_tiles)
+                num_y = int(y_tiles)
+                if num_x <= 0 or num_y <= 0:
+                    raise ValueError
+                build_arena = False
+                menu = True
+                arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
+                arenaBuilder.main()
+            except ValueError:
+                print("There should only be positive numbers in the fields!")
+
+    elif event.type == pygame.KEYDOWN:
+        if input_active_x:
+            if event.key == pygame.K_BACKSPACE:
+                x_tiles = x_tiles[:-1]
+            else:
+                x_tiles += event.unicode
+        elif input_active_y:
+            if event.key == pygame.K_BACKSPACE:
+                y_tiles = y_tiles[:-1]
+            else:
+                y_tiles += event.unicode
+
+
+def handle_settings_menu_events():
+    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, dist_between_elements, input_fields_x_size, input_fields_y_size, input_text_offset_x, input_text_offset_y, rect_inflate_x, rect_inflate_y, font_size_big, font_size_small, arena, movement
+
+    dis_res_changed = False
+
+    if fullscreen_rect.collidepoint(mouse_pos):
+        display_resolution = fullscreen_res
+        fullscreen = True
+        dis_res_changed = True
+    elif back_rect.collidepoint(mouse_pos):
+        menu = True
+        settings = False
+
+    for i, res_rect in enumerate(resolution_rects):
+        if res_rect.collidepoint(mouse_pos):
+            display_resolution = available_resolutions[i]
+            fullscreen = False
+            dis_res_changed = True
+            break
+
+    if dis_res_changed:
+        if fullscreen:
+            screen = pygame.display.set_mode(display_resolution, pygame.FULLSCREEN)
+        else:
+            screen = pygame.display.set_mode(display_resolution)
+        dist_between_elements = display_resolution[1] / 20
+        input_fields_x_size = display_resolution[0] / 12
+        input_fields_y_size = display_resolution[1] / 33
+        input_text_offset_x = display_resolution[0] / 200
+        input_text_offset_y = display_resolution[1] / 200
+        rect_inflate_x = display_resolution[0] / 50
+        rect_inflate_y = display_resolution[1] / 50
+        font_size_big = int(display_resolution[1] / 16)
+        font_size_small = int(display_resolution[1] / 25)
+        arena = Arena("secondMap.json", pygame)
+        movement = Movement(display_resolution[1] / 2000)
+        recalculate_robot_values()
+
+
+def handle_start_game_menu_events():
+    global player_count, robots, jump, start_game, playing
+
+    robot1 = Robot(
+        robot_spawn_distance + arena.x_offset,
+        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        robot_radius,
+        45,
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(200),
+        100,
+        "blue",
+        0,
+    )
+    robot2 = Robot(
+        2 * robot_spawn_distance + arena.x_offset,
+        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        robot_radius,
+        45,
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(200),
+        100,
+        "red",
+        1,
+    )
+    robot3 = Robot(
+        3 * robot_spawn_distance + arena.x_offset,
+        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        robot_radius,
+        45,
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(200),
+        100,
+        "green",
+        2,
+    )
+    robot4 = Robot(
+        4 * robot_spawn_distance + arena.x_offset,
+        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        robot_radius,
+        45,
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(1000),
+        arena.map_size[0] / float(200),
+        100,
+        "yellow",
+        3,
+    )
+
+    if one_player_rect.collidepoint(mouse_pos):
+        player_count = 1
+        robots = [robot1]
+    elif two_player_rect.collidepoint(mouse_pos):
+        player_count = 2
+        robots = [robot1, robot2]
+        jump = [False]
+        start_game = False
+    elif three_player_rect.collidepoint(mouse_pos):
+        player_count = 3
+        robots = [robot1, robot2, robot3]
+        jump = [False, False]
+        start_game = False
+    elif four_player_rect.collidepoint(mouse_pos):
+        player_count = 4
+        robots = [robot1, robot2, robot3, robot4]
+        jump = [False, False, False]
+    if robots:
+        start_game = False
+        playing = True
+        arena.render_arena(pygame)
+
+
+def handle_death_screen_events():
+    global menu, death
+
+    if main_menu_rect.collidepoint(mouse_pos):
+        menu = True
+        death = False
+    elif quit_rect.collidepoint(mouse_pos):
+        pygame.quit()
+        sys.exit()
+
+
+def handle_pause_screen_events():
+    global game_paused, menu, playing
+
+    if resume_rect.collidepoint(mouse_pos):
+        game_paused = False
+    elif main_menu_rect.collidepoint(mouse_pos):
+        menu = True
+        playing = False
+        game_paused = False
+    elif quit_rect.collidepoint(mouse_pos):
+        pygame.quit()
+        sys.exit()
+
+
+def game_loop():
+    global player_robot, playing, death, attack_cooldown, frame_count, force
+
+    screen.fill(white)
+    arena.paint_arena(screen)
+
+    frame_count += 1
+    player_robot = robots[0]
+
+    # Player related
+    if player_robot.health <= 0:
+        playing = False
+        death = True
+
+    if attack_cooldown != 0:
+        if attack_cooldown == 60:
+            attack_cooldown = 0
+        else:
+            attack_cooldown += 1
+    if attack_cooldown < 30 and attack_cooldown != 0:  # attack will stay for a certain duration
+        player_robot.attack(pygame, screen, robots)
+        attack_cooldown += 1
+
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT]:
+        player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+    elif keys[pygame.K_RIGHT]:
+        player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+    else:
+        if player_robot.vel < 0:
+            player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
+            if player_robot.vel + player_robot.accel >= 0:
+                player_robot.change_velocity_cap(0)
+                player_robot.change_acceleration(0)
+        elif player_robot.vel > 0:
+            player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 40000)
+            if player_robot.vel + player_robot.accel <= 0:
+                player_robot.change_velocity_cap(0)
+                player_robot.change_acceleration(0)
+        else:
+            player_robot.change_acceleration(0)
+
+    player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
+    movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena, dt)
+    player_robot.paint_robot(pygame, screen)
+
+    # Bots related
+    if frame_count >= change_direction_interval:
+        for i in range(1, len(robots)):
+            # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
+            robots[i].change_acceleration(random.uniform(-1, 1))
+            robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+            # Setze den Zähler zurück
+            frame_count = 0
+            jump[i - 1] = random.choice([True, False])
+
+    for i in range(1, len(robots)):
+        # Bewegung des Roboters
+        movement.move_bot(robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1])
+        robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+        jump[i - 1] = False
+        robots[i].paint_robot(pygame, screen)
+
+
 while run:
     pygame.time.delay(0)
     dt = clock.tick(120)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        if menu:
-            main_menu()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if play_rect.collidepoint(mouse_pos):
-                    robots = []
-                    start_game = True
-                    menu = False
-                elif build_arena_rect.collidepoint(mouse_pos):
-                    build_arena = True
-                    menu = False
-                elif settings_rect.collidepoint(mouse_pos):
-                    settings = True
-                    menu = False
-                elif exit_rect.collidepoint(mouse_pos):
-                    run = False
-        elif build_arena:
-            build_arena_menu()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if input_rect_x_tiles.collidepoint(mouse_pos):
-                    input_active_x = True
-                    input_active_y = False
-                elif input_rect_y_tiles.collidepoint(mouse_pos):
-                    input_active_y = True
-                    input_active_x = False
-                elif start_building_rect.collidepoint(mouse_pos):
-                    try:
-                        num_x = int(x_tiles)
-                        num_y = int(y_tiles)
-                        if num_x <= 0 or num_y <= 0:
-                            raise ValueError
-                        build_arena = False
-                        menu = True
-                        arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
-                        arenaBuilder.main()
-                    except ValueError:
-                        print("There should only be positive numbers in the fields!")
-            elif event.type == pygame.KEYDOWN:
-                if input_active_x:
-                    if event.key == pygame.K_BACKSPACE:
-                        x_tiles = x_tiles[:-1]
-                    else:
-                        x_tiles += event.unicode
-                elif input_active_y:
-                    if event.key == pygame.K_BACKSPACE:
-                        y_tiles = y_tiles[:-1]
-                    else:
-                        y_tiles += event.unicode
-        elif settings:
-            settings_menu()
-            dis_res_changed = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if fullscreen_rect.collidepoint(mouse_pos):
-                    display_resolution = fullscreen_res
-                    fullscreen = True
-                    dis_res_changed = True
-                elif back_rect.collidepoint(mouse_pos):
-                    menu = True
-                    settings = False
-                for i, res_rect in enumerate(resolution_rects):
-                    if res_rect.collidepoint(mouse_pos):
-                        display_resolution = available_resolutions[i]
-                        fullscreen = False
-                        dis_res_changed = True
-                        break
-            if dis_res_changed:
-                dis_res_changed = False
-                if fullscreen:
-                    screen = pygame.display.set_mode(display_resolution, pygame.FULLSCREEN)
-                else:
-                    screen = pygame.display.set_mode(display_resolution)
-                dist_between_elements = display_resolution[1] / 20
-                input_fields_x_size = display_resolution[0] / 12
-                input_fields_y_size = display_resolution[1] / 33
-                input_text_offset_x = display_resolution[0] / 200
-                input_text_offset_y = display_resolution[1] / 200
-                rect_inflate_x = display_resolution[0] / 50
-                rect_inflate_y = display_resolution[1] / 50
-                font_size_big = int(display_resolution[1] / 16)
-                font_size_small = int(display_resolution[1] / 25)
-                arena = Arena("secondMap.json", pygame)
-                movement = Movement(display_resolution[1] / 2000)
-                recalculate_robot_values()
-        elif start_game:
-            start_screen()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if one_player_rect.collidepoint(mouse_pos):
-                    player_count = 1
-                    robots = [
-                        Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "blue",
-                            0,
-                        )
-                    ]
-                elif two_player_rect.collidepoint(mouse_pos):
-                    player_count = 2
-                    robots = [
-                        Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "blue",
-                            0,
-                        ),
-                        Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "red",
-                            1,
-                        ),
-                    ]
-                    jump = [False]
-                    start_game = False
-                elif three_player_rect.collidepoint(mouse_pos):
-                    player_count = 3
-                    robots = [
-                        Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "blue",
-                            0,
-                        ),
-                        Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "red",
-                            1,
-                        ),
-                        Robot(
-                            3 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "green",
-                            2,
-                        ),
-                    ]
-                    jump = [False, False]
-                    start_game = False
-                elif four_player_rect.collidepoint(mouse_pos):
-                    player_count = 4
-                    robots = [
-                        Robot(
-                            robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "blue",
-                            0,
-                        ),
-                        Robot(
-                            2 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "red",
-                            1,
-                        ),
-                        Robot(
-                            3 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "green",
-                            2,
-                        ),
-                        Robot(
-                            4 * robot_spawn_distance + arena.x_offset,
-                            display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
-                            robot_radius,
-                            45,
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(1000),
-                            arena.map_size[0] / float(200),
-                            100,
-                            "yellow",
-                            3,
-                        ),
-                    ]
-                    jump = [False, False, False]
-
-                if robots:
-                    start_game = False
-                    playing = True
-                    arena.render_arena(pygame)
-        elif death:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if main_menu_rect.collidepoint(mouse_pos):
-                    menu = True
-                    death = False
-                elif quit_rect.collidepoint(mouse_pos):
-                    pygame.quit()
-                    sys.exit()
-        elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            if resume_rect.collidepoint(mouse_pos):
-                game_paused = False
-            elif main_menu_rect.collidepoint(mouse_pos):
-                menu = True
-                playing = False
-                game_paused = False
-            elif quit_rect.collidepoint(mouse_pos):
-                pygame.quit()
-                sys.exit()
-        elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_UP and robots[0].jump_counter == 1:
-                robots[0].can_jump_again = True
+            if not playing:
+                if menu:
+                    handle_main_menu_events()
+                elif build_arena:
+                    handle_build_arena_menu_events(event)
+                elif settings:
+                    handle_settings_menu_events()
+                elif start_game:
+                    handle_start_game_menu_events()
+                elif death:
+                    handle_death_screen_events()
+            elif game_paused:
+                handle_pause_screen_events()
 
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_ESCAPE] and playing:
-        game_paused = True
+        elif event.type == pygame.KEYUP:
+            key = event.key
+            player_robot = robots[0]
+            if key == pygame.K_UP and player_robot.jump_counter == 1:
+                player_robot.can_jump_again = True
+
+        elif event.type == pygame.KEYDOWN:
+            if playing and not game_paused:
+                key = event.key
+                player_robot = robots[0]
+                if key == pygame.K_ESCAPE:
+                    game_paused = True
+                elif (
+                    key == pygame.K_g and attack_cooldown == 0
+                ):  # we can attack if we have no cooldown and press the button
+                    player_robot.attack(pygame, screen, robots)
+                    attack_cooldown += 1
+                elif key == pygame.K_f:
+                    player_robot.take_damage_debug(10)
+            elif build_arena:
+                handle_build_arena_menu_events(event)
 
     if playing and not game_paused:
-        arena.paint_arena(screen)
-        frame_count += 1
-        player_robot = robots[0]
-        if player_robot.health <= 0:
-            playing = False
-            death = True
-        if attack_cooldown != 0:
-            if attack_cooldown == 60:
-                attack_cooldown = 0
-            else:
-                attack_cooldown += 1
-        if (keys[pygame.K_g] and attack_cooldown == 0) or (  # we can attack if we have no cooldown and press the button
-            attack_cooldown < 30 and attack_cooldown != 0
-        ):  # attack will stay for a certain duration
-            player_robot.attack(pygame, screen, robots)
-            attack_cooldown += 1
-        if keys[pygame.K_f]:
-            player_robot.take_damage_debug(10)
-        if keys[pygame.K_RIGHT]:
-            player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
-        elif keys[pygame.K_LEFT]:
-            player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
-        else:
-            if player_robot.vel < 0:
-                player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
-                if player_robot.vel + player_robot.accel >= 0:
-                    player_robot.change_velocity_cap(0)
-                    player_robot.change_acceleration(0)
-            elif player_robot.vel > 0:
-                player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 40000)
-                if player_robot.vel + player_robot.accel <= 0:
-                    player_robot.change_velocity_cap(0)
-                    player_robot.change_acceleration(0)
-            else:
-                player_robot.change_acceleration(0)
-
-        if frame_count >= change_direction_interval:
-            for i in range(1, len(robots)):
-                # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
-                robots[i].change_acceleration(random.uniform(-1, 1))
-                robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
-                # Setze den Zähler zurück
-                frame_count = 0
-                jump[i - 1] = random.choice([True, False])
-
-        for i in range(1, len(robots)):
-            # Bewegung des Roboters
-            movement.move_bot(
-                robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1]
-            )
-            robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
-            jump[i - 1] = False
-            robots[i].paint_robot(pygame, screen)
-
-        player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-        movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena, dt)
-        player_robot.paint_robot(pygame, screen)
+        game_loop()
+    # Painting the screens:
     elif game_paused:
         pause_screen()
     elif death:
         death_screen()
+    elif menu:
+        main_menu()
+    elif settings:
+        settings_menu()
+    elif build_arena:
+        build_arena_menu()
+    elif start_game:
+        start_screen()
 
     pygame.display.update()
 

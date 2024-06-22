@@ -84,7 +84,7 @@ class Arena:
         for row in self.tiles:
             x = 0
             for tile in row:
-                if tile.filename is not "Air.png":
+                if tile.filename != "Air.png":
                     self.rendered_arena.blit(tile.image, (x, y))
                 x += self.tile_size
             y += self.tile_size
