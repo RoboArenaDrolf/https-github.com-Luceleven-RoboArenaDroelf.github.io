@@ -67,30 +67,63 @@ class Robot:
     def change_turn_velocity(self, va):
         self.vel = va
 
-    def attack(self, pygame, screen):
-        new_x = self.radius * (math.cos(math.radians(self.alpha)))
-        new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "red", (self.posx, self.posy), (self.posx + new_x * 2, self.posy + new_y * 2), width=4)
-
     def take_damage_debug(self, d):
         if d <= self.health:
             self.health = self.health - d
         else:
             self.health = 0
+            
+    def attack(self, pygame, screen, robots):
+        new_x = self.radius * (math.cos(math.radians(self.alpha)))
+        new_y = self.radius * (math.sin(math.radians(self.alpha)))
+        line_start = (self.posx + new_x, self.posy + new_y)
+        line_end = (self.posx + new_x * 2, self.posy + new_y * 2)
+        pygame.draw.line(screen, "red", line_start, line_end, width=4)
+
+        for i in range(1, len(robots)):
+            # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
+            # Line defined by two points
+            if (self.distance_from_segment(line_start[0], line_start[1], line_end[0], line_end[1],
+                                           robots[i].posx, robots[i].posy)
+                    <= robots[i].radius):  # if the distance from this line to the center of a robot
+                # is smaller than it's radius, we have a hit and that robot takes some damage
+                # print(i, "hit")
+                robots[i].take_damage_debug(1)
+
+    def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
+        # Vektoren berechnen
+        px, py = x2 - x1, y2 - y1
+        norm = px * px + py * py
+
+        # Punkt auf die Linie projizieren
+        u = ((x3 - x1) * px + (y3 - y1) * py) / norm
+
+        # Überprüfen, ob die Projektion innerhalb der Strecke liegt
+        if u < 0:
+            # Nächster Punkt ist P1
+            closest_x, closest_y = x1, y1
+        elif u > 1:
+            # Nächster Punkt ist P2
+            closest_x, closest_y = x2, y2
+        else:
+            # Projektion auf die Strecke
+            closest_x = x1 + u * px
+            closest_y = y1 + u * py
+
+        # Abstand zwischen P3 und dem nächstgelegenen Punkt berechnen
+        dx, dy = x3 - closest_x, y3 - closest_y
+        distance = math.sqrt(dx * dx + dy * dy)
+
+        return distance
 
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
 
-        print(pygame.display.get_window_size())
-
         if not direction_left:
             screen.blit(self.first_robot, image_rect)
         elif direction_left:
             screen.blit(self.first_robot_scaled, image_rect)
-
-        new_x = self.radius * (math.cos(math.radians(self.alpha)))
-        new_y = self.radius * (math.sin(math.radians(self.alpha)))
 
         # corresponding health UI
         health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))

@@ -19,24 +19,16 @@ class Movement:
         robot.posy += robot.vertical_speed
 
         # Überprüfen, ob der Roboter die seitlichen Grenzen der Arena erreicht hat
-        if robot.posx < robot.radius + arena.x_offset:
-            robot.posx = robot.radius + arena.x_offset
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
-        elif robot.posx > screen_width - robot.radius - arena.x_offset:
-            robot.posx = screen_width - robot.radius - arena.x_offset
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
+        if robot.posx + robot.radius - arena.x_offset < 0:
+            robot.health = 0
+        elif robot.posx - robot.radius + arena.x_offset > screen_width:
+            robot.health = 0
 
         # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
-        if robot.posy - robot.radius < arena.y_offset:
-            robot.posy = robot.radius + arena.y_offset
-            if robot.vertical_speed < 0:
-                robot.vertical_speed = float(0)
-        elif robot.posy + robot.radius > screen_height - arena.y_offset:
-            robot.posy = screen_height - robot.radius - arena.y_offset
-            if robot.vertical_speed > 0:
-                robot.vertical_speed = float(0)
+        if robot.posy + robot.radius < arena.y_offset:
+            robot.health = 0
+        elif robot.posy - robot.radius > screen_height - arena.y_offset:
+            robot.health = 0
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
