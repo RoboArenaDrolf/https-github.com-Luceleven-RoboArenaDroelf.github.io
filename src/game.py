@@ -54,6 +54,7 @@ playing = False
 player_count = 0
 death = False
 robots = []
+direction_left = False
 
 input_active_x = False
 input_active_y = False
@@ -168,6 +169,7 @@ def handle_start_game_menu_events():
         100,
         "blue",
         0,
+        arena.tile_size
     )
     robot2 = Robot(
         2 * robot_spawn_distance + arena.x_offset,
@@ -180,6 +182,7 @@ def handle_start_game_menu_events():
         100,
         "red",
         1,
+        arena.tile_size
     )
     robot3 = Robot(
         3 * robot_spawn_distance + arena.x_offset,
@@ -192,6 +195,7 @@ def handle_start_game_menu_events():
         100,
         "green",
         2,
+        arena.tile_size
     )
     robot4 = Robot(
         4 * robot_spawn_distance + arena.x_offset,
@@ -204,6 +208,7 @@ def handle_start_game_menu_events():
         100,
         "yellow",
         3,
+        arena.tile_size
     )
 
     if one_player_rect.collidepoint(mouse_pos):
@@ -289,7 +294,7 @@ def bots_handling():
 
 
 def player_robot_handling(player_robot):
-    global playing, death, attack_cooldown
+    global playing, death, attack_cooldown, direction_left
 
     # Überprüfen, ob player die seitlichen Grenzen der Arena erreicht hat
     if player_robot.posx + player_robot.radius - arena.x_offset < 0:
@@ -319,8 +324,10 @@ def player_robot_handling(player_robot):
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+        direction_left = True
     elif keys[pygame.K_RIGHT]:
         player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+        direction_left = False
     else:
         if player_robot.vel < 0:
             player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
@@ -336,7 +343,7 @@ def player_robot_handling(player_robot):
             player_robot.change_acceleration(0)
     player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
     movement.move_robot(player_robot, player_robot.vel, arena, dt)
-    player_robot.paint_robot(pygame, screen)
+    player_robot.paint_robot(pygame, screen, direction_left)
 
 
 while run:
