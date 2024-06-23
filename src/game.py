@@ -62,7 +62,7 @@ x_tiles = ""
 y_tiles = ""
 
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
-change_direction_interval = 40  # Ändere die Richtung alle 40 Frames
+change_direction_interval = 120  # Ändere die Richtung alle 120 Frames
 frame_count = 0
 attack_cooldown = 0
 
@@ -287,10 +287,12 @@ def bots_handling():
     # Move and paint bots
     for i in range(1, len(robots)):
         # Bewegung des Roboters
-        movement.move_bot(robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1])
+        movement.move_bot(
+            robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1], dt
+        )
         robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
         jump[i - 1] = False
-        robots[i].paint_robot(pygame, screen)
+        robots[i].paint_robot(pygame, screen, direction_left)
 
 
 def player_robot_handling(player_robot):

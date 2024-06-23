@@ -53,13 +53,14 @@ class Movement:
             robot.jump_counter += 1
             robot.jump = False
 
-    def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
+    def move_bot(self, robot, screen_height, screen_width, x, arena, jump, dt):
+        dt_scaled = dt / 15.0
 
         # Bewegung in x-Richtung
-        robot.posx += x
+        robot.posx += x * dt_scaled
 
         # Vertikale Bewegung
-        robot.vertical_speed += self.gravity
+        robot.vertical_speed += self.gravity * dt_scaled
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
@@ -116,7 +117,7 @@ class Movement:
 
         # Tastatureingaben verarbeiten
         if jump:
-            robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für Sprung setzen
+            robot.vertical_speed = (-arena.map_size[1] / 100) * dt_scaled  # Vertikale Geschwindigkeit für Sprung setzen
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse
