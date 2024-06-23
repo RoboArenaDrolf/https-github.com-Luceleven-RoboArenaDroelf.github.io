@@ -124,7 +124,7 @@ def handle_build_arena_menu_events(event):
 
 
 def handle_settings_menu_events():
-    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, dist_between_elements, input_fields_x_size, input_fields_y_size, input_text_offset_x, input_text_offset_y, rect_inflate_x, rect_inflate_y, font_size_big, font_size_small, arena, movement, screens
+    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, arena, movement, screens
 
     dis_res_changed = False
 
@@ -259,24 +259,63 @@ def game_loop():
 
     screen.fill(white)
     arena.paint_arena(screen)
-
     frame_count += 1
     player_robot = robots[0]
+    # Handling of player robot
+    player_robot_handling(player_robot)
+    # Handling of bots
+    bots_handling()
 
-    # Player related
+
+def bots_handling():
+    global frame_count
+
+    # Setup bots random movement
+    if frame_count >= change_direction_interval:
+        for i in range(1, len(robots)):
+            # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
+            robots[i].change_acceleration(random.uniform(-1, 1))
+            robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+            # Setze den Zähler zurück
+            frame_count = 0
+            jump[i - 1] = random.choice([True, False])
+    # Move and paint bots
+    for i in range(1, len(robots)):
+        # Bewegung des Roboters
+        movement.move_bot(robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1])
+        robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+        jump[i - 1] = False
+        robots[i].paint_robot(pygame, screen)
+
+
+def player_robot_handling(player_robot):
+    global playing, death, attack_cooldown
+
+    # Überprüfen, ob player die seitlichen Grenzen der Arena erreicht hat
+    if player_robot.posx + player_robot.radius - arena.x_offset < 0:
+        player_robot.health = 0
+    elif player_robot.posx - player_robot.radius + arena.x_offset > display_resolution[0]:
+        player_robot.health = 0
+    # Überprüfen, ob player die oberen und unteren Grenzen der Arena erreicht hat
+    if player_robot.posy + player_robot.radius < arena.y_offset:
+        player_robot.health = 0
+    elif player_robot.posy - player_robot.radius > display_resolution[1] - arena.y_offset:
+        player_robot.health = 0
+    # Check if player is dead:
     if player_robot.health <= 0:
         playing = False
         death = True
-
+    # Player attack cooldown
     if attack_cooldown != 0:
         if attack_cooldown == 60:
             attack_cooldown = 0
         else:
             attack_cooldown += 1
-    if attack_cooldown < 30 and attack_cooldown != 0:  # attack will stay for a certain duration
+    # attack will stay for a certain duration
+    if attack_cooldown < 30 and attack_cooldown != 0:
         player_robot.attack(pygame, screen, robots)
         attack_cooldown += 1
-
+    # Player movement
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
@@ -295,27 +334,9 @@ def game_loop():
                 player_robot.change_acceleration(0)
         else:
             player_robot.change_acceleration(0)
-
     player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
-    movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena, dt)
+    movement.move_robot(player_robot, player_robot.vel, arena, dt)
     player_robot.paint_robot(pygame, screen)
-
-    # Bots related
-    if frame_count >= change_direction_interval:
-        for i in range(1, len(robots)):
-            # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
-            robots[i].change_acceleration(random.uniform(-1, 1))
-            robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
-            # Setze den Zähler zurück
-            frame_count = 0
-            jump[i - 1] = random.choice([True, False])
-
-    for i in range(1, len(robots)):
-        # Bewegung des Roboters
-        movement.move_bot(robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1])
-        robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
-        jump[i - 1] = False
-        robots[i].paint_robot(pygame, screen)
 
 
 while run:
@@ -340,12 +361,6 @@ while run:
             elif game_paused:
                 handle_pause_screen_events()
 
-        elif event.type == pygame.KEYUP:
-            key = event.key
-            player_robot = robots[0]
-            if key == pygame.K_UP and player_robot.jump_counter == 1:
-                player_robot.can_jump_again = True
-
         elif event.type == pygame.KEYDOWN:
             if playing and not game_paused:
                 key = event.key
@@ -359,6 +374,9 @@ while run:
                     attack_cooldown += 1
                 elif key == pygame.K_f:
                     player_robot.take_damage_debug(10)
+                elif key == pygame.K_UP:
+                    if player_robot.jump_counter <= 1:
+                        player_robot.jump = True
             elif build_arena:
                 handle_build_arena_menu_events(event)
 

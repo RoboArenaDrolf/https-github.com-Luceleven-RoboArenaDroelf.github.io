@@ -16,7 +16,7 @@ class Robot:
     health_max: int
     health: int
     color: str
-    can_jump_again = False
+    jump = False
     jump_counter = 0
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):

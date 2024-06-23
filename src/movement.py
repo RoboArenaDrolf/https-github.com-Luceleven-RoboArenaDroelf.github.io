@@ -1,14 +1,10 @@
-import pygame
-
-
 class Movement:
 
     def __init__(self, gravity):
         self.gravity = gravity
 
-    def move_robot(self, robot, screen_height, screen_width, x, arena, dt):
+    def move_robot(self, robot, x, arena, dt):
         dt_scaled = dt / 15.0
-        keys = pygame.key.get_pressed()
 
         # Bewegung in x-Richtung
         robot.posx += x * dt_scaled
@@ -18,18 +14,6 @@ class Movement:
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
-
-        # Überprüfen, ob der Roboter die seitlichen Grenzen der Arena erreicht hat
-        if robot.posx + robot.radius - arena.x_offset < 0:
-            robot.health = 0
-        elif robot.posx - robot.radius + arena.x_offset > screen_width:
-            robot.health = 0
-
-        # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
-        if robot.posy + robot.radius < arena.y_offset:
-            robot.health = 0
-        elif robot.posy - robot.radius > screen_height - arena.y_offset:
-            robot.health = 0
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
@@ -61,24 +45,13 @@ class Movement:
             robot.change_acceleration(0)
             robot.change_velocity(0)
 
-        # Tastatureingaben verarbeiten
-        if keys[pygame.K_UP]:
-            if robot.jump_counter == 0:
-                robot.vertical_speed = (
-                    -arena.map_size[1] / 75
-                ) * dt_scaled  # Vertikale Geschwindigkeit für den ersten Sprung setzen
-                robot.jump_counter = 1
-            elif robot.can_jump_again:
-                robot.vertical_speed = (
-                    -arena.map_size[1] / 75
-                ) * dt_scaled  # Vertikale Geschwindigkeit für den Doppelsprung setzen
-                robot.can_jump_again = False
-                robot.jump_counter = 2
-
-        # for event in pygame.event.get():
-        #     if event.type == pygame.KEYUP:
-        #         if event.key == pygame.K_UP and robot.jump_counter == 1:
-        #             robot.can_jump_again = True
+        # Sprung
+        if robot.jump:
+            robot.vertical_speed = (
+                -arena.map_size[1] / 75
+            ) * dt_scaled  # Vertikale Geschwindigkeit für den ersten Sprung setzen
+            robot.jump_counter += 1
+            robot.jump = False
 
     def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
 
