@@ -359,9 +359,11 @@ class ArenaBuilder(Arena):
             self.pygame.draw.line(self.screen, self.GREY, (0, y), (self._max_x_of_map, y))
 
     def _load_background(self):
-        self._background_image_filename = self._open_file_dialog()
-        image = self.pygame.image.load(self._background_image_filename).convert()
-        self._set_background_image(image, self.pygame)
+        filename = self._open_file_dialog()
+        if filename != '':
+            self._background_image_filename = filename
+            image = self.pygame.image.load(self._background_image_filename).convert()
+            self._set_background_image(image, self.pygame)
 
     def _open_file_dialog(self):
         root = Tk()
