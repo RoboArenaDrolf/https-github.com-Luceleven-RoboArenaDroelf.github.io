@@ -201,12 +201,23 @@
         um sie besser bemerkbar zu machen.
     </p>
 
-    <h1>Sprint 4:</h1>
+    <h1>Sprint 5 (12.06. - 26.06.):</h1>
     <p>In diesem Sprint hat sich Emanuel um die Roboter-Grafiken gekümmert. Zuerst hat er eine Community-Vorlage 
         auf Pixelart dafür verwendet. Es stellte sich schnell das Problem heraus, dass der Roboter bei einer Geschwindigkeit
         von 0 nicht die korrekte ausgangsposition hatte (Grafik sollte horizontal gespiegelt angezeigt werden, wenn Roboter
         nach links schaut). Dies wurde korrigiert, in dem wir jetzt im Gameloop der paint_robot()-Funktion eine Variabel mehr 
         mitgeben, die die Blickrichtung des Roboters bestimmt.
+    </p>
+    <p>
+        Luca hat die bugs bei der anpassbaren Screen Size behoben und dieses Feature vollends umgesetzt. Danach hat er Björn geholfen bei der Umsetzung der hitbox/treffen anderer Roboter des melee Angriffs.
+        Mithilfe dieses Features hat er einen Rückstoß bei der Attacke hinzugefügt sowie eine Prozentzahl wie in Smash Bros, die sich bei jedem Treffer erhöht und bei der Rückstoß Berechnung verwendet wird.
+        Also desto öfter ein Roboter getroffen wurde desto größer ist der Rückstoß. Diese Rückstoß prozente werden in der Health UI unter den Lebenspunkten angezeigt. In diesem Zug hat er auch das movement
+        der bots etwas angepasst, damit sich diese etwas mehr wie der player bewegen, sodass man den Rückstoß besser beobachten kann. Zudem hat er auch einen simplen Death Screen eingebaut und die map grenzen
+        so umgeschrieben, dass man über diese hinaus kann und stirbt sobald man außerhalb der map grenzen ist.<br>
+        Danach hat er versucht die Performance des Spiels zu verbessern, da es mittlerweile vor allem bei größeren Bildschirm Auflösungen zu sehr starken Performance Einbußen kam. Das Hauptproblem war
+        dass die Arena jeden Frame neu gerendert wurde. Diese wird nun pre-gerendered was die Performance stark erhöht hat. Zudem hat er die Codebase refactored, da das main game.py file schon über 600 Zeilen lang war.
+        Dabei hat er die Methoden für das painting der Screens wie den main menu screen in eine extra Klasse gepackt und einige Methoden extrahiert, sodass der main game loop übersichtlicher ist.
+        Zudem hat er auch logik aus der Movement Klasse, die Tastatur Eingaben verarbeitet hat, in den main game loop verschoben, was den Doppelsprung einfacher und reaktionsschneller gemacht hat.
     </p>
 </body>
 </html>
