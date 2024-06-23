@@ -56,6 +56,7 @@ jump = []
 
 clock = pygame.time.Clock()
 
+
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
     robot_radius = min(display_resolution) / 40
