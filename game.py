@@ -37,6 +37,7 @@ font_size_big = int(display_resolution[1] / 16)
 font_size_small = int(display_resolution[1] / 25)
 robot_spawn_distance = display_resolution[0] / 10
 
+direction_left = False
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
@@ -424,6 +425,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
@@ -440,6 +442,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -452,6 +455,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False]
@@ -470,6 +474,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -482,6 +487,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -494,6 +500,7 @@ while run:
                             100,
                             "green",
                             2,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False, False]
@@ -512,6 +519,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -524,6 +532,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -536,6 +545,7 @@ while run:
                             100,
                             "green",
                             2,
+                            arena.tile_size,
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -548,6 +558,7 @@ while run:
                             100,
                             "yellow",
                             3,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False, False, False]
@@ -601,8 +612,10 @@ while run:
             player_robot.take_damage_debug(10)
         if keys[pygame.K_RIGHT]:
             player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+            direction_left = False
         elif keys[pygame.K_LEFT]:
             player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+            direction_left = True
         else:
             if player_robot.vel < 0:
                 player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
@@ -633,11 +646,11 @@ while run:
             )
             robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
             jump[i - 1] = False
-            robots[i].paint_robot(pygame, screen)
+            robots[i].paint_robot(pygame, screen, direction_left)
 
         player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
         movement.move_robot(player_robot, display_resolution[1], display_resolution[0], player_robot.vel, arena)
-        player_robot.paint_robot(pygame, screen)
+        player_robot.paint_robot(pygame, screen, direction_left)
     elif game_paused:
         pause_screen()
     elif death:
