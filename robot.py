@@ -31,8 +31,23 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.robot_image = pygame.image.load("Robots/playerRobot.png")
-        self.robot_image = pygame.transform.scale(self.robot_image, pygame.display.get_window_size() )
+        self.scale_robot_image()
         self.robot_image_scaled = pygame.transform.flip(self.robot_image, True, False)
+
+    def scale_robot_image(self):
+        screen_width, screen_height = pygame.display.get_window_size()
+        if screen_width == 720 and screen_height == 720:
+            robot_size = (50, 50)
+        elif screen_width == 1280 and screen_height == 720:
+            robot_size = (50, 50)
+        elif screen_width == 1280 and screen_height == 1080:
+            robot_size = (65, 65)
+        elif screen_width == 1920 and screen_height == 1080:
+            robot_size = (70, 70)
+        else:
+            robot_size = (135, 135)  # Fullscreen or other resolutions
+
+        self.robot_image = pygame.transform.scale(self.robot_image, robot_size)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
