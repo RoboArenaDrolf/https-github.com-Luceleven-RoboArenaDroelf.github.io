@@ -25,23 +25,9 @@ white = (255, 255, 255)
 robot_radius = min(display_resolution) / 40
 robot_spawn_distance = display_resolution[0] / 10
 
-
-def recalculate_robot_values():
-    global robots, robot_radius, robot_spawn_distance
-    robot_radius = min(display_resolution) / 40
-    robot_spawn_distance = display_resolution[0] / 10
-    if robots:
-        for i, robot in enumerate(robots):
-            robot.radius = robot_radius
-            robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
-            robot.accel_max = arena.map_size[0] / float(1000)
-            robot.accel_alpha_max = arena.map_size[0] / float(1000)
-            robot.vel_max = arena.map_size[0] / float(200)
-
-
+map_name = "secondMap.json"
 movement = Movement(display_resolution[1] / 2000)
-arena = Arena("secondMap.json", pygame)
+arena = Arena(map_name, pygame)
 screens = Screens(pygame)
 
 game_paused = False
@@ -69,6 +55,19 @@ attack_cooldown = 0
 jump = []
 
 clock = pygame.time.Clock()
+
+def recalculate_robot_values():
+    global robots, robot_radius, robot_spawn_distance
+    robot_radius = min(display_resolution) / 40
+    robot_spawn_distance = display_resolution[0] / 10
+    if robots:
+        for i, robot in enumerate(robots):
+            robot.radius = robot_radius
+            robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
+            robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            robot.accel_max = arena.map_size[0] / float(1000)
+            robot.accel_alpha_max = arena.map_size[0] / float(1000)
+            robot.vel_max = arena.map_size[0] / float(200)
 
 
 def handle_main_menu_events():
@@ -150,7 +149,7 @@ def handle_settings_menu_events():
         else:
             screen = pygame.display.set_mode(display_resolution)
         screens = Screens(pygame)
-        arena = Arena("secondMap.json", pygame)
+        arena = Arena(map_name, pygame)
         movement = Movement(display_resolution[1] / 2000)
         recalculate_robot_values()
 
