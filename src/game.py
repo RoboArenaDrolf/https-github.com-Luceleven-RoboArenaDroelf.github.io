@@ -169,7 +169,7 @@ def handle_start_game_menu_events():
         100,
         "blue",
         0,
-        arena.tile_size
+        arena.tile_size,
     )
     robot2 = Robot(
         2 * robot_spawn_distance + arena.x_offset,
@@ -182,7 +182,7 @@ def handle_start_game_menu_events():
         100,
         "red",
         1,
-        arena.tile_size
+        arena.tile_size,
     )
     robot3 = Robot(
         3 * robot_spawn_distance + arena.x_offset,
@@ -195,7 +195,7 @@ def handle_start_game_menu_events():
         100,
         "green",
         2,
-        arena.tile_size
+        arena.tile_size,
     )
     robot4 = Robot(
         4 * robot_spawn_distance + arena.x_offset,
@@ -208,7 +208,7 @@ def handle_start_game_menu_events():
         100,
         "yellow",
         3,
-        arena.tile_size
+        arena.tile_size,
     )
 
     if one_player_rect.collidepoint(mouse_pos):

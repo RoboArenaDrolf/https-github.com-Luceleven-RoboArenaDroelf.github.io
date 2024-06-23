@@ -1,6 +1,7 @@
 import math
 import pygame
 
+
 class Robot:
     posx: int
     posy: int
@@ -30,10 +31,9 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.ts = ts
-        self.first_robot = pygame.image.load("./../Robots/playerRobot.png")
-        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts,self.ts))
+        self.first_robot = pygame.image.load("./../PixelArt/playerRobot.png")
+        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts, self.ts))
         self.first_robot_scaled = pygame.transform.flip(self.first_robot, True, False)
-
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
