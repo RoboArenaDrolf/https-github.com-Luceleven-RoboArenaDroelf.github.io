@@ -1,6 +1,6 @@
 import math
 import pygame
-
+import arena
 
 class Robot:
     posx: int
@@ -18,7 +18,7 @@ class Robot:
     can_jump_again = False
     jump_counter = 0
 
-    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
+    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn, ts):
         self.posx = x
         self.posy = y
         self.radius = r
@@ -30,24 +30,11 @@ class Robot:
         self.health = self.health_max
         self.color = c
         self.player_number = pn
-        self.robot_image = pygame.image.load("Robots/playerRobot.png")
-        self.scale_robot_image()
-        self.robot_image_scaled = pygame.transform.flip(self.robot_image, True, False)
+        self.ts = ts
+        self.first_robot = pygame.image.load("Robots/playerRobot.png")
+        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts,self.ts))
+        self.first_robot_scaled = pygame.transform.flip(self.first_robot, True, False)
 
-    def scale_robot_image(self):
-        screen_width, screen_height = pygame.display.get_window_size()
-        if screen_width == 720 and screen_height == 720:
-            robot_size = (50, 50)
-        elif screen_width == 1280 and screen_height == 720:
-            robot_size = (50, 50)
-        elif screen_width == 1280 and screen_height == 1080:
-            robot_size = (65, 65)
-        elif screen_width == 1920 and screen_height == 1080:
-            robot_size = (70, 70)
-        else:
-            robot_size = (135, 135)  # Fullscreen or other resolutions
-
-        self.robot_image = pygame.transform.scale(self.robot_image, robot_size)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -93,14 +80,14 @@ class Robot:
 
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
-        image_rect = self.robot_image.get_rect(center=(self.posx, self.posy-7))
+        image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
 
         print(pygame.display.get_window_size())
 
         if not direction_left:
-            screen.blit(self.robot_image, image_rect)
+            screen.blit(self.first_robot, image_rect)
         elif direction_left:
-            screen.blit(self.robot_image_scaled, image_rect)
+            screen.blit(self.first_robot_scaled, image_rect)
 
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))

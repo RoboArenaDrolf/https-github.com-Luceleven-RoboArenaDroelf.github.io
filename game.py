@@ -397,6 +397,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         )
                     ]
                 elif two_player_rect.collidepoint(mouse_pos):
