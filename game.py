@@ -414,6 +414,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -426,6 +427,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False]
@@ -443,6 +445,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -455,6 +458,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -467,6 +471,7 @@ while run:
                             100,
                             "green",
                             2,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False, False]
@@ -485,6 +490,7 @@ while run:
                             100,
                             "blue",
                             0,
+                            arena.tile_size,
                         ),
                         Robot(
                             2 * robot_spawn_distance + arena.x_offset,
@@ -497,6 +503,7 @@ while run:
                             100,
                             "red",
                             1,
+                            arena.tile_size,
                         ),
                         Robot(
                             3 * robot_spawn_distance + arena.x_offset,
@@ -509,6 +516,7 @@ while run:
                             100,
                             "green",
                             2,
+                            arena.tile_size,
                         ),
                         Robot(
                             4 * robot_spawn_distance + arena.x_offset,
@@ -521,6 +529,7 @@ while run:
                             100,
                             "yellow",
                             3,
+                            arena.tile_size,
                         ),
                     ]
                     jump = [False, False, False]
