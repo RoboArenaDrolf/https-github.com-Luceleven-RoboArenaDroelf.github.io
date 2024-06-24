@@ -413,6 +413,22 @@ while run:
                         y_tiles = y_tiles[:-1]
                     else:
                         y_tiles += event.unicode
+        elif map:
+            level_menu()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if continue_rect.collidepoint(mouse_pos):
+                    map = False
+                    start_game = False
+                    playing = True
+                print(level_rects)
+                for i, res_rect in enumerate(level_rects):
+                    print(mouse_pos)
+                    if res_rect.collidepoint(mouse_pos):
+                        arena = Arena(maps[i],pygame)
+                        map = False
+                        playing = True
+                        break
         elif settings:
             settings_menu()
             dis_res_changed = False
@@ -446,7 +462,6 @@ while run:
                 rect_inflate_y = display_resolution[1] / 50
                 font_size_big = int(display_resolution[1] / 16)
                 font_size_small = int(display_resolution[1] / 25)
-                arena = Arena("secondMap.json", pygame)
                 movement = Movement(display_resolution[1] / 2000)
                 recalculate_robot_values()
         elif start_game:
@@ -597,24 +612,7 @@ while run:
                 if robots:
                     start_game = False
                     map = True
-        elif map:
-            level_menu()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                mouse_pos = pygame.mouse.get_pos()
-                if continue_rect.collidepoint(mouse_pos):
-                    map = False
-                    start_game = False
-                    playing = True
-                #print(level_rects)
-                for i, res_rect in enumerate(level_rects):
-                    if res_rect.collidepoint(mouse_pos):
-                        map = False
-                        playing = True
-                        print(res_rect)
-                        print(maps[i])
-                        print("Maps/"+maps[i])
-                        arena = Arena("Maps/"+maps[i],pygame)
-                        break
+                    
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
