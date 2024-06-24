@@ -17,6 +17,7 @@ class Robot:
     color: str
     jump = False
     jump_counter = 0
+    robots_base_path = "./../Robots/"
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn, ts):
         self.posx = x
@@ -31,13 +32,12 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.ts = ts
-        self.first_robot = pygame.image.load("./../Robots/firstRobot.png")
-        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts,self.ts))
-        self.first_robot_scaled = pygame.transform.flip(self.first_robot, True, False)
-        self.second_robot = pygame.image.load("./../Robots/secondRobot.png")
-        self.second_robot = pygame.transform.scale(self.second_robot, (self.ts,self.ts))
-        self.second_robot_scaled = pygame.transform.flip(self.second_robot, True, False)
-
+        self.first_robot = pygame.image.load(self.robots_base_path + "firstRobot.png")
+        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts, self.ts))
+        self.first_robot_flipped = pygame.transform.flip(self.first_robot, True, False)
+        self.second_robot = pygame.image.load(self.robots_base_path + "secondRobot.png")
+        self.second_robot = pygame.transform.scale(self.second_robot, (self.ts, self.ts))
+        self.second_robot_flipped = pygame.transform.flip(self.second_robot, True, False)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -75,7 +75,7 @@ class Robot:
             self.health = self.health - d
         else:
             self.health = 0
-            
+
     def attack(self, pygame, screen, robots):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
@@ -125,27 +125,27 @@ class Robot:
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
-        nb = self.player_number + 1
-        if nb == 1:
+        pn = self.player_number
+        if pn == 0:
             if not direction_left:
                 screen.blit(self.first_robot, image_rect)
             elif direction_left:
-                screen.blit(self.first_robot_scaled, image_rect)
-        if nb == 2:
+                screen.blit(self.first_robot_flipped, image_rect)
+        elif pn == 1:
             if not direction_left:
                 screen.blit(self.second_robot, image_rect)
             elif direction_left:
-                screen.blit(self.second_robot_scaled, image_rect)
-        if nb == 3:
+                screen.blit(self.second_robot_flipped, image_rect)
+        elif pn == 2:
             if not direction_left:
                 screen.blit(self.first_robot, image_rect)
             elif direction_left:
-                screen.blit(self.first_robot_scaled, image_rect)
-        if nb == 4:
+                screen.blit(self.first_robot_flipped, image_rect)
+        elif pn == 3:
             if not direction_left:
                 screen.blit(self.first_robot, image_rect)
             elif direction_left:
-                screen.blit(self.first_robot_scaled, image_rect)
+                screen.blit(self.first_robot_flipped, image_rect)
         # corresponding health UI
         health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
         player_health = health_font.render(f"{self.health}", True, f"{self.color}")
