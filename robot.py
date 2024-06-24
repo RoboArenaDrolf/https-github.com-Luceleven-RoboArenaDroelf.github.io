@@ -18,7 +18,7 @@ class Robot:
     can_jump_again = False
     jump_counter = 0
 
-    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn, ts):
+    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn, ts, nb):
         self.posx = x
         self.posy = y
         self.radius = r
@@ -31,9 +31,13 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.ts = ts
-        self.first_robot = pygame.image.load("Robots/playerRobot.png")
+        self.nb = nb    
+        self.first_robot = pygame.image.load("Robots/firstRobot.png")
         self.first_robot = pygame.transform.scale(self.first_robot, (self.ts,self.ts))
         self.first_robot_scaled = pygame.transform.flip(self.first_robot, True, False)
+        self.second_robot = pygame.image.load("Robots/secondRobot.png")
+        self.second_robot = pygame.transform.scale(self.second_robot, (self.ts,self.ts))
+        self.second_robot_scaled = pygame.transform.flip(self.second_robot, True, False)
 
 
     def change_acceleration(self, a):
@@ -119,12 +123,27 @@ class Robot:
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
-
-        if not direction_left:
-            screen.blit(self.first_robot, image_rect)
-        elif direction_left:
-            screen.blit(self.first_robot_scaled, image_rect)
-
+        nb = self.nb
+        if nb == 1:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_scaled, image_rect)
+        if nb == 2:
+            if not direction_left:
+                screen.blit(self.second_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.second_robot_scaled, image_rect)
+        if nb == 3:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_scaled, image_rect)
+        if nb == 4:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_scaled, image_rect)       
         # corresponding health UI
         health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
         player_health = health_font.render(f"{self.health}", True, f"{self.color}")
