@@ -283,7 +283,6 @@ class Screens:
         )
 
         # Hole die JSON- und PNG-Dateinamen
-        directory = "Maps"
         # png_filenames = get_png_filenames(directory)
 
         level_rects = []
