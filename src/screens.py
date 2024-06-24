@@ -268,3 +268,39 @@ class Screens:
         screen.blit(four_player, four_player_rect)
 
         return one_player_rect, two_player_rect, three_player_rect, four_player_rect
+
+    def level_menu(self, pygame, screen, json_filenames):
+        screen.fill(self.white)
+
+        font = pygame.font.Font(None, self.font_size_big)
+        text = font.render("Welches Level möchten Sie spielen?", True, self.black)
+        screen.blit(
+            text,
+            (
+                self.display_resolution[0] // 2 - text.get_width() // 2,
+                self.display_resolution[1] // 2 - text.get_height() // 2 - 3 * self.dist_between_elements,
+            ),
+        )
+
+        # Hole die JSON- und PNG-Dateinamen
+        directory = "Maps"
+        # png_filenames = get_png_filenames(directory)
+
+        level_rects = []
+        maps = []
+        # Anzeige der JSON-Dateinamen
+        small_font = pygame.font.Font(None, self.font_size_small)
+        for index, filename in enumerate(json_filenames):
+            level_text = small_font.render(filename, True, self.white)
+            level_rect = level_text.get_rect(
+                center=(
+                    self.display_resolution[0] // 2,
+                    self.display_resolution[1] // 2 - self.dist_between_elements + index * self.dist_between_elements,
+                )
+            )
+            pygame.draw.rect(screen, self.black, level_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
+            screen.blit(level_text, level_rect)
+            level_rects.append(level_rect)
+            maps.append(filename + ".json")
+
+        return level_rects, maps
