@@ -284,7 +284,7 @@ def start_screen():
 
 
 def level_menu():
-    global continue_rect, res_rect
+    global continue_rect, level_rects, maps
     screen.fill(white)
 
     font = pygame.font.Font(None, font_size_big)
@@ -302,7 +302,8 @@ def level_menu():
     json_filenames = get_json_filenames(directory)
     #png_filenames = get_png_filenames(directory)
 
-
+    level_rects = []
+    maps = []
     # Anzeige der JSON-Dateinamen
     small_font = pygame.font.Font(None, font_size_small)
     for index, filename in enumerate(json_filenames):
@@ -317,6 +318,8 @@ def level_menu():
                 display_resolution[1] // 2 - level_text.get_height() // 2 + index * dist_between_elements
             ),
         )
+        level_rects.append(res_rect)
+        maps.append(filename+".json")
 
 
     # Continue Button
@@ -598,18 +601,20 @@ while run:
             level_menu()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-
-                if res_rect.collidepoint(mouse_pos):
-                    map = False
-                    start_game = False
-                    playing = True
-
                 if continue_rect.collidepoint(mouse_pos):
                     map = False
                     start_game = False
                     playing = True
-
-
+                #print(level_rects)
+                for i, res_rect in enumerate(level_rects):
+                    if res_rect.collidepoint(mouse_pos):
+                        map = False
+                        playing = True
+                        print(res_rect)
+                        print(maps[i])
+                        print("Maps/"+maps[i])
+                        arena = Arena("Maps/"+maps[i],pygame)
+                        break
         elif event.type == pygame.MOUSEBUTTONDOWN and game_paused:
             mouse_pos = pygame.mouse.get_pos()
             if resume_rect.collidepoint(mouse_pos):
