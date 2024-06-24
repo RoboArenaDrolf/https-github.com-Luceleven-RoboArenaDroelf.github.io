@@ -6,9 +6,9 @@ import sys
 
 from movement import Movement
 from arena import Arena
-from src.arenaBuilder import ArenaBuilder
-from src.robot import Robot
-from src.screens import Screens
+from arenaBuilder import ArenaBuilder
+from robot import Robot
+from screens import Screens
 
 pygame.init()
 
@@ -57,6 +57,7 @@ attack_cooldown = 0
 jump = []
 
 clock = pygame.time.Clock()
+
 
 def get_json_filenames(directory):
     json_files = []
@@ -275,6 +276,7 @@ def handle_pause_screen_events():
     elif quit_rect.collidepoint(mouse_pos):
         pygame.quit()
         sys.exit()
+
 
 def handle_map_screen_events():
     global map, playing, arena, map_name
