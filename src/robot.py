@@ -19,7 +19,7 @@ class Robot:
     jump_counter = 0
     robots_base_path = "./../Robots/"
 
-    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn, ts):
+    def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
         self.posy = y
         self.radius = r
@@ -31,12 +31,11 @@ class Robot:
         self.health = self.health_max
         self.color = c
         self.player_number = pn
-        self.ts = ts
         self.first_robot = pygame.image.load(self.robots_base_path + "firstRobot.png")
-        self.first_robot = pygame.transform.scale(self.first_robot, (self.ts, self.ts))
+        self.first_robot = pygame.transform.scale(self.first_robot, (self.radius * 2, self.radius * 2))
         self.first_robot_flipped = pygame.transform.flip(self.first_robot, True, False)
         self.second_robot = pygame.image.load(self.robots_base_path + "secondRobot.png")
-        self.second_robot = pygame.transform.scale(self.second_robot, (self.ts, self.ts))
+        self.second_robot = pygame.transform.scale(self.second_robot, (self.radius * 2, self.radius * 2))
         self.second_robot_flipped = pygame.transform.flip(self.second_robot, True, False)
 
     def change_acceleration(self, a):

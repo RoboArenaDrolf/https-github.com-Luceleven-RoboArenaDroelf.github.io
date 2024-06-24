@@ -22,13 +22,13 @@ pygame.display.set_caption("Robo Arena")
 
 white = (255, 255, 255)
 
-robot_radius = min(display_resolution) / 40
-robot_spawn_distance = display_resolution[0] / 10
-
 map_name = "secondMap.json"
 movement = Movement(display_resolution[1] / 2000)
 arena = Arena(map_name, pygame)
 screens = Screens(pygame)
+
+robot_radius = arena.tile_size * 0.5
+robot_spawn_distance = display_resolution[0] / 10
 
 game_paused = False
 run = True
@@ -169,7 +169,6 @@ def handle_start_game_menu_events():
         100,
         "blue",
         0,
-        arena.tile_size,
     )
     robot2 = Robot(
         2 * robot_spawn_distance + arena.x_offset,
@@ -182,7 +181,6 @@ def handle_start_game_menu_events():
         100,
         "red",
         1,
-        arena.tile_size,
     )
     robot3 = Robot(
         3 * robot_spawn_distance + arena.x_offset,
@@ -195,7 +193,6 @@ def handle_start_game_menu_events():
         100,
         "green",
         2,
-        arena.tile_size,
     )
     robot4 = Robot(
         4 * robot_spawn_distance + arena.x_offset,
@@ -208,7 +205,6 @@ def handle_start_game_menu_events():
         100,
         "yellow",
         3,
-        arena.tile_size,
     )
 
     if one_player_rect.collidepoint(mouse_pos):
