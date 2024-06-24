@@ -31,10 +31,10 @@ class Robot:
         self.color = c
         self.player_number = pn
         self.ts = ts
-        self.first_robot = pygame.image.load("Robots/firstRobot.png")
+        self.first_robot = pygame.image.load("./../Robots/firstRobot.png")
         self.first_robot = pygame.transform.scale(self.first_robot, (self.ts,self.ts))
         self.first_robot_scaled = pygame.transform.flip(self.first_robot, True, False)
-        self.second_robot = pygame.image.load("Robots/secondRobot.png")
+        self.second_robot = pygame.image.load("./../Robots/secondRobot.png")
         self.second_robot = pygame.transform.scale(self.second_robot, (self.ts,self.ts))
         self.second_robot_scaled = pygame.transform.flip(self.second_robot, True, False)
 

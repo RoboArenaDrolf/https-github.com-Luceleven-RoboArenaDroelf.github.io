@@ -26,7 +26,7 @@ class Arena:
             """
             Sets the images of the Enum TileType to the loaded pictures specified by their filename.
             :param pygame: instance of pygame
-            :param base_path: base path of picture directory, for example ".\\PixelArt\\"
+            :param base_path: base path of picture directory, for example ".\\Tiles\\"
             :param tile_size: size of the tiles
             """
             for member in cls:
@@ -34,7 +34,7 @@ class Arena:
                     pygame.image.load(base_path + member.filename).convert(), (tile_size, tile_size)
                 )
 
-    blocks_base_path = "./../PixelArt/"
+    blocks_base_path = "../Tiles/"
     maps_base_path = "./../Maps/"
 
     def __init__(self, filename, pygame):
