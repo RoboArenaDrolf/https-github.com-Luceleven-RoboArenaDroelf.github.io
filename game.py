@@ -1,6 +1,7 @@
 import random
 import pygame
 import sys
+import os
 from screeninfo import get_monitors
 
 from robot import Robot
@@ -38,6 +39,31 @@ font_size_small = int(display_resolution[1] / 25)
 robot_spawn_distance = display_resolution[0] / 10
 
 direction_left = False
+
+map = ""
+
+
+def get_json_filenames(directory):
+    json_files = []
+    # Gehe durch alle Dateien im angegebenen Verzeichnis
+    for filename in os.listdir(directory):
+        # Überprüfe, ob die Datei die Endung .json hat
+        if filename.endswith(".json"):
+            # Füge den Dateinamen ohne die Endung .json der Liste hinzu
+            json_files.append(filename[:-5])
+    return json_files
+
+
+def get_png_filenames(directory):
+    png_files = []
+    # Gehe durch alle Dateien im angegebenen Verzeichnis
+    for filename in os.listdir(directory):
+        # Überprüfe, ob die Datei die Endung .png hat
+        if filename.endswith(".png"):
+            # Füge den Dateinamen der Liste hinzu
+            png_files.append(filename)
+    return png_files
+  
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
@@ -289,6 +315,53 @@ def start_screen():
     screen.blit(four_player, four_player_rect)
 
 
+def level_menu():
+    global continue_rect, level_rects, maps
+    screen.fill(white)
+
+    font = pygame.font.Font(None, font_size_big)
+    text = font.render("Welches Level möchten Sie spielen?", True, black)
+    screen.blit(
+        text,
+        (
+            display_resolution[0] // 2 - text.get_width() // 2,
+            display_resolution[1] // 2 - text.get_height() // 2 - 3 * dist_between_elements,
+        ),
+    )
+
+    # Hole die JSON- und PNG-Dateinamen
+    directory = "Maps"
+    json_filenames = get_json_filenames(directory)
+    # png_filenames = get_png_filenames(directory)
+
+    level_rects = []
+    maps = []
+    # Anzeige der JSON-Dateinamen
+    small_font = pygame.font.Font(None, font_size_small)
+    for index, filename in enumerate(json_filenames):
+        level_text = small_font.render(filename, True, white)
+        level_rect = level_text.get_rect(
+            center=(
+                display_resolution[0] // 2,
+                display_resolution[1] // 2 - dist_between_elements + index * dist_between_elements,
+            )
+        )
+        pygame.draw.rect(screen, black, level_rect.inflate(rect_inflate_x, rect_inflate_y))
+        screen.blit(level_text, level_rect)
+        level_rects.append(level_rect)
+        maps.append(filename + ".json")
+
+    # Continue Button
+    continue_button = small_font.render("continue", True, black)
+    continue_rect = continue_button.get_rect(
+        center=(
+            display_resolution[0] // 2,
+            display_resolution[1] // 2 + (len(json_filenames) + 1) * dist_between_elements,
+        )
+    )
+    screen.blit(continue_button, continue_rect)
+
+
 movement = Movement(display_resolution[1] / 2000)
 arena = Arena("secondMap.json", pygame)
 
@@ -296,6 +369,7 @@ game_paused = False
 run = True
 start_game = False
 menu = True
+map = False
 build_arena = False
 settings = False
 playing = False
@@ -371,6 +445,21 @@ while run:
                         y_tiles = y_tiles[:-1]
                     else:
                         y_tiles += event.unicode
+        elif map:
+            level_menu()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if continue_rect.collidepoint(mouse_pos):
+                    map = False
+                    playing = True
+                print(level_rects)
+                for i, level_rect in enumerate(level_rects):
+                    print(mouse_pos)
+                    if level_rect.collidepoint(mouse_pos):
+                        arena = Arena(maps[i], pygame)
+                        map = False
+                        playing = True
+                        break
         elif settings:
             settings_menu()
             dis_res_changed = False
@@ -404,7 +493,6 @@ while run:
                 rect_inflate_y = display_resolution[1] / 50
                 font_size_big = int(display_resolution[1] / 16)
                 font_size_small = int(display_resolution[1] / 25)
-                arena = Arena("secondMap.json", pygame)
                 movement = Movement(display_resolution[1] / 2000)
                 recalculate_robot_values()
         elif start_game:
@@ -575,7 +663,7 @@ while run:
 
                 if robots:
                     start_game = False
-                    playing = True
+                    map = True
         elif death:
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
