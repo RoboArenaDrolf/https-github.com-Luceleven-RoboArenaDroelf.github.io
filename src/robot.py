@@ -176,14 +176,17 @@ class Robot:
                 # Überprüfen, ob die Projectile die seitlichen Grenzen der Arena erreicht hat
                 if robots[i].projectiles[j].x < robots[i].projectiles[j].radius + arena.x_offset:
                     to_delete.append(j)
-                    # print("we delete this") #  shoot the left wall and see this
+                    # print("we delete this, left")  # shoot the left wall and see this
                 elif robots[i].projectiles[j].x > screen_width - robots[i].projectiles[j].radius - arena.x_offset:
                     to_delete.append(j)
+                    # print("we delete this, right")
                 # Überprüfen, ob die Projectile die oberen und unteren Grenzen der Arena erreicht hat
                 elif robots[i].projectiles[j].y - robots[i].projectiles[j].radius < arena.y_offset:
                     to_delete.append(j)
+                    # print("we delete this, up")
                 elif robots[i].projectiles[j].y + robots[i].projectiles[j].radius > screen_height - arena.y_offset:
                     to_delete.append(j)
+                    # print("we delete this, down")
                 # Kollisionen in y-Richtung überprüfen und behandeln
                 elif robots[i].projectiles[j].check_collision_y(arena):
                     to_delete.append(j)

@@ -397,7 +397,7 @@ def player_robot_handling(player_robot):
     player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
     movement.move_robot(player_robot, player_robot.vel, arena, dt)
     player_robot.paint_robot(pygame, screen, direction_left)
-    player_robot.ranged_hit_reg(robots, display_resolution[0], display_resolution[1], arena)
+    player_robot.ranged_hit_reg(robots, display_resolution[1], display_resolution[0], arena)
 
 
 while run:
