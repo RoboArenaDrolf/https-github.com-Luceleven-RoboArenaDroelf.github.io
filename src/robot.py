@@ -158,7 +158,7 @@ class Robot:
             pn = self.player_number  # projectile created by player number x
             # this shouldn't be needed since the robot that owns the projectiles array has this number,
             # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
-            self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
+            self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))  # this append must be the reason
 
     def ranged_hit_reg(self, robots, screen_height, screen_width, arena):
         for i in range(0, len(robots)):
@@ -241,6 +241,8 @@ class Robot:
         )
         screen.blit(player_health, player_rect)
         # projectiles
-        for i in self.projectiles:  # each robot will paint the projectiles it has created
-            i.paint_projectile(pygame, screen)
-            i.move_projectile()
+        for i in self.projectiles:  # each robot will paint and update the projectiles it has created
+            # print(self.player_number, i.player_number)  # why do all robots share the projectiles?
+            if self.player_number == i.player_number:  # this should fix it
+                i.paint_projectile(pygame, screen)
+                i.move_projectile()
