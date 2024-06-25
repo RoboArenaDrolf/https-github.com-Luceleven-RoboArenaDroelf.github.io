@@ -1,6 +1,7 @@
 import math
+import pygame
 
-from projectiles import Projectile
+from src.projectiles import Projectile
 
 
 class Robot:
@@ -9,33 +10,38 @@ class Robot:
     radius = 0
     alpha = 0
     accel = float(0)
-    # accel_max = 1
-    accel_alpha = float(0)  # this might just be useless for us
-    # accel_alpha_max = 1  # this feels VERY useless
+    accel_alpha = float(0)
     vel = float(0)
     vel_alpha = float(0)
-    vertical_speed = float(0)  # Anfangsgeschwindigkeit in der vertikalen Richtung
+    vertical_speed = float(0)
     health_max: int
     health: int
     color: str
-    can_jump_again = False
+    jump = False
     jump_counter = 0
     projectiles = []
     melee_cd = 0
     ranged_cd = 0
+    robots_base_path = "./../Robots/"
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
         self.posy = y
         self.radius = r
-        self.alpha = a % 360  # thanks to mod 360 this will no longer break
+        self.alpha = a % 360
         self.accel_max = am
         self.accel_alpha_max = aam
         self.vel_max = vm
         self.health_max = hm
-        self.health = self.health_max  # we start at full health
+        self.health = self.health_max
         self.color = c
         self.player_number = pn
+        self.first_robot = pygame.image.load(self.robots_base_path + "firstRobot.png")
+        self.first_robot = pygame.transform.scale(self.first_robot, (self.radius * 2, self.radius * 2))
+        self.first_robot_flipped = pygame.transform.flip(self.first_robot, True, False)
+        self.second_robot = pygame.image.load(self.robots_base_path + "secondRobot.png")
+        self.second_robot = pygame.transform.scale(self.second_robot, (self.radius * 2, self.radius * 2))
+        self.second_robot_flipped = pygame.transform.flip(self.second_robot, True, False)
 
     def change_acceleration(self, a):
         if abs(a) <= self.accel_max:
@@ -59,7 +65,7 @@ class Robot:
         self.alpha = a
 
     def change_velocity_cap(self, v):
-        if abs(v) < self.vel_max:  # for now, I have 5 as a static cap we might want to change it to va v_max variable
+        if abs(v) < self.vel_max:
             self.vel = v
         else:
             if v < 0:
@@ -87,9 +93,12 @@ class Robot:
         for i in range(1, len(robots)):
             # now I will use https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line:
             # Line defined by two points
-            if (self.distance_from_segment(line_start[0], line_start[1], line_end[0], line_end[1],
-                                           robots[i].posx, robots[i].posy)
-                    <= robots[i].radius):  # if the distance from this line to the center of a robot
+            if (
+                self.distance_from_segment(
+                    line_start[0], line_start[1], line_end[0], line_end[1], robots[i].posx, robots[i].posy
+                )
+                <= robots[i].radius
+            ):  # if the distance from this line to the center of a robot
                 # is smaller than it's radius, we have a hit and that robot takes some damage
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
@@ -188,13 +197,31 @@ class Robot:
             for n in to_delete:  # after the j loop we delete them
                 robots[i].projectiles.pop(n)
 
-    def paint_robot(self, pygame, screen):
-        # robot
-        pygame.draw.circle(screen, self.color, (self.posx, self.posy), self.radius)
-        new_x = self.radius * (math.cos(math.radians(self.alpha)))
-        new_y = self.radius * (math.sin(math.radians(self.alpha)))
-        pygame.draw.line(screen, "black", (self.posx, self.posy), (self.posx + new_x, self.posy + new_y))
-        # corresponding health ui
+    def paint_robot(self, pygame, screen, direction_left):
+        # Bild des Roboters zeichnen
+        image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
+        pn = self.player_number
+        if pn == 0:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_flipped, image_rect)
+        elif pn == 1:
+            if not direction_left:
+                screen.blit(self.second_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.second_robot_flipped, image_rect)
+        elif pn == 2:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_flipped, image_rect)
+        elif pn == 3:
+            if not direction_left:
+                screen.blit(self.first_robot, image_rect)
+            elif direction_left:
+                screen.blit(self.first_robot_flipped, image_rect)
+        # corresponding health UI
         health_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
         player_health = health_font.render(f"{self.health}", True, f"{self.color}")
         player_rect = player_health.get_rect(
