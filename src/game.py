@@ -53,7 +53,6 @@ y_tiles = ""
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
 change_direction_interval = 120  # Ändere die Richtung alle 120 Frames
 frame_count = 0
-attack_cooldown = 0
 # Initiale Fensterposition
 window = Window.from_display_module()
 initial_window_pos = window.position
@@ -192,7 +191,7 @@ def handle_start_game_menu_events():
         robot_spawn_distance + arena.x_offset,
         display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
         robot_radius,
-        45,
+        0,
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(200),
@@ -204,7 +203,7 @@ def handle_start_game_menu_events():
         2 * robot_spawn_distance + arena.x_offset,
         display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
         robot_radius,
-        45,
+        0,
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(200),
@@ -216,7 +215,7 @@ def handle_start_game_menu_events():
         3 * robot_spawn_distance + arena.x_offset,
         display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
         robot_radius,
-        45,
+        0,
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(200),
@@ -228,7 +227,7 @@ def handle_start_game_menu_events():
         4 * robot_spawn_distance + arena.x_offset,
         display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
         robot_radius,
-        45,
+        0,
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(1000),
         arena.map_size[0] / float(200),
@@ -298,7 +297,7 @@ def handle_map_screen_events():
 
 
 def game_loop():
-    global player_robot, playing, death, attack_cooldown, frame_count, force
+    global player_robot, playing, death, frame_count, force
 
     screen.fill(white)
     arena.paint_arena(screen)
@@ -334,7 +333,7 @@ def bots_handling():
 
 
 def player_robot_handling(player_robot):
-    global playing, death, attack_cooldown, direction_left
+    global playing, death, direction_left
 
     # Überprüfen, ob player die seitlichen Grenzen der Arena erreicht hat
     if player_robot.posx + player_robot.radius - arena.x_offset < 0:
@@ -351,23 +350,37 @@ def player_robot_handling(player_robot):
         playing = False
         death = True
     # Player attack cooldown
-    if attack_cooldown != 0:
-        if attack_cooldown == 60:
-            attack_cooldown = 0
+    if player_robot.melee_cd != 0:
+        if player_robot.melee_cd == 60:
+            player_robot.melee_cd = 0
         else:
-            attack_cooldown += 1
+            player_robot.melee_cd += 1
+    if player_robot.ranged_cd != 0:
+        if player_robot.ranged_cd == 60:
+            player_robot.ranged_cd = 0
+        else:
+            player_robot.ranged_cd += 1
     # attack will stay for a certain duration
-    if attack_cooldown < 30 and attack_cooldown != 0:
-        player_robot.attack(pygame, screen, robots)
-        attack_cooldown += 1
+    if player_robot.melee_cd < 30 and player_robot.melee_cd != 0:
+        player_robot.melee_attack(pygame, screen, robots)
+        player_robot.melee_cd += 1
+    if player_robot.ranged_cd < 30 and player_robot.ranged_cd != 0:
+        player_robot.ranged_attack()
+        player_robot.ranged_cd += 1
     # Player movement
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
         player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+        player_robot.change_alpha(180)
         direction_left = True
     elif keys[pygame.K_RIGHT]:
         player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+        player_robot.change_alpha(0)
         direction_left = False
+    elif keys[pygame.K_DOWN]:
+        player_robot.change_alpha(90)
+    elif keys[pygame.K_UP]:
+        player_robot.change_alpha(270)
     else:
         if player_robot.vel < 0:
             player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
@@ -384,6 +397,7 @@ def player_robot_handling(player_robot):
     player_robot.change_velocity_cap(player_robot.vel + player_robot.accel)
     movement.move_robot(player_robot, player_robot.vel, arena, dt)
     player_robot.paint_robot(pygame, screen, direction_left)
+    player_robot.ranged_hit_reg(robots, display_resolution[0], display_resolution[1], arena)
 
 
 while run:
@@ -423,10 +437,13 @@ while run:
                 if key == pygame.K_ESCAPE:
                     game_paused = True
                 elif (
-                    key == pygame.K_g and attack_cooldown == 0
+                    key == pygame.K_g and player_robot.melee_cd == 0
                 ):  # we can attack if we have no cooldown and press the button
-                    player_robot.attack(pygame, screen, robots)
-                    attack_cooldown += 1
+                    player_robot.melee_attack(pygame, screen, robots)
+                    player_robot.melee_cd += 1
+                elif key == pygame.K_r and player_robot.ranged_cd == 0:
+                    player_robot.ranged_attack()
+                    player_robot.ranged_cd += 1
                 elif key == pygame.K_f:
                     player_robot.take_damage_debug(10)
                 elif key == pygame.K_UP:
