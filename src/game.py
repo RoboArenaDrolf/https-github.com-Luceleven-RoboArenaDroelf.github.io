@@ -65,8 +65,10 @@ def get_json_filenames(directory):
     for filename in os.listdir(directory):
         # Überprüfe, ob die Datei die Endung .json hat
         if filename.endswith(".json"):
-            # Füge den Dateinamen ohne die Endung .json der Liste hinzu
-            json_files.append(filename[:-5])
+            # Überprüfe, ob es nicht die emptyMap ist, denn diese wird ausgeschlossen
+            if filename != "emptyMap.json":
+                # Füge den Dateinamen ohne die Endung .json der Liste hinzu
+                json_files.append(filename[:-5])
     return json_files
 
 
