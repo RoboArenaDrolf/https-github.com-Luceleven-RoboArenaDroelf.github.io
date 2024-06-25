@@ -35,6 +35,7 @@ class ArenaBuilder(Arena):
         self._legend_space = screen_size[0] / 5
         pygame.display.set_mode((screen_size[0] - self._legend_space, screen_size[1]))
         super().__init__(filename, pygame)
+        self.render_arena(pygame)
         self.x_offset = 0
         self.y_offset = 0
         self.pygame = pygame
@@ -169,6 +170,7 @@ class ArenaBuilder(Arena):
         y //= self.tile_size
         if x < self.num_tiles_x and y < self.num_tiles_y:
             self.set_tile(x, y, current_tile)
+            self.render_arena(self.pygame)
 
     def _handle_key_down(self, current_tile, event):
         if self._input_active_saving:
@@ -265,7 +267,7 @@ class ArenaBuilder(Arena):
         Paints the arena defined by tiles with a grid
         and a legend of possible tiles as well as other fields
         """
-        self.paint_arena(self.pygame, self.screen)
+        self.paint_arena(self.screen)
         self._draw_grid()
         self._draw_legend()
         self._draw_input_fields()
@@ -359,9 +361,11 @@ class ArenaBuilder(Arena):
             self.pygame.draw.line(self.screen, self.GREY, (0, y), (self._max_x_of_map, y))
 
     def _load_background(self):
-        self._background_image_filename = self._open_file_dialog()
-        image = self.pygame.image.load(self._background_image_filename)
-        self._set_background_image(image, self.pygame)
+        filename = self._open_file_dialog()
+        if filename != "":
+            self._background_image_filename = filename
+            image = self.pygame.image.load(self._background_image_filename).convert()
+            self._set_background_image(image, self.pygame)
 
     def _open_file_dialog(self):
         root = Tk()
