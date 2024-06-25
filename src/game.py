@@ -405,7 +405,7 @@ while run:
     dt = clock.tick(120)
 
     current_window_pos = window.position
-    if playing == True:
+    if playing:
         if current_window_pos != initial_window_pos:
             game_paused = True
             initial_window_pos = current_window_pos
