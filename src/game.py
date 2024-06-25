@@ -446,7 +446,7 @@ while run:
                     player_robot.ranged_cd += 1
                 elif key == pygame.K_f:
                     player_robot.take_damage_debug(10)
-                elif key == pygame.K_UP:
+                elif key == pygame.K_SPACE:
                     if player_robot.jump_counter <= 1:
                         player_robot.jump = True
             elif build_arena:
