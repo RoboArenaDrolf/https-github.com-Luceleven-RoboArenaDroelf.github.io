@@ -1,6 +1,8 @@
 import math
 import pygame
 
+from src.projectiles import Projectile
+
 
 class Robot:
     posx: int
@@ -17,6 +19,9 @@ class Robot:
     color: str
     jump = False
     jump_counter = 0
+    projectiles = []
+    melee_cd = 0
+    ranged_cd = 0
     robots_base_path = "./../Robots/"
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
@@ -56,6 +61,9 @@ class Robot:
     def change_velocity(self, v):
         self.vel = v
 
+    def change_alpha(self, a):
+        self.alpha = a
+
     def change_velocity_cap(self, v):
         if abs(v) < self.vel_max:
             self.vel = v
@@ -64,7 +72,7 @@ class Robot:
                 self.vel = -self.vel_max
             else:
                 self.vel = self.vel_max
-        self.alpha = 270 + (90 / self.vel_max) * self.vel
+        # self.alpha = 270 + (90 / self.vel_max) * self.vel
 
     def change_turn_velocity(self, va):
         self.vel = va
@@ -75,7 +83,7 @@ class Robot:
         else:
             self.health = 0
 
-    def attack(self, pygame, screen, robots):
+    def melee_attack(self, pygame, screen, robots):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         line_start = (self.posx + new_x, self.posy + new_y)
@@ -121,6 +129,77 @@ class Robot:
 
         return distance
 
+    def ranged_attack(self):
+        if self.ranged_cd == 0 or self.ranged_cd == 10:
+            r = self.radius/4
+            if self.alpha == 0:  # right
+                xs = self.vel_max
+                ys = 0
+                x = self.posx + self.radius + r
+                y = self.posy
+            elif self.alpha == 90:  # down
+                xs = 0
+                ys = self.vel_max
+                x = self.posx
+                y = self.posy + self.radius + r
+            elif self.alpha == 180:  # left
+                xs = -self.vel_max
+                ys = 0
+                x = self.posx - self.radius - r
+                y = self.posy
+            elif self.alpha == 270:  # up
+                xs = 0
+                ys = -self.vel_max
+                x = self.posx
+                y = self.posy - self.radius - r
+            else:  # failsafe
+                print("how did you do this? alpha=", self.alpha)
+            c = "black"
+            pn = self.player_number  # projectile created by player number x
+            # this shouldn't be needed since the robot that owns the projectiles array has this number,
+            # but I used this as a fix in ranged_hit_reg, in order to be unable to hit yourself
+            self.projectiles.append(Projectile(x, y, c, r, xs, ys, pn))
+
+    def ranged_hit_reg(self, robots, screen_height, screen_width, arena):
+        for i in range(0, len(robots)):
+            to_delete = []
+            for j in range(0, len(robots[i].projectiles)):
+                if i != robots[i].projectiles[j].player_number:  # do not hit yourself
+                    # get distance from projectile center to robot center
+                    distance = (abs(robots[i].posx-robots[i].projectiles[j].x)
+                                + abs(robots[i].posy-robots[i].projectiles[j].y))
+                    if distance < (robots[i].radius + robots[i].projectiles[j].radius):
+                        # we have a hit
+                        robots[i].take_damage_debug(1)
+                        # DO NOT REMOVE PROJECTILES INSIDE THE LOOP instead
+                        to_delete.append(j)  # save the index (might be multiple)
+                # Überprüfen, ob die Projectile die seitlichen Grenzen der Arena erreicht hat
+                if robots[i].projectiles[j].x < robots[i].projectiles[j].radius + arena.x_offset:
+                    to_delete.append(j)
+                    # print("we delete this, left")  # shoot the left wall and see this
+                elif robots[i].projectiles[j].x > screen_width - robots[i].projectiles[j].radius - arena.x_offset:
+                    to_delete.append(j)
+                    # print("we delete this, right")
+                # Überprüfen, ob die Projectile die oberen und unteren Grenzen der Arena erreicht hat
+                elif robots[i].projectiles[j].y - robots[i].projectiles[j].radius < arena.y_offset:
+                    to_delete.append(j)
+                    # print("we delete this, up")
+                elif robots[i].projectiles[j].y + robots[i].projectiles[j].radius > screen_height - arena.y_offset:
+                    to_delete.append(j)
+                    # print("we delete this, down")
+                # Kollisionen in y-Richtung überprüfen und behandeln
+                elif robots[i].projectiles[j].check_collision_y(arena):
+                    to_delete.append(j)
+                # Kollisionen in x-Richtung überprüfen und behandeln
+                elif robots[i].projectiles[j].check_collision_x(arena):
+                    to_delete.append(j)
+            # im not 100% sure if it's possible for a projectile to be added to the to_delete array twice,
+            # so I might have to add a duplicate remover here
+
+            to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
+            for n in to_delete:  # after the j loop we delete them
+                robots[i].projectiles.pop(n)
+
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
         image_rect = self.first_robot.get_rect(center=(self.posx, self.posy))
@@ -161,3 +240,7 @@ class Robot:
             player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
         )
         screen.blit(player_health, player_rect)
+        # projectiles
+        for i in self.projectiles:  # each robot will paint the projectiles it has created
+            i.paint_projectile(pygame, screen)
+            i.move_projectile()
