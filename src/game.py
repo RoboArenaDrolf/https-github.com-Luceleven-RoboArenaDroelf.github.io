@@ -1,6 +1,7 @@
 import os
 import random
 import pygame
+from pygame._sdl2.video import Window
 from screeninfo import get_monitors
 import sys
 
@@ -53,6 +54,9 @@ y_tiles = ""
 change_direction_interval = 120  # Ändere die Richtung alle 120 Frames
 frame_count = 0
 attack_cooldown = 0
+# Initiale Fensterposition
+window = Window.from_display_module()
+initial_window_pos = window.position
 
 jump = []
 
@@ -385,6 +389,12 @@ def player_robot_handling(player_robot):
 while run:
     pygame.time.delay(0)
     dt = clock.tick(120)
+
+    current_window_pos = window.position
+    if current_window_pos != initial_window_pos:
+        game_paused = True
+        initial_window_pos = current_window_pos
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
