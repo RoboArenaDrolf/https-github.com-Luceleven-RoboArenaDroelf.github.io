@@ -1,5 +1,3 @@
-
-
 class Projectile:
     x: int
     y: int

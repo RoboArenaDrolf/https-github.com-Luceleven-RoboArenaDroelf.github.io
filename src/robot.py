@@ -23,6 +23,8 @@ class Robot:
     melee_cd = 0
     ranged_cd = 0
     robots_base_path = "./../Robots/"
+    recoil_percent = 0.1
+    hit_cooldown = 0
 
     def __init__(self, x, y, r, a, am, aam, vm, hm, c, pn):
         self.posx = x
@@ -83,7 +85,7 @@ class Robot:
         else:
             self.health = 0
 
-    def melee_attack(self, pygame, screen, robots):
+    def melee_attack(self, pygame, screen, robots, arena):
         new_x = self.radius * (math.cos(math.radians(self.alpha)))
         new_y = self.radius * (math.sin(math.radians(self.alpha)))
         line_start = (self.posx + new_x, self.posy + new_y)
@@ -102,6 +104,8 @@ class Robot:
                 # is smaller than it's radius, we have a hit and that robot takes some damage
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
+                if robots[i].hit_cooldown <= 0:
+                    self.recoil(arena, robots[i])
 
     def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
         # Vektoren berechnen
@@ -131,7 +135,7 @@ class Robot:
 
     def ranged_attack(self):
         if self.ranged_cd == 0 or self.ranged_cd == 10:
-            r = self.radius/4
+            r = self.radius / 4
             if self.alpha == 0:  # right
                 xs = self.vel_max
                 ys = 0
@@ -166,11 +170,14 @@ class Robot:
             for j in range(0, len(robots[i].projectiles)):
                 if i != robots[i].projectiles[j].player_number:  # do not hit yourself
                     # get distance from projectile center to robot center
-                    distance = (abs(robots[i].posx-robots[i].projectiles[j].x)
-                                + abs(robots[i].posy-robots[i].projectiles[j].y))
+                    distance = abs(robots[i].posx - robots[i].projectiles[j].x) + abs(
+                        robots[i].posy - robots[i].projectiles[j].y
+                    )
                     if distance < (robots[i].radius + robots[i].projectiles[j].radius):
                         # we have a hit
                         robots[i].take_damage_debug(1)
+                        if robots[i].hit_cooldown <= 0:
+                            self.recoil(arena, robots[i])
                         # DO NOT REMOVE PROJECTILES INSIDE THE LOOP instead
                         to_delete.append(j)  # save the index (might be multiple)
                 # Überprüfen, ob die Projectile die seitlichen Grenzen der Arena erreicht hat
@@ -199,6 +206,23 @@ class Robot:
             to_delete = reversed(to_delete)  # reverse it so we delete the largest index first
             for n in to_delete:  # after the j loop we delete them
                 robots[i].projectiles.pop(n)
+
+    def decrease_hit_cooldown(self):
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
+
+    def recoil(self, arena, robot):
+        robot.hit_cooldown = 20  # setting this so the robot doesn't get launched into space
+        # cause recoil
+        robot.vertical_speed += -arena.map_size[1] / 50 * robot.recoil_percent  # recoil up
+        # check if we face left, right or upwards
+        if self.alpha > 315 or self.alpha == 0:  # facing right
+            robot.change_acceleration(robot.accel + (arena.map_size[0] / 40) * robot.recoil_percent)
+        elif self.alpha < 225:  # facing left
+            robot.change_acceleration(robot.accel - (arena.map_size[0] / 40) * robot.recoil_percent)
+        else:  # facing upwards
+            robot.vertical_speed += -arena.map_size[1] / 100 * robot.recoil_percent  # recoil up again
+        robot.recoil_percent += 0.05
 
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
@@ -240,6 +264,22 @@ class Robot:
             player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
         )
         screen.blit(player_health, player_rect)
+        # corresponding recoil ui
+        recoil_font = pygame.font.Font(None, int(pygame.display.get_window_size()[1] / 25))
+        player_recoil = recoil_font.render(f"{int(self.recoil_percent * 100)} %", True, f"{self.color}")
+        player_rect = player_recoil.get_rect(
+            center=(
+                pygame.display.get_window_size()[0] / 5
+                + (pygame.display.get_window_size()[0] / 5) * self.player_number,
+                pygame.display.get_window_size()[1] / 10,
+            )
+        )
+        pygame.draw.rect(
+            screen,
+            (0, 30, 50, 0.5),
+            player_rect.inflate(pygame.display.get_window_size()[0] / 33, pygame.display.get_window_size()[1] / 50),
+        )
+        screen.blit(player_recoil, player_rect)
         # projectiles
         for i in self.projectiles:  # each robot will paint and update the projectiles it has created
             # print(self.player_number, i.player_number)  # why do all robots share the projectiles?
