@@ -411,10 +411,8 @@ while run:
     current_window_pos = window.position
     if playing:
         if current_window_pos != initial_window_pos:
-            flags = pygame.display.get_surface().get_flags()
-            if not bool(flags & pygame.FULLSCREEN):
-                game_paused = True
-            initial_window_pos = current_window_pos
+            game_paused = True
+    initial_window_pos = current_window_pos
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
