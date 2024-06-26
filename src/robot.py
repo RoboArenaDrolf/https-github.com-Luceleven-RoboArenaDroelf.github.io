@@ -105,23 +105,7 @@ class Robot:
                 # print(i, "hit")
                 robots[i].take_damage_debug(1)
                 if robots[i].hit_cooldown <= 0:
-                    robots[i].hit_cooldown = 20  # setting this so the robot doesn't get launched into space
-                    # cause recoil
-                    robots[i].vertical_speed += -arena.map_size[1] / 40 * robots[i].recoil_percent  # recoil up
-                    # check if we face left, right or upwards
-                    if self.alpha > 315 or self.alpha == 0:  # facing right
-                        robots[i].change_acceleration(
-                            robots[i].accel + (arena.map_size[0] / 40) * robots[i].recoil_percent
-                        )
-                    elif self.alpha < 225:  # facing left
-                        robots[i].change_acceleration(
-                            robots[i].accel - (arena.map_size[0] / 40) * robots[i].recoil_percent
-                        )
-                    else:  # facing upwards
-                        robots[i].vertical_speed += (
-                            -arena.map_size[1] / 100 * robots[i].recoil_percent
-                        )  # recoil up again
-                    robots[i].recoil_percent += 0.05
+                    self.recoil(arena, robots[i])
 
     def distance_from_segment(self, x1, y1, x2, y2, x3, y3):
         # Vektoren berechnen
@@ -192,6 +176,8 @@ class Robot:
                     if distance < (robots[i].radius + robots[i].projectiles[j].radius):
                         # we have a hit
                         robots[i].take_damage_debug(1)
+                        if robots[i].hit_cooldown <= 0:
+                            self.recoil(arena, robots[i])
                         # DO NOT REMOVE PROJECTILES INSIDE THE LOOP instead
                         to_delete.append(j)  # save the index (might be multiple)
                 # Überprüfen, ob die Projectile die seitlichen Grenzen der Arena erreicht hat
@@ -224,6 +210,19 @@ class Robot:
     def decrease_hit_cooldown(self):
         if self.hit_cooldown > 0:
             self.hit_cooldown -= 1
+
+    def recoil(self, arena, robot):
+        robot.hit_cooldown = 20  # setting this so the robot doesn't get launched into space
+        # cause recoil
+        robot.vertical_speed += -arena.map_size[1] / 50 * robot.recoil_percent  # recoil up
+        # check if we face left, right or upwards
+        if self.alpha > 315 or self.alpha == 0:  # facing right
+            robot.change_acceleration(robot.accel + (arena.map_size[0] / 40) * robot.recoil_percent)
+        elif self.alpha < 225:  # facing left
+            robot.change_acceleration(robot.accel - (arena.map_size[0] / 40) * robot.recoil_percent)
+        else:  # facing upwards
+            robot.vertical_speed += -arena.map_size[1] / 100 * robot.recoil_percent  # recoil up again
+        robot.recoil_percent += 0.05
 
     def paint_robot(self, pygame, screen, direction_left):
         # Bild des Roboters zeichnen
