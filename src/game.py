@@ -51,7 +51,7 @@ x_tiles = ""
 y_tiles = ""
 
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
-change_direction_interval = 120  # Ändere die Richtung alle 120 Frames
+change_direction_interval = 100  # Ändere die Richtung alle 120 Frames
 frame_count = 0
 # Initiale Fensterposition
 window = Window.from_display_module()
@@ -316,18 +316,30 @@ def bots_handling():
     if frame_count >= change_direction_interval:
         for i in range(1, len(robots)):
             # Zufällige Änderungen der Beschleunigung und der Drehgeschwindigkeit
-            robots[i].change_acceleration(random.uniform(-1, 1))
-            robots[i].change_turn_velocity(random.uniform(-0.1, 0.1))
+            robots[i].change_acceleration(robots[i].accel + random.uniform(-1, 1))
             # Setze den Zähler zurück
             frame_count = 0
             jump[i - 1] = random.choice([True, False])
     # Move and paint bots
     for i in range(1, len(robots)):
+        robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
+        robots[i].decrease_hit_cooldown()
+        if robots[i].vel < 0:
+            robots[i].change_acceleration(robots[i].accel + arena.map_size[0] / 40000)
+            if robots[i].vel + robots[i].accel >= 0:
+                robots[i].change_velocity_cap(0)
+                robots[i].change_acceleration(0)
+        elif robots[i].vel > 0:
+            robots[i].change_acceleration(robots[i].accel - arena.map_size[0] / 40000)
+            if robots[i].vel + robots[i].accel <= 0:
+                robots[i].change_velocity_cap(0)
+                robots[i].change_acceleration(0)
+        else:
+            robots[i].change_acceleration(0)
         # Bewegung des Roboters
         movement.move_bot(
-            robots[i], display_resolution[1], display_resolution[1], robots[i].vel, arena, jump[i - 1], dt
+            robots[i], display_resolution[1], display_resolution[0], robots[i].vel, arena, jump[i - 1], dt
         )
-        robots[i].change_velocity_cap(robots[i].vel + robots[i].accel)
         jump[i - 1] = False
         robots[i].paint_robot(pygame, screen, direction_left)
 
@@ -362,7 +374,7 @@ def player_robot_handling(player_robot):
             player_robot.ranged_cd += 1
     # attack will stay for a certain duration
     if player_robot.melee_cd < 30 and player_robot.melee_cd != 0:
-        player_robot.melee_attack(pygame, screen, robots)
+        player_robot.melee_attack(pygame, screen, robots, arena)
         player_robot.melee_cd += 1
     if player_robot.ranged_cd < 30 and player_robot.ranged_cd != 0:
         player_robot.ranged_attack()
@@ -440,7 +452,7 @@ while run:
                 elif (
                     key == pygame.K_g and player_robot.melee_cd == 0
                 ):  # we can attack if we have no cooldown and press the button
-                    player_robot.melee_attack(pygame, screen, robots)
+                    player_robot.melee_attack(pygame, screen, robots, arena)
                     player_robot.melee_cd += 1
                 elif key == pygame.K_r and player_robot.ranged_cd == 0:
                     player_robot.ranged_attack()
