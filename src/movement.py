@@ -1,42 +1,19 @@
-import pygame
-
-
 class Movement:
 
     def __init__(self, gravity):
         self.gravity = gravity
 
-    def move_robot(self, robot, screen_height, screen_width, x, arena):
-        keys = pygame.key.get_pressed()
+    def move_robot(self, robot, x, arena, dt):
+        dt_scaled = dt / 15.0
 
         # Bewegung in x-Richtung
-        robot.posx += x
+        robot.posx += x * dt_scaled
 
         # Vertikale Bewegung
-        robot.vertical_speed += self.gravity
+        robot.vertical_speed += self.gravity * dt_scaled
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
-
-        # Überprüfen, ob der Roboter die seitlichen Grenzen der Arena erreicht hat
-        if robot.posx < robot.radius + arena.x_offset:
-            robot.posx = robot.radius + arena.x_offset
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
-        elif robot.posx > screen_width - robot.radius - arena.x_offset:
-            robot.posx = screen_width - robot.radius - arena.x_offset
-            robot.change_velocity(0)
-            robot.change_acceleration(0)
-
-        # Überprüfen, ob der Roboter die oberen und unteren Grenzen der Arena erreicht hat
-        if robot.posy - robot.radius < arena.y_offset:
-            robot.posy = robot.radius + arena.y_offset
-            if robot.vertical_speed < 0:
-                robot.vertical_speed = float(0)
-        elif robot.posy + robot.radius > screen_height - arena.y_offset:
-            robot.posy = screen_height - robot.radius - arena.y_offset
-            if robot.vertical_speed > 0:
-                robot.vertical_speed = float(0)
 
         # Kollisionen in y-Richtung überprüfen und behandeln
         if self.check_collision_y(robot, arena):
@@ -68,30 +45,22 @@ class Movement:
             robot.change_acceleration(0)
             robot.change_velocity(0)
 
-        # Tastatureingaben verarbeiten
-        if keys[pygame.K_UP]:
-            if robot.jump_counter == 0:
-                robot.vertical_speed = (
-                    -arena.map_size[1] / 100
-                )  # Vertikale Geschwindigkeit für den ersten Sprung setzen
-                robot.jump_counter = 1
-            elif robot.can_jump_again:
-                robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für den Doppelsprung setzen
-                robot.can_jump_again = False
-                robot.jump_counter = 2
+        # Sprung
+        if robot.jump:
+            robot.vertical_speed = (
+                -arena.map_size[1] / 75
+            ) * dt_scaled  # Vertikale Geschwindigkeit für den ersten Sprung setzen
+            robot.jump_counter += 1
+            robot.jump = False
 
-        for event in pygame.event.get():
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_UP and robot.jump_counter == 1:
-                    robot.can_jump_again = True
-
-    def move_bot(self, robot, screen_height, screen_width, x, arena, jump):
+    def move_bot(self, robot, screen_height, screen_width, x, arena, jump, dt):
+        dt_scaled = dt / 15.0
 
         # Bewegung in x-Richtung
-        robot.posx += x
+        robot.posx += x * dt_scaled
 
         # Vertikale Bewegung
-        robot.vertical_speed += self.gravity
+        robot.vertical_speed += self.gravity * dt_scaled
 
         # Bewegung in y-Richtung
         robot.posy += robot.vertical_speed
@@ -148,7 +117,7 @@ class Movement:
 
         # Tastatureingaben verarbeiten
         if jump:
-            robot.vertical_speed = -arena.map_size[1] / 100  # Vertikale Geschwindigkeit für Sprung setzen
+            robot.vertical_speed = (-arena.map_size[1] / 100) * dt_scaled  # Vertikale Geschwindigkeit für Sprung setzen
 
     def check_collision_y(self, robot, arena):
         # Überprüfen, ob der Roboter mit einem festen Tile kollidiert auf y-Achse

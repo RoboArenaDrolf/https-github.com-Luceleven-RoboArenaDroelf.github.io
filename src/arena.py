@@ -26,16 +26,16 @@ class Arena:
             """
             Sets the images of the Enum TileType to the loaded pictures specified by their filename.
             :param pygame: instance of pygame
-            :param base_path: base path of picture directory, for example ".\\PixelArt\\"
+            :param base_path: base path of picture directory, for example ".\\Tiles\\"
             :param tile_size: size of the tiles
             """
             for member in cls:
                 member.image = pygame.transform.scale(
-                    pygame.image.load(base_path + member.filename), (tile_size, tile_size)
+                    pygame.image.load(base_path + member.filename).convert(), (tile_size, tile_size)
                 )
 
-    blocks_base_path = ".\\PixelArt\\"
-    maps_base_path = ".\\Maps\\"
+    blocks_base_path = "../Tiles/"
+    maps_base_path = "./../Maps/"
 
     def __init__(self, filename, pygame):
         self.load_map_from_json(filename, pygame)
@@ -45,6 +45,7 @@ class Arena:
         self._set_background_image(self._background_image_unscaled, pygame)
         self.x_offset = int((pygame.display.get_window_size()[0] - self.map_size[0]) / 2)
         self.y_offset = int((pygame.display.get_window_size()[1] - self.map_size[1]) / 2)
+        self.rendered_arena = None
 
     def load_map_from_json(self, filename, pygame):
         try:
@@ -64,26 +65,40 @@ class Arena:
             self.num_tiles_x = data["num_tiles_x"]
             self.num_tiles_y = data["num_tiles_y"]
             self.tiles = [[Arena.TileType[tile] for tile in row] for row in data["tiles"]]
-            self._background_image_unscaled = pygame.image.load(self.maps_base_path + data["background_image"])
+            self._background_image_unscaled = pygame.image.load(
+                self.maps_base_path + data["background_image"]
+            ).convert()
 
     def _set_background_image(self, image, pygame):
         self.background_image = pygame.transform.scale(image, self.map_size)
 
-    def paint_arena(self, pygame, screen):
-        """
-        Paints the arena with help of parameters pygame and screen.
+    def render_arena(self, pygame):
+        # Erstelle eine Surface für das gerenderte Arena-Bild
+        self.rendered_arena = pygame.Surface(self.map_size)
 
-        :param pygame: pygame instance
-        :param screen: screen element of pygame initialized with pygame.display.set_mode()
-        """
-        screen.blit(self.background_image, (self.x_offset, self.y_offset))
+        # Blitte das Hintergrundbild auf die Surface
+        self.rendered_arena.blit(self.background_image, (0, 0))
+
+        # Blitte die Tiles auf die Surface
         y = 0
         for row in self.tiles:
             x = 0
             for tile in row:
-                screen.blit(tile.image, (self.x_offset + x, self.y_offset + y))
+                if tile.filename != "Air.png":
+                    self.rendered_arena.blit(tile.image, (x, y))
                 x += self.tile_size
             y += self.tile_size
+
+    def paint_arena(self, screen):
+        """
+        Paints the pre-rendered arena onto the screen.
+
+        :param screen: screen element of pygame initialized with pygame.display.set_mode()
+        """
+        if self.rendered_arena:
+            screen.blit(self.rendered_arena, (self.x_offset, self.y_offset))
+        else:
+            print("Error: Arena has not been rendered yet.")
 
     def is_solid(self, x_positions, y_positions):
         for x in x_positions:
