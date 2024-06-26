@@ -88,13 +88,13 @@ def get_png_filenames(directory):
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
-    robot_radius = min(display_resolution) / 40
-    robot_spawn_distance = display_resolution[0] / 10
+    robot_radius = arena.tile_size * 0.5
+    #robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
             robot.radius = robot_radius
-            robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            #robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
+            #robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
             robot.accel_max = arena.map_size[0] / float(1000)
             robot.accel_alpha_max = arena.map_size[0] / float(1000)
             robot.vel_max = arena.map_size[0] / float(200)
@@ -188,8 +188,8 @@ def handle_start_game_menu_events():
     global player_count, robots, jump, start_game, playing, map
 
     robot1 = Robot(
-        robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        10 * arena.tile_size + arena.x_offset,
+        14 * arena.tile_size + arena.y_offset,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -200,8 +200,8 @@ def handle_start_game_menu_events():
         0,
     )
     robot2 = Robot(
-        2 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        16 * arena.tile_size + arena.x_offset,
+        4 * arena.tile_size + arena.y_offset,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -212,8 +212,8 @@ def handle_start_game_menu_events():
         1,
     )
     robot3 = Robot(
-        3 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        40 * arena.tile_size + arena.x_offset,
+        3 * arena.tile_size + arena.y_offset,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -224,8 +224,8 @@ def handle_start_game_menu_events():
         2,
     )
     robot4 = Robot(
-        4 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        30 * arena.tile_size + arena.x_offset,
+        20 * arena.tile_size + arena.y_offset,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -291,6 +291,7 @@ def handle_map_screen_events():
             map_name = maps[i]
             arena = Arena(map_name, pygame)
             arena.render_arena(pygame)
+            recalculate_robot_values()
             map = False
             playing = True
             break
