@@ -88,18 +88,16 @@ def get_png_filenames(directory):
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
-    print(arena.tile_size)
     robot_radius = arena.tile_size * 0.5
-    print(robot_radius)
-    #robot_spawn_distance = display_resolution[0] / 10
+    # robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
             robot.radius = robot_radius
-            #robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            #robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
-            robot.accel_max = arena.map_size[0] / float(1000)
-            robot.accel_alpha_max = arena.map_size[0] / float(1000)
-            robot.vel_max = arena.map_size[0] / float(200)
+            # robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
+            # robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            robot.accel_max = arena.tile_size / 50.0
+            robot.accel_alpha_max = arena.tile_size / 50.0
+            robot.vel_max = arena.tile_size / 10.0
 
 
 def handle_main_menu_events():
@@ -182,7 +180,7 @@ def handle_settings_menu_events():
             screen = pygame.display.set_mode(display_resolution)
         screens = Screens(pygame)
         arena = Arena(map_name, pygame)
-        movement = Movement(display_resolution[1] / 2000)
+        movement = Movement(arena.tile_size / 120.0)
         recalculate_robot_values()
 
 
@@ -254,6 +252,7 @@ def handle_start_game_menu_events():
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
+        recalculate_robot_values()
         start_game = False
         playing = True
 
@@ -284,7 +283,7 @@ def handle_pause_screen_events():
 
 
 def handle_map_screen_events():
-    global map, start_game, arena, map_name
+    global map, start_game, arena, map_name, movement
 
     for i, level_rect in enumerate(level_rects):
         if level_rect.collidepoint(mouse_pos):
@@ -292,6 +291,7 @@ def handle_map_screen_events():
             arena = Arena(map_name, pygame)
             arena.render_arena(pygame)
             recalculate_robot_values()
+            movement = Movement(arena.tile_size / 120.0)
             map = False
             start_game = True
             break
@@ -374,11 +374,11 @@ def player_robot_handling(player_robot):
     # Player movement
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
-        player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+        player_robot.change_acceleration(player_robot.accel - arena.tile_size / 1000.0)
         player_robot.change_alpha(180)
         direction_left = True
     elif keys[pygame.K_RIGHT]:
-        player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+        player_robot.change_acceleration(player_robot.accel + arena.tile_size / 1000.0)
         player_robot.change_alpha(0)
         direction_left = False
     elif keys[pygame.K_DOWN]:
@@ -387,12 +387,12 @@ def player_robot_handling(player_robot):
         player_robot.change_alpha(270)
     else:
         if player_robot.vel < 0:
-            player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
+            player_robot.change_acceleration(player_robot.accel + arena.tile_size / 2000.0)
             if player_robot.vel + player_robot.accel >= 0:
                 player_robot.change_velocity_cap(0)
                 player_robot.change_acceleration(0)
         elif player_robot.vel > 0:
-            player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 40000)
+            player_robot.change_acceleration(player_robot.accel - arena.tile_size / 2000.0)
             if player_robot.vel + player_robot.accel <= 0:
                 player_robot.change_velocity_cap(0)
                 player_robot.change_acceleration(0)
