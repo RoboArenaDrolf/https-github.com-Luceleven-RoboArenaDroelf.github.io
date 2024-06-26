@@ -88,7 +88,9 @@ def get_png_filenames(directory):
 
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
+    print(arena.tile_size)
     robot_radius = arena.tile_size * 0.5
+    print(robot_radius)
     #robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
@@ -101,11 +103,11 @@ def recalculate_robot_values():
 
 
 def handle_main_menu_events():
-    global robots, start_game, menu, build_arena, settings, run
+    global robots, map, menu, build_arena, settings, run
 
     if play_rect.collidepoint(mouse_pos):
         robots = []
-        start_game = True
+        map = True
         menu = False
     elif build_arena_rect.collidepoint(mouse_pos):
         build_arena = True
@@ -185,7 +187,7 @@ def handle_settings_menu_events():
 
 
 def handle_start_game_menu_events():
-    global player_count, robots, jump, start_game, playing, map
+    global player_count, robots, jump, start_game, playing
 
     robot1 = Robot(
         10 * arena.tile_size + arena.x_offset,
@@ -243,19 +245,17 @@ def handle_start_game_menu_events():
         player_count = 2
         robots = [robot1, robot2]
         jump = [False]
-        start_game = False
     elif three_player_rect.collidepoint(mouse_pos):
         player_count = 3
         robots = [robot1, robot2, robot3]
         jump = [False, False]
-        start_game = False
     elif four_player_rect.collidepoint(mouse_pos):
         player_count = 4
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
         start_game = False
-        map = True
+        playing = True
 
 
 def handle_death_screen_events():
@@ -284,7 +284,7 @@ def handle_pause_screen_events():
 
 
 def handle_map_screen_events():
-    global map, playing, arena, map_name
+    global map, start_game, arena, map_name
 
     for i, level_rect in enumerate(level_rects):
         if level_rect.collidepoint(mouse_pos):
@@ -293,7 +293,7 @@ def handle_map_screen_events():
             arena.render_arena(pygame)
             recalculate_robot_values()
             map = False
-            playing = True
+            start_game = True
             break
 
 
