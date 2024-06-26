@@ -349,24 +349,27 @@ def player_robot_handling(player_robot):
     if player_robot.health <= 0:
         playing = False
         death = True
-    # Player attack cooldown
-    if player_robot.melee_cd != 0:
-        if player_robot.melee_cd == 60:
-            player_robot.melee_cd = 0
-        else:
-            player_robot.melee_cd += 1
-    if player_robot.ranged_cd != 0:
-        if player_robot.ranged_cd == 60:
-            player_robot.ranged_cd = 0
-        else:
-            player_robot.ranged_cd += 1
     # attack will stay for a certain duration
     if player_robot.melee_cd < 30 and player_robot.melee_cd != 0:
         player_robot.melee_attack(pygame, screen, robots)
         player_robot.melee_cd += 1
-    if player_robot.ranged_cd < 30 and player_robot.ranged_cd != 0:
+    # Player melee attack cooldown
+    elif player_robot.melee_cd != 0:
+        if player_robot.melee_cd == 60:
+            player_robot.melee_cd = 0
+        else:
+            player_robot.melee_cd += 1
+    # second ranged attack at ranged_cd == 10
+    if player_robot.ranged_cd < 11 and player_robot.ranged_cd != 0:
         player_robot.ranged_attack()
         player_robot.ranged_cd += 1
+    # Player ranged attack cooldown
+    elif player_robot.ranged_cd != 0:
+        if player_robot.ranged_cd == 60:
+            player_robot.ranged_cd = 0
+        else:
+            player_robot.ranged_cd += 1
+
     # Player movement
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:
@@ -442,7 +445,7 @@ while run:
                 ):  # we can attack if we have no cooldown and press the button
                     player_robot.melee_attack(pygame, screen, robots)
                     player_robot.melee_cd += 1
-                elif key == pygame.K_r and player_robot.ranged_cd == 0:
+                elif key == pygame.K_r and (player_robot.ranged_cd == 0 or player_robot.ranged_cd == 10):
                     player_robot.ranged_attack()
                     player_robot.ranged_cd += 1
                 elif key == pygame.K_f:
