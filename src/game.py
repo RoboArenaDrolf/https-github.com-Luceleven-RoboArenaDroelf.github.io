@@ -30,7 +30,6 @@ arena = Arena(map_name, pygame)
 screens = Screens(pygame)
 
 robot_radius = arena.tile_size * 0.5
-robot_spawn_distance = display_resolution[0] / 10
 
 game_paused = False
 run = True
@@ -87,14 +86,13 @@ def get_png_filenames(directory):
 
 
 def recalculate_robot_values():
-    global robots, robot_radius, robot_spawn_distance
+    global robots, robot_radius
     robot_radius = min(display_resolution) / 40
-    robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
             robot.radius = robot_radius
-            robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            robot.posx = arena.spawn_positions[i][0] + robot_radius
+            robot.posy = arena.spawn_positions[i][1] + robot_radius
             robot.accel_max = arena.map_size[0] / float(1000)
             robot.accel_alpha_max = arena.map_size[0] / float(1000)
             robot.vel_max = arena.map_size[0] / float(200)
@@ -254,6 +252,7 @@ def handle_start_game_menu_events():
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
+        recalculate_robot_values()
         start_game = False
         map = True
 
@@ -291,6 +290,7 @@ def handle_map_screen_events():
             map_name = maps[i]
             arena = Arena(map_name, pygame)
             arena.render_arena(pygame)
+            recalculate_robot_values()
             map = False
             playing = True
             break
