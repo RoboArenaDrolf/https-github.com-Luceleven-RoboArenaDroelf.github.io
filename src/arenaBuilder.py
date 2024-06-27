@@ -68,6 +68,11 @@ class ArenaBuilder(Arena):
         # Set up font
         self._font = self.pygame.font.SysFont(None, int(display_resolution[1] / 40))
         self._text_color = self.WHITE
+        # Set up reset spawn positions button
+        self._reset_button_text = self._font.render("Reset Spawns", True, self.WHITE)
+        self._reset_button_rect = self.pygame.Rect(
+            self._x_of_legend, self._y_of_legend_end, elements_x_size, buttons_y_size
+        )
         # Set up text input field for saving
         self._input_text_saving = ""
         self._input_active_saving = False
@@ -111,9 +116,11 @@ class ArenaBuilder(Arena):
         save_button_clicked = False
         load_map_button_clicked = False
         load_background_button_clicked = False
+        reset_button_clicked = False
         button_click_time_saving = 0
         button_click_time_loading_map = 0
         button_click_time_loading_background = 0
+        button_click_time_reset = 0
 
         # Main loop
         while running:
@@ -121,7 +128,9 @@ class ArenaBuilder(Arena):
             self.screen.fill(self.BLACK)
 
             # Paint the arenaBuilder
-            self._paint_arena_builder(save_button_clicked, load_map_button_clicked, load_background_button_clicked)
+            self._paint_arena_builder(
+                save_button_clicked, load_map_button_clicked, load_background_button_clicked, reset_button_clicked
+            )
 
             # Update the display
             self.pygame.display.flip()
@@ -142,6 +151,8 @@ class ArenaBuilder(Arena):
                         running,
                         load_background_button_clicked,
                         button_click_time_loading_background,
+                        reset_button_clicked,
+                        button_click_time_reset,
                     ) = self._handle_mouse_button_down(
                         button_click_time_loading_map,
                         button_click_time_saving,
@@ -151,6 +162,8 @@ class ArenaBuilder(Arena):
                         running,
                         load_background_button_clicked,
                         button_click_time_loading_background,
+                        reset_button_clicked,
+                        button_click_time_reset,
                     )
                 elif event.type == self.pygame.MOUSEBUTTONUP and event.button == 1:  # Left mouse button released
                     mouse_pressed = False
@@ -168,6 +181,9 @@ class ArenaBuilder(Arena):
 
             if load_background_button_clicked and current_time - button_click_time_loading_background >= 200:
                 load_background_button_clicked = False
+
+            if reset_button_clicked and current_time - button_click_time_reset >= 200:
+                reset_button_clicked = False
 
     def _paint_tile(self, current_tile):
         x, y = self.pygame.mouse.get_pos()
@@ -237,10 +253,16 @@ class ArenaBuilder(Arena):
         running,
         load_background_button_clicked,
         button_click_time_loading_background,
+        reset_button_clicked,
+        button_click_time_reset,
     ):
         mouse_pressed = True
         mouse_pos = self.pygame.mouse.get_pos()
-        if self._save_button_rect.collidepoint(mouse_pos):
+        if self._reset_button_rect.collidepoint(mouse_pos):
+            reset_button_clicked = True
+            button_click_time_reset = current_time
+            self._reset_spawn_positions()
+        elif self._save_button_rect.collidepoint(mouse_pos):
             save_button_clicked = True
             button_click_time_saving = current_time
             self._save_map()
@@ -272,6 +294,8 @@ class ArenaBuilder(Arena):
             running,
             load_background_button_clicked,
             button_click_time_loading_background,
+            reset_button_clicked,
+            button_click_time_reset,
         )
 
     def _load_map(self):
@@ -284,7 +308,9 @@ class ArenaBuilder(Arena):
     def _save_map(self):
         self.save_to_json(self._input_text_saving + ".json")
 
-    def _paint_arena_builder(self, save_button_clicked, load_map_button_clicked, load_background_button_clicked):
+    def _paint_arena_builder(
+        self, save_button_clicked, load_map_button_clicked, load_background_button_clicked, reset_button_clicked
+    ):
         """
         Paints the arena defined by tiles with a grid
         and a legend of possible tiles as well as other fields
@@ -293,10 +319,26 @@ class ArenaBuilder(Arena):
         self._draw_grid()
         self._draw_legend()
         self._draw_input_fields()
-        self._draw_buttons(load_map_button_clicked, save_button_clicked, load_background_button_clicked)
+        self._draw_buttons(
+            load_map_button_clicked, save_button_clicked, load_background_button_clicked, reset_button_clicked
+        )
         self._draw_spawn_positions()
 
-    def _draw_buttons(self, load_map_button_clicked, save_button_clicked, load_background_button_clicked):
+    def _draw_buttons(
+        self, load_map_button_clicked, save_button_clicked, load_background_button_clicked, reset_button_clicked
+    ):
+        # Draw reset spawn positions button
+        if reset_button_clicked:
+            self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._reset_button_rect)
+        else:
+            self.pygame.draw.rect(self.screen, self.GREEN, self._reset_button_rect)
+        self.screen.blit(
+            self._reset_button_text,
+            (
+                self._reset_button_rect.x + self._button_text_x_offset,
+                self._reset_button_rect.y + self._button_text_y_offset,
+            ),
+        )
         # Draw save button
         if save_button_clicked:
             self.pygame.draw.rect(self.screen, self.DARK_GREEN, self._save_button_rect)
