@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from screens import Screens
 
 
 class Arena:
@@ -56,7 +57,7 @@ class Arena:
             UnicodeDecodeError,
             ValueError,
         ):
-            print("File not found!")
+            Screens.show_popup("File not found or Corrupted! Loading emptyMap.")
             self._load_map_from_json_helper("emptyMap.json", pygame)
 
     def _load_map_from_json_helper(self, filename, pygame):

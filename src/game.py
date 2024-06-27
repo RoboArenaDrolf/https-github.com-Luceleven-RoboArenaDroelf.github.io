@@ -138,7 +138,7 @@ def handle_build_arena_menu_events(event):
                 arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                 arenaBuilder.main()
             except ValueError:
-                print("There should only be positive numbers in the fields!")
+                screens.show_popup("There should only be positive numbers in the fields!")
 
     elif event.type == pygame.KEYDOWN:
         if input_active_x:
