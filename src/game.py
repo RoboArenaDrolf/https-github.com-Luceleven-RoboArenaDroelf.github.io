@@ -252,7 +252,6 @@ def handle_start_game_menu_events():
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
-        recalculate_robot_values()
         start_game = False
         map = True
 
