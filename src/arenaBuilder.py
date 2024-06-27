@@ -3,6 +3,7 @@ from tkinter import filedialog, Tk
 import shutil
 import os
 from arena import Arena
+from screens import Screens
 
 
 class ArenaBuilder(Arena):
@@ -24,6 +25,7 @@ class ArenaBuilder(Arena):
         self.num_tiles_x = num_tiles_x
         self.num_tiles_y = num_tiles_y
         self.tiles = [[self.TileType.AIR for _ in range(self.num_tiles_x)] for _ in range(self.num_tiles_y)]
+        self._spawn_positions_unscaled = [[0, 0], [0, 0], [0, 0], [0, 0]]
         self._background_image_filename = super().maps_base_path + "emptyMap.png"
         filename = "emptyMap.json"
         self.save_to_json(filename)
@@ -38,11 +40,14 @@ class ArenaBuilder(Arena):
         self.render_arena(pygame)
         self.x_offset = 0
         self.y_offset = 0
+        self._calculate_spawn_positions()
         self.pygame = pygame
         if bool(flags & pygame.FULLSCREEN):
             self.screen = self.pygame.display.set_mode(screen_size, pygame.FULLSCREEN)
         else:
             self.screen = self.pygame.display.set_mode(screen_size)
+        if filename == "emptyMap.json":
+            self._reset_spawn_positions()
 
     def _set_up_paint_related(self):
         # Set up scaled sizes
@@ -169,8 +174,23 @@ class ArenaBuilder(Arena):
         x //= self.tile_size
         y //= self.tile_size
         if x < self.num_tiles_x and y < self.num_tiles_y:
-            self.set_tile(x, y, current_tile)
+            if current_tile == self.TileType.SPAWN and [x, y] not in self._spawn_positions_unscaled:
+                self.set_spawn_position(x, y)
+            else:
+                self.set_tile(x, y, current_tile)
             self.render_arena(self.pygame)
+
+    def set_tile(self, x, y, tile_type):
+        self.tiles[y][x] = tile_type
+
+    def set_spawn_position(self, x, y):
+        if len(self.spawn_positions) < 4:
+            self._spawn_positions_unscaled.append([x, y])
+            self.spawn_positions.append([x * self.tile_size + self.x_offset, y * self.tile_size + self.y_offset])
+
+    def _reset_spawn_positions(self):
+        self._spawn_positions_unscaled = []
+        self.spawn_positions = []
 
     def _handle_key_down(self, current_tile, event):
         if self._input_active_saving:
@@ -203,6 +223,8 @@ class ArenaBuilder(Arena):
             current_tile = self.TileType.BIRCH
         elif event.key == self.pygame.K_7:
             current_tile = self.TileType.LEAVES
+        elif event.key == self.pygame.K_8:
+            current_tile = self.TileType.SPAWN
         return current_tile
 
     def _handle_mouse_button_down(
@@ -272,6 +294,7 @@ class ArenaBuilder(Arena):
         self._draw_legend()
         self._draw_input_fields()
         self._draw_buttons(load_map_button_clicked, save_button_clicked, load_background_button_clicked)
+        self._draw_spawn_positions()
 
     def _draw_buttons(self, load_map_button_clicked, save_button_clicked, load_background_button_clicked):
         # Draw save button
@@ -360,6 +383,14 @@ class ArenaBuilder(Arena):
         for y in range(0, self._max_y_of_map + self.tile_size, self.tile_size):
             self.pygame.draw.line(self.screen, self.GREY, (0, y), (self._max_x_of_map, y))
 
+    def _draw_spawn_positions(self):
+        FONT_SIZE = int(self.tile_size)
+        font = self.pygame.font.SysFont(None, FONT_SIZE)
+        for i, pos in enumerate(self.spawn_positions):
+            text = font.render(str(i + 1), True, self.BLACK)  # Rendere den Text (Schwarz)
+            text_rect = text.get_rect(center=(pos[0] + self.tile_size // 2, pos[1] + self.tile_size // 2))
+            self.screen.blit(text, text_rect)
+
     def _load_background(self):
         filename = self._open_file_dialog()
         if filename != "":
@@ -376,9 +407,6 @@ class ArenaBuilder(Arena):
         )
         return file_path
 
-    def set_tile(self, x, y, tile_type):
-        self.tiles[y][x] = tile_type
-
     # Speichere die Daten in einer JSON-Datei
     def save_to_json(self, filename):
         _, file_extension = os.path.splitext(self._background_image_filename)
@@ -391,6 +419,7 @@ class ArenaBuilder(Arena):
             "num_tiles_x": self.num_tiles_x,
             "num_tiles_y": self.num_tiles_y,
             "background_image": map_name + file_extension,
+            "spawn_positions_unscaled": self._spawn_positions_unscaled,
             "tiles": [[tile.name for tile in row] for row in self.tiles],
         }
         with open(self.maps_base_path + filename, "w") as f:

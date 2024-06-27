@@ -16,6 +16,7 @@ class Arena:
         LAVA = ("Lava.png", True)
         BIRCH = ("Birch.png", True)
         LEAVES = ("Leaves.png", True)
+        SPAWN = ("Spawn.png", False)
 
         def __init__(self, filename, solid):
             self.filename = filename
@@ -75,7 +76,9 @@ class Arena:
     def _calculate_spawn_positions(self):
         self.spawn_positions = []
         for pos in self._spawn_positions_unscaled:
-            self.spawn_positions.append([pos[0] * self.tile_size + self.x_offset, pos[1] * self.tile_size + self.y_offset])
+            self.spawn_positions.append(
+                [pos[0] * self.tile_size + self.x_offset, pos[1] * self.tile_size + self.y_offset]
+            )
 
     def _set_background_image(self, image, pygame):
         self.background_image = pygame.transform.scale(image, self.map_size)
@@ -92,7 +95,7 @@ class Arena:
         for row in self.tiles:
             x = 0
             for tile in row:
-                if tile.filename != "Air.png":
+                if tile.filename != "Air.png" and tile.filename != "Spawn.png":
                     self.rendered_arena.blit(tile.image, (x, y))
                 x += self.tile_size
             y += self.tile_size
