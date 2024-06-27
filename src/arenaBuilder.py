@@ -306,7 +306,10 @@ class ArenaBuilder(Arena):
         self._input_text_saving = map_name
 
     def _save_map(self):
-        self.save_to_json(self._input_text_saving + ".json")
+        if len(self.spawn_positions) == 4:
+            self.save_to_json(self._input_text_saving + ".json")
+        else:
+            Screens.show_popup("You need to set all 4 Spawn positions first!")
 
     def _paint_arena_builder(
         self, save_button_clicked, load_map_button_clicked, load_background_button_clicked, reset_button_clicked
