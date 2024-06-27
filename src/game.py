@@ -188,8 +188,8 @@ def handle_start_game_menu_events():
     global player_count, robots, jump, start_game, playing, map
 
     robot1 = Robot(
-        robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        arena.spawn_positions[0][0] + robot_radius,
+        arena.spawn_positions[0][1] + robot_radius,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -200,8 +200,8 @@ def handle_start_game_menu_events():
         0,
     )
     robot2 = Robot(
-        2 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        arena.spawn_positions[1][0] + robot_radius,
+        arena.spawn_positions[1][1] + robot_radius,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -212,8 +212,8 @@ def handle_start_game_menu_events():
         1,
     )
     robot3 = Robot(
-        3 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        arena.spawn_positions[2][0] + robot_radius,
+        arena.spawn_positions[2][1] + robot_radius,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
@@ -224,8 +224,8 @@ def handle_start_game_menu_events():
         2,
     )
     robot4 = Robot(
-        4 * robot_spawn_distance + arena.x_offset,
-        display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset,
+        arena.spawn_positions[3][0] + robot_radius,
+        arena.spawn_positions[3][1] + robot_radius,
         robot_radius,
         0,
         arena.map_size[0] / float(1000),
