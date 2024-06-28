@@ -1,4 +1,16 @@
 class Screens:
+    class MenuItem:
+        def __init__(self, text, textcolor, font, dist_mult, display_resolution, dist_between_elements):
+            self.text = font.render(text, True, textcolor)
+            self.rect = self.text.get_rect(
+                center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_mult * dist_between_elements)
+            )
+            self.selected = False
+
+        def draw(self, screen, pygame, color):
+            color = (255, 0, 0) if self.selected else color
+            pygame.draw.rect(screen, color, self.rect)
+            screen.blit(self.text, self.rect)
 
     black = (0, 0, 0)
     white = (255, 255, 255)
@@ -17,6 +29,7 @@ class Screens:
 
     def death_screen(self, pygame, screen):
         screen.fill(self.black)
+
         font = pygame.font.Font(None, self.font_size_big)
         text = font.render("You Died!", True, (101, 28, 50))
         screen.blit(
@@ -28,23 +41,15 @@ class Screens:
         )
 
         font = pygame.font.Font(None, self.font_size_small)
-        text_main_menu = font.render("Main Menu", True, self.black)
-        text_quit = font.render("Quit Game", True, self.black)
+        menu_items = [
+            self.MenuItem("Main Menu", self.black, font, 2, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Quit Game", self.black, font, 3, self.display_resolution, self.dist_between_elements),
+        ]
 
-        main_menu_rect = text_main_menu.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 2 * self.dist_between_elements)
-        )
-        quit_rect = text_quit.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
-        )
+        for item in menu_items:
+            item.draw(screen, pygame, self.white)
 
-        pygame.draw.rect(screen, self.white, main_menu_rect)
-        pygame.draw.rect(screen, self.white, quit_rect)
-
-        screen.blit(text_main_menu, main_menu_rect)
-        screen.blit(text_quit, quit_rect)
-
-        return quit_rect, main_menu_rect
+        return menu_items
 
     def pause_screen(self, pygame, screen):
         font = pygame.font.Font(None, self.font_size_big)
@@ -58,63 +63,32 @@ class Screens:
         )
 
         font = pygame.font.Font(None, self.font_size_small)
-        text_resume = font.render("Resume", True, self.white)
-        text_main_menu = font.render("Main Menu", True, self.white)
-        text_quit = font.render("Quit Game", True, self.white)
+        menu_items = [
+            self.MenuItem("Resume", self.white, font, 1, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Main Menu", self.white, font, 2, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Quit Game", self.white, font, 3, self.display_resolution, self.dist_between_elements),
+        ]
 
-        resume_rect = text_resume.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + self.dist_between_elements)
-        )
-        main_menu_rect = text_main_menu.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 2 * self.dist_between_elements)
-        )
-        quit_rect = text_quit.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
-        )
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
 
-        pygame.draw.rect(screen, self.black, resume_rect)
-        pygame.draw.rect(screen, self.black, main_menu_rect)
-        pygame.draw.rect(screen, self.black, quit_rect)
-
-        screen.blit(text_resume, resume_rect)
-        screen.blit(text_main_menu, main_menu_rect)
-        screen.blit(text_quit, quit_rect)
-
-        return resume_rect, quit_rect, main_menu_rect
+        return menu_items
 
     def main_menu(self, pygame, screen):
         screen.fill(self.white)
 
         font = pygame.font.Font(None, self.font_size_small)
-        play_text = font.render("Play", True, self.white)
-        build_arena_text = font.render("Build Arena", True, self.white)
-        settings_text = font.render("Settings", True, self.white)
-        exit_text = font.render("Exit", True, self.white)
+        menu_items = [
+            self.MenuItem("Play", self.white, font, 1, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Build Arena", self.white, font, 2, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Settings", self.white, font, 3, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Exit", self.white, font, 4, self.display_resolution, self.dist_between_elements),
+        ]
 
-        play_rect = play_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + self.dist_between_elements)
-        )
-        build_arena_rect = build_arena_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 2 * self.dist_between_elements)
-        )
-        settings_rect = settings_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
-        )
-        exit_rect = exit_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 4 * self.dist_between_elements)
-        )
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
 
-        pygame.draw.rect(screen, self.black, play_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, build_arena_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, settings_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, exit_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-
-        screen.blit(play_text, play_rect)
-        screen.blit(build_arena_text, build_arena_rect)
-        screen.blit(settings_text, settings_rect)
-        screen.blit(exit_text, exit_rect)
-
-        return play_rect, build_arena_rect, exit_rect, settings_rect
+        return menu_items
 
     def settings_menu(self, pygame, screen, available_resolutions):
         screen.fill(self.white)
@@ -129,35 +103,26 @@ class Screens:
             ),
         )
 
-        resolution_rects = []
+        menu_items = []
         font = pygame.font.Font(None, self.font_size_small)
         for i, res in enumerate(available_resolutions):
-            res_text = font.render(f"{res[0]}x{res[1]}", True, self.white)
-            res_rect = res_text.get_rect(
-                center=(
-                    self.display_resolution[0] // 2,
-                    self.display_resolution[1] // 2 - self.dist_between_elements + i * self.dist_between_elements,
+            menu_items.append(
+                self.MenuItem(
+                    f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution, self.dist_between_elements
                 )
             )
-            pygame.draw.rect(screen, self.black, res_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-            screen.blit(res_text, res_rect)
-            resolution_rects.append(res_rect)
 
-        fullscreen_text = font.render("Fullscreen", True, self.white)
-        fullscreen_rect = fullscreen_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
+        menu_items.append(
+            self.MenuItem("Fullscreen", self.white, font, 4, self.display_resolution, self.dist_between_elements)
         )
-        pygame.draw.rect(screen, self.black, fullscreen_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        screen.blit(fullscreen_text, fullscreen_rect)
-
-        back_text = font.render("Back", True, self.white)
-        back_rect = fullscreen_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 4 * self.dist_between_elements)
+        menu_items.append(
+            self.MenuItem("Back", self.white, font, 5, self.display_resolution, self.dist_between_elements)
         )
-        pygame.draw.rect(screen, self.black, back_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        screen.blit(back_text, back_rect)
 
-        return resolution_rects, fullscreen_rect, back_rect
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
+
+        return menu_items
 
     def build_arena_menu(self, pygame, screen, x_tiles, y_tiles):
         screen.fill(self.white)
@@ -213,17 +178,14 @@ class Screens:
         )
 
         font = pygame.font.Font(None, self.font_size_small)
-        start_building_text = font.render("Start Building", True, self.white)
+        menu_items = [
+            self.MenuItem("Start Building", self.white, font, 3, self.display_resolution, self.dist_between_elements)
+        ]
 
-        start_building_rect = start_building_text.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
-        )
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
 
-        pygame.draw.rect(screen, self.black, start_building_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-
-        screen.blit(start_building_text, start_building_rect)
-
-        return input_rect_x_tiles, input_rect_y_tiles, start_building_rect
+        return input_rect_x_tiles, input_rect_y_tiles, menu_items
 
     def start_screen(self, pygame, screen):
         screen.fill(self.white)
@@ -239,35 +201,17 @@ class Screens:
         )
 
         font = pygame.font.Font(None, self.font_size_small)
-        one_player = font.render("1", True, self.white)
-        two_player = font.render("2", True, self.white)
-        three_player = font.render("3", True, self.white)
-        four_player = font.render("4", True, self.white)
+        menu_items = [
+            self.MenuItem("1", self.white, font, 1, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("2", self.white, font, 2, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("3", self.white, font, 3, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("4", self.white, font, 4, self.display_resolution, self.dist_between_elements),
+        ]
 
-        one_player_rect = one_player.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + self.dist_between_elements)
-        )
-        two_player_rect = two_player.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 2 * self.dist_between_elements)
-        )
-        three_player_rect = three_player.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 3 * self.dist_between_elements)
-        )
-        four_player_rect = four_player.get_rect(
-            center=(self.display_resolution[0] // 2, self.display_resolution[1] // 2 + 4 * self.dist_between_elements)
-        )
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
 
-        pygame.draw.rect(screen, self.black, one_player_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, two_player_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, three_player_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-        pygame.draw.rect(screen, self.black, four_player_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-
-        screen.blit(one_player, one_player_rect)
-        screen.blit(two_player, two_player_rect)
-        screen.blit(three_player, three_player_rect)
-        screen.blit(four_player, four_player_rect)
-
-        return one_player_rect, two_player_rect, three_player_rect, four_player_rect
+        return menu_items
 
     def level_menu(self, pygame, screen, json_filenames):
         screen.fill(self.white)
@@ -285,21 +229,17 @@ class Screens:
         # Hole die JSON- und PNG-Dateinamen
         # png_filenames = get_png_filenames(directory)
 
-        level_rects = []
+        menu_items = []
         maps = []
         # Anzeige der JSON-Dateinamen
         small_font = pygame.font.Font(None, self.font_size_small)
-        for index, filename in enumerate(json_filenames):
-            level_text = small_font.render(filename, True, self.white)
-            level_rect = level_text.get_rect(
-                center=(
-                    self.display_resolution[0] // 2,
-                    self.display_resolution[1] // 2 - self.dist_between_elements + index * self.dist_between_elements,
-                )
+        for i, filename in enumerate(json_filenames):
+            menu_items.append(
+                self.MenuItem(filename, self.white, font, i, self.display_resolution, self.dist_between_elements)
             )
-            pygame.draw.rect(screen, self.black, level_rect.inflate(self.rect_inflate_x, self.rect_inflate_y))
-            screen.blit(level_text, level_rect)
-            level_rects.append(level_rect)
             maps.append(filename + ".json")
 
-        return level_rects, maps
+        for item in menu_items:
+            item.draw(screen, pygame, self.black)
+
+        return menu_items, maps

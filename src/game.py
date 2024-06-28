@@ -534,21 +534,39 @@ while run:
         game_loop()
     # Painting the screens:
     elif game_paused:
-        resume_rect, quit_rect, main_menu_rect = screens.pause_screen(pygame, screen)
+        menu_items = screens.pause_screen(pygame, screen)
+        resume_rect, main_menu_rect, quit_rect = menu_items[0].rect, menu_items[1].rect, menu_items[2].rect
     elif death:
-        quit_rect, main_menu_rect = screens.death_screen(pygame, screen)
+        menu_items = screens.death_screen(pygame, screen)
+        main_menu_rect, quit_rect = menu_items[0].rect, menu_items[1].rect
     elif menu:
-        play_rect, build_arena_rect, exit_rect, settings_rect = screens.main_menu(pygame, screen)
-    elif settings:
-        resolution_rects, fullscreen_rect, back_rect = screens.settings_menu(pygame, screen, available_resolutions)
-    elif build_arena:
-        input_rect_x_tiles, input_rect_y_tiles, start_building_rect = screens.build_arena_menu(
-            pygame, screen, x_tiles, y_tiles
+        menu_items = screens.main_menu(pygame, screen)
+        play_rect, build_arena_rect, settings_rect, exit_rect = (
+            menu_items[0].rect,
+            menu_items[1].rect,
+            menu_items[2].rect,
+            menu_items[3].rect,
         )
+    elif settings:
+        menu_items = screens.settings_menu(pygame, screen, available_resolutions)
+        resolution_rects = menu_items[0].rect, menu_items[1].rect, menu_items[2].rect, menu_items[3].rect
+        fullscreen_rect, back_rect = menu_items[4].rect, menu_items[5].rect
+    elif build_arena:
+        input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_menu(pygame, screen, x_tiles, y_tiles)
+        start_building_rect = menu_items[0].rect
     elif start_game:
-        one_player_rect, two_player_rect, three_player_rect, four_player_rect = screens.start_screen(pygame, screen)
+        menu_items = screens.start_screen(pygame, screen)
+        one_player_rect, two_player_rect, three_player_rect, four_player_rect = (
+            menu_items[0].rect,
+            menu_items[1].rect,
+            menu_items[2].rect,
+            menu_items[3].rect,
+        )
     elif map:
-        level_rects, maps = screens.level_menu(pygame, screen, get_json_filenames(arena.maps_base_path))
+        menu_items, maps = screens.level_menu(pygame, screen, get_json_filenames(arena.maps_base_path))
+        level_rects = []
+        for item in menu_items:
+            level_rects.append(item.rect)
 
     pygame.display.update()
 
