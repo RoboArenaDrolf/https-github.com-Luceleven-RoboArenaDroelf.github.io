@@ -36,7 +36,6 @@ white = (255, 255, 255)
 map_name = "secondMap.json"
 movement = Movement(display_resolution[1] / 2000)
 arena = Arena(map_name, pygame)
-screens = Screens(pygame)
 
 robot_radius = arena.tile_size * 0.5
 robot_spawn_distance = display_resolution[0] / 10
@@ -59,6 +58,9 @@ input_active_x = False
 input_active_y = False
 x_tiles = ""
 y_tiles = ""
+menu_items = []
+selected_item_index = 0
+recently_switched_item = False
 
 # Zähler für die Anzahl der Frames, bevor die Richtung des Roboters geändert wird
 change_direction_interval = 100  # Ändere die Richtung alle 120 Frames
@@ -96,6 +98,9 @@ def get_png_filenames(directory):
     return png_files
 
 
+screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
+
+
 def recalculate_robot_values():
     global robots, robot_radius, robot_spawn_distance
     robot_radius = min(display_resolution) / 40
@@ -111,24 +116,27 @@ def recalculate_robot_values():
 
 
 def handle_main_menu_events():
-    global robots, start_game, menu, build_arena, settings, run
+    global robots, start_game, menu, build_arena, settings, run, selected_item_index
 
     if play_rect.collidepoint(mouse_pos):
         robots = []
         start_game = True
         menu = False
+        selected_item_index = 0
     elif build_arena_rect.collidepoint(mouse_pos):
         build_arena = True
         menu = False
+        selected_item_index = 0
     elif settings_rect.collidepoint(mouse_pos):
         settings = True
         menu = False
+        selected_item_index = 0
     elif exit_rect.collidepoint(mouse_pos):
         run = False
 
 
 def handle_build_arena_menu_events(event):
-    global input_active_x, input_active_y, build_arena, menu, arenaBuilder, x_tiles, y_tiles
+    global input_active_x, input_active_y, build_arena, menu, x_tiles, y_tiles, screens
 
     if event.type == pygame.MOUSEBUTTONDOWN:
         if input_rect_x_tiles.collidepoint(mouse_pos):
@@ -147,6 +155,7 @@ def handle_build_arena_menu_events(event):
                 menu = True
                 arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                 arenaBuilder.main()
+                screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
             except ValueError:
                 print("There should only be positive numbers in the fields!")
 
@@ -164,7 +173,7 @@ def handle_build_arena_menu_events(event):
 
 
 def handle_settings_menu_events():
-    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, arena, movement, screens
+    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, arena, movement, screens, selected_item_index
 
     dis_res_changed = False
 
@@ -175,6 +184,7 @@ def handle_settings_menu_events():
     elif back_rect.collidepoint(mouse_pos):
         menu = True
         settings = False
+        selected_item_index = 0
 
     for i, res_rect in enumerate(resolution_rects):
         if res_rect.collidepoint(mouse_pos):
@@ -188,14 +198,14 @@ def handle_settings_menu_events():
             screen = pygame.display.set_mode(display_resolution, pygame.FULLSCREEN)
         else:
             screen = pygame.display.set_mode(display_resolution)
-        screens = Screens(pygame)
+        screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
         arena = Arena(map_name, pygame)
         movement = Movement(display_resolution[1] / 2000)
         recalculate_robot_values()
 
 
 def handle_start_game_menu_events():
-    global player_count, robots, jump, start_game, playing, map
+    global player_count, robots, jump, start_game, playing, map, selected_item_index
 
     robot1 = Robot(
         robot_spawn_distance + arena.x_offset,
@@ -266,21 +276,23 @@ def handle_start_game_menu_events():
     if robots:
         start_game = False
         map = True
+        selected_item_index = 0
 
 
 def handle_death_screen_events():
-    global menu, death
+    global menu, death, selected_item_index
 
     if main_menu_rect.collidepoint(mouse_pos):
         menu = True
         death = False
+        selected_item_index = 0
     elif quit_rect.collidepoint(mouse_pos):
         pygame.quit()
         sys.exit()
 
 
 def handle_pause_screen_events():
-    global game_paused, menu, playing
+    global game_paused, menu, playing, selected_item_index
 
     if resume_rect.collidepoint(mouse_pos):
         game_paused = False
@@ -288,13 +300,14 @@ def handle_pause_screen_events():
         menu = True
         playing = False
         game_paused = False
+        selected_item_index = 0
     elif quit_rect.collidepoint(mouse_pos):
         pygame.quit()
         sys.exit()
 
 
 def handle_map_screen_events():
-    global map, playing, arena, map_name
+    global map, playing, arena, map_name, selected_item_index
 
     for i, level_rect in enumerate(level_rects):
         if level_rect.collidepoint(mouse_pos):
@@ -303,6 +316,7 @@ def handle_map_screen_events():
             arena.render_arena(pygame)
             map = False
             playing = True
+            selected_item_index = 0
             break
 
 
@@ -514,21 +528,47 @@ while run:
                         player_robot.jump = True
             elif build_arena:
                 handle_build_arena_menu_events(event)
-        elif event.type == pygame.JOYBUTTONDOWN and playing and not game_paused:
-            player_robot = robots[0]
-            if event.button == 0:
-                if player_robot.jump_counter <= 1:
-                    player_robot.jump = True
-        elif event.type == pygame.JOYAXISMOTION and playing and not game_paused:
-            player_robot = robots[0]
-            if (
-                event.axis == 5 and event.value > 0.2 and player_robot.melee_cd == 0
-            ):  # we can attack if we have no cooldown and press the button
-                player_robot.melee_attack(pygame, screen, robots, arena)
-                player_robot.melee_cd += 1
-            if event.axis == 4 and event.value > 0.2 and (player_robot.ranged_cd == 0 or player_robot.ranged_cd == 10):
-                player_robot.ranged_attack()
-                player_robot.ranged_cd += 1
+        elif event.type == pygame.JOYBUTTONDOWN:
+            if playing and not game_paused:
+                player_robot = robots[0]
+                if event.button == 0:
+                    if player_robot.jump_counter <= 1:
+                        player_robot.jump = True
+            else:
+                if event.button == 1:
+                    menu_items[selected_item_index].pressed = True
+
+        elif event.type == pygame.JOYAXISMOTION:
+            if playing and not game_paused:
+                player_robot = robots[0]
+                if (
+                    event.axis == 5 and event.value > 0.2 and player_robot.melee_cd == 0
+                ):  # we can attack if we have no cooldown and press the button
+                    player_robot.melee_attack(pygame, screen, robots, arena)
+                    player_robot.melee_cd += 1
+                if (
+                    event.axis == 4
+                    and event.value > 0.2
+                    and (player_robot.ranged_cd == 0 or player_robot.ranged_cd == 10)
+                ):
+                    player_robot.ranged_attack()
+                    player_robot.ranged_cd += 1
+            else:
+                if event.axis == 1:
+                    if event.value > 0.2 and not recently_switched_item:
+                        menu_items[selected_item_index].selected = False
+                        selected_item_index += 1
+                        if selected_item_index >= len(menu_items):
+                            selected_item_index = 0
+                        recently_switched_item = True
+                    elif event.value < -0.2 and not recently_switched_item:
+                        menu_items[selected_item_index].selected = False
+                        selected_item_index -= 1
+                        if selected_item_index < 0:
+                            selected_item_index = len(menu_items) - 1
+                        recently_switched_item = True
+                    elif -0.2 <= event.value <= 0.2:
+                        recently_switched_item = False
 
     if playing and not game_paused:
         game_loop()
@@ -549,7 +589,9 @@ while run:
         )
     elif settings:
         menu_items = screens.settings_menu(pygame, screen, available_resolutions)
-        resolution_rects = menu_items[0].rect, menu_items[1].rect, menu_items[2].rect, menu_items[3].rect
+        resolution_rects = []
+        for i in range(0, 4):
+            resolution_rects.append(menu_items[i].rect)
         fullscreen_rect, back_rect = menu_items[4].rect, menu_items[5].rect
     elif build_arena:
         input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_menu(pygame, screen, x_tiles, y_tiles)
@@ -567,6 +609,18 @@ while run:
         level_rects = []
         for item in menu_items:
             level_rects.append(item.rect)
+
+    # Check mouse pos and select menu items
+    if (not playing or game_paused) and not use_controller:
+        mouse_pos = pygame.mouse.get_pos()
+        for item in menu_items:
+            if item.rect.collidepoint(mouse_pos):
+                item.selected = True
+            else:
+                item.selected = False
+    # If using controller: Check selected item index and set it to True
+    elif (not playing or game_paused) and use_controller:
+        menu_items[selected_item_index].selected = True
 
     pygame.display.update()
 

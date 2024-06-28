@@ -7,18 +7,20 @@ class Screens:
                 center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_mult * dist_between_elements)
             )
             self.selected = False
+            self.pressed = False
 
         def draw(self, screen, pygame, color, display_resolution):
             rect_inflate_x = display_resolution[0] / 50
             rect_inflate_y = display_resolution[1] / 50
-            color = (255, 0, 0) if self.selected else color
+            if self.selected:
+                color = (130, 130, 130)
             pygame.draw.rect(screen, color, self.rect.inflate(rect_inflate_x, rect_inflate_y))
             screen.blit(self.text, self.rect)
 
     black = (0, 0, 0)
     white = (255, 255, 255)
 
-    def __init__(self, pygame):
+    def __init__(self, pygame, available_resolutions, json_filenames):
         self.display_resolution = pygame.display.get_window_size()
         self.dist_between_elements = self.display_resolution[1] / 20
         self.input_fields_x_size = self.display_resolution[0] / 12
@@ -29,6 +31,43 @@ class Screens:
         self.rect_inflate_y = self.display_resolution[1] / 50
         self.font_size_big = int(self.display_resolution[1] / 16)
         self.font_size_small = int(self.display_resolution[1] / 25)
+        self._initialize_menu_items(pygame, available_resolutions, json_filenames)
+
+    def _initialize_menu_items(self, pygame, available_resolutions, json_filenames):
+        font = pygame.font.Font(None, self.font_size_small)
+        self.death_screen_items = [
+            self.MenuItem("Main Menu", self.black, font, 2, self.display_resolution),
+            self.MenuItem("Quit Game", self.black, font, 3, self.display_resolution),
+        ]
+        self.pause_screen_items = [
+            self.MenuItem("Resume", self.white, font, 1, self.display_resolution),
+            self.MenuItem("Main Menu", self.white, font, 2, self.display_resolution),
+            self.MenuItem("Quit Game", self.white, font, 3, self.display_resolution),
+        ]
+        self.main_menu_items = [
+            self.MenuItem("Play", self.white, font, 1, self.display_resolution),
+            self.MenuItem("Build Arena", self.white, font, 2, self.display_resolution),
+            self.MenuItem("Settings", self.white, font, 3, self.display_resolution),
+            self.MenuItem("Exit", self.white, font, 4, self.display_resolution),
+        ]
+        self.settings_menu_items = []
+        for i, res in enumerate(available_resolutions):
+            self.settings_menu_items.append(
+                self.MenuItem(f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution)
+            )
+        self.settings_menu_items.append(self.MenuItem("Fullscreen", self.white, font, 4, self.display_resolution))
+        self.settings_menu_items.append(self.MenuItem("Back", self.white, font, 5, self.display_resolution))
+        self.build_arena_menu_items = [self.MenuItem("Start Building", self.white, font, 3, self.display_resolution)]
+        self.start_screen_items = [
+            self.MenuItem("1", self.white, font, 1, self.display_resolution),
+            self.MenuItem("2", self.white, font, 2, self.display_resolution),
+            self.MenuItem("3", self.white, font, 3, self.display_resolution),
+            self.MenuItem("4", self.white, font, 4, self.display_resolution),
+        ]
+        self.level_menu_items = []
+        for i, filename in enumerate(json_filenames):
+            self.level_menu_items.append(self.MenuItem(filename, self.white, font, i, self.display_resolution))
+            self.level_menu_items.append(filename + ".json")
 
     def death_screen(self, pygame, screen):
         screen.fill(self.black)
@@ -43,16 +82,10 @@ class Screens:
             ),
         )
 
-        font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [
-            self.MenuItem("Main Menu", self.black, font, 2, self.display_resolution),
-            self.MenuItem("Quit Game", self.black, font, 3, self.display_resolution),
-        ]
-
-        for item in menu_items:
+        for item in self.death_screen_items:
             item.draw(screen, pygame, self.white, self.display_resolution)
 
-        return menu_items
+        return self.death_screen_items
 
     def pause_screen(self, pygame, screen):
         font = pygame.font.Font(None, self.font_size_big)
@@ -65,33 +98,18 @@ class Screens:
             ),
         )
 
-        font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [
-            self.MenuItem("Resume", self.white, font, 1, self.display_resolution),
-            self.MenuItem("Main Menu", self.white, font, 2, self.display_resolution),
-            self.MenuItem("Quit Game", self.white, font, 3, self.display_resolution),
-        ]
-
-        for item in menu_items:
+        for item in self.pause_screen_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return menu_items
+        return self.pause_screen_items
 
     def main_menu(self, pygame, screen):
         screen.fill(self.white)
 
-        font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [
-            self.MenuItem("Play", self.white, font, 1, self.display_resolution),
-            self.MenuItem("Build Arena", self.white, font, 2, self.display_resolution),
-            self.MenuItem("Settings", self.white, font, 3, self.display_resolution),
-            self.MenuItem("Exit", self.white, font, 4, self.display_resolution),
-        ]
-
-        for item in menu_items:
+        for item in self.main_menu_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return menu_items
+        return self.main_menu_items
 
     def settings_menu(self, pygame, screen, available_resolutions):
         screen.fill(self.white)
@@ -106,18 +124,10 @@ class Screens:
             ),
         )
 
-        menu_items = []
-        font = pygame.font.Font(None, self.font_size_small)
-        for i, res in enumerate(available_resolutions):
-            menu_items.append(self.MenuItem(f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution))
-
-        menu_items.append(self.MenuItem("Fullscreen", self.white, font, 4, self.display_resolution))
-        menu_items.append(self.MenuItem("Back", self.white, font, 5, self.display_resolution))
-
-        for item in menu_items:
+        for item in self.settings_menu_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return menu_items
+        return self.settings_menu_items
 
     def build_arena_menu(self, pygame, screen, x_tiles, y_tiles):
         screen.fill(self.white)
@@ -172,13 +182,10 @@ class Screens:
             (input_rect_y_tiles.x + self.input_text_offset_x, input_rect_y_tiles.y + self.input_text_offset_y),
         )
 
-        font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [self.MenuItem("Start Building", self.white, font, 3, self.display_resolution)]
-
-        for item in menu_items:
+        for item in self.build_arena_menu_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return input_rect_x_tiles, input_rect_y_tiles, menu_items
+        return input_rect_x_tiles, input_rect_y_tiles, self.build_arena_menu_items
 
     def start_screen(self, pygame, screen):
         screen.fill(self.white)
@@ -193,18 +200,10 @@ class Screens:
             ),
         )
 
-        font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [
-            self.MenuItem("1", self.white, font, 1, self.display_resolution),
-            self.MenuItem("2", self.white, font, 2, self.display_resolution),
-            self.MenuItem("3", self.white, font, 3, self.display_resolution),
-            self.MenuItem("4", self.white, font, 4, self.display_resolution),
-        ]
-
-        for item in menu_items:
+        for item in self.start_screen_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return menu_items
+        return self.start_screen_items
 
     def level_menu(self, pygame, screen, json_filenames):
         screen.fill(self.white)
@@ -222,15 +221,9 @@ class Screens:
         # Hole die JSON- und PNG-Dateinamen
         # png_filenames = get_png_filenames(directory)
 
-        menu_items = []
         maps = []
         # Anzeige der JSON-Dateinamen
-        small_font = pygame.font.Font(None, self.font_size_small)
-        for i, filename in enumerate(json_filenames):
-            menu_items.append(self.MenuItem(filename, self.white, small_font, i, self.display_resolution))
-            maps.append(filename + ".json")
-
-        for item in menu_items:
+        for item in self.level_menu_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return menu_items, maps
+        return self.level_menu_items, maps
