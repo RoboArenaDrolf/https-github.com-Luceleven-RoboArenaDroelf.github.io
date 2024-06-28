@@ -67,7 +67,6 @@ class Screens:
         self.level_menu_items = []
         for i, filename in enumerate(json_filenames):
             self.level_menu_items.append(self.MenuItem(filename, self.white, font, i, self.display_resolution))
-            self.level_menu_items.append(filename + ".json")
 
     def death_screen(self, pygame, screen):
         screen.fill(self.black)
@@ -221,9 +220,8 @@ class Screens:
         # Hole die JSON- und PNG-Dateinamen
         # png_filenames = get_png_filenames(directory)
 
-        maps = []
         # Anzeige der JSON-Dateinamen
         for item in self.level_menu_items:
             item.draw(screen, pygame, self.black, self.display_resolution)
 
-        return self.level_menu_items, maps
+        return self.level_menu_items

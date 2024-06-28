@@ -115,23 +115,28 @@ def recalculate_robot_values():
             robot.vel_max = arena.map_size[0] / float(200)
 
 
+def reset_selected_item():
+    global selected_item_index
+    menu_items[selected_item_index].selected = False
+    selected_item_index = 0
+
+
 def handle_main_menu_events():
     global robots, start_game, menu, build_arena, settings, run, selected_item_index
 
-    if play_rect.collidepoint(mouse_pos):
+    if play_item.pressed:
         robots = []
         start_game = True
         menu = False
-        selected_item_index = 0
-    elif build_arena_rect.collidepoint(mouse_pos):
+    elif build_arena_item.pressed:
         build_arena = True
         menu = False
-        selected_item_index = 0
-    elif settings_rect.collidepoint(mouse_pos):
+        reset_selected_item()
+    elif settings_item.pressed:
         settings = True
         menu = False
-        selected_item_index = 0
-    elif exit_rect.collidepoint(mouse_pos):
+        reset_selected_item()
+    elif exit_item.pressed:
         run = False
 
 
@@ -145,7 +150,7 @@ def handle_build_arena_menu_events(event):
         elif input_rect_y_tiles.collidepoint(mouse_pos):
             input_active_y = True
             input_active_x = False
-        elif start_building_rect.collidepoint(mouse_pos):
+        elif start_building_item.pressed:
             try:
                 num_x = int(x_tiles)
                 num_y = int(y_tiles)
@@ -177,17 +182,17 @@ def handle_settings_menu_events():
 
     dis_res_changed = False
 
-    if fullscreen_rect.collidepoint(mouse_pos):
+    if fullscreen_item.pressed:
         display_resolution = fullscreen_res
         fullscreen = True
         dis_res_changed = True
-    elif back_rect.collidepoint(mouse_pos):
+    elif back_item.pressed:
         menu = True
         settings = False
-        selected_item_index = 0
+        reset_selected_item()
 
-    for i, res_rect in enumerate(resolution_rects):
-        if res_rect.collidepoint(mouse_pos):
+    for i, res_item in enumerate(resolution_items):
+        if res_item.pressed:
             display_resolution = available_resolutions[i]
             fullscreen = False
             dis_res_changed = True
@@ -256,37 +261,36 @@ def handle_start_game_menu_events():
         3,
     )
 
-    if one_player_rect.collidepoint(mouse_pos):
+    if one_player_item.pressed:
         player_count = 1
         robots = [robot1]
-    elif two_player_rect.collidepoint(mouse_pos):
+    elif two_player_item.pressed:
         player_count = 2
         robots = [robot1, robot2]
         jump = [False]
         start_game = False
-    elif three_player_rect.collidepoint(mouse_pos):
+    elif three_player_item.pressed:
         player_count = 3
         robots = [robot1, robot2, robot3]
         jump = [False, False]
         start_game = False
-    elif four_player_rect.collidepoint(mouse_pos):
+    elif four_player_item.pressed:
         player_count = 4
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
         start_game = False
         map = True
-        selected_item_index = 0
+        reset_selected_item()
 
 
 def handle_death_screen_events():
     global menu, death, selected_item_index
 
-    if main_menu_rect.collidepoint(mouse_pos):
+    if main_menu_item.pressed:
         menu = True
         death = False
-        selected_item_index = 0
-    elif quit_rect.collidepoint(mouse_pos):
+    elif quit_item.pressed:
         pygame.quit()
         sys.exit()
 
@@ -294,14 +298,14 @@ def handle_death_screen_events():
 def handle_pause_screen_events():
     global game_paused, menu, playing, selected_item_index
 
-    if resume_rect.collidepoint(mouse_pos):
+    if resume_item.pressed:
         game_paused = False
-    elif main_menu_rect.collidepoint(mouse_pos):
+    elif main_menu_item.pressed:
         menu = True
         playing = False
         game_paused = False
-        selected_item_index = 0
-    elif quit_rect.collidepoint(mouse_pos):
+        reset_selected_item()
+    elif quit_item.pressed:
         pygame.quit()
         sys.exit()
 
@@ -309,19 +313,19 @@ def handle_pause_screen_events():
 def handle_map_screen_events():
     global map, playing, arena, map_name, selected_item_index
 
-    for i, level_rect in enumerate(level_rects):
-        if level_rect.collidepoint(mouse_pos):
+    for i, level_item in enumerate(level_items):
+        if level_item.pressed:
             map_name = maps[i]
             arena = Arena(map_name, pygame)
             arena.render_arena(pygame)
             map = False
             playing = True
-            selected_item_index = 0
+            reset_selected_item()
             break
 
 
 def game_loop():
-    global player_robot, playing, death, frame_count, force
+    global player_robot, playing, death, frame_count
 
     screen.fill(white)
     arena.paint_arena(screen)
@@ -491,21 +495,14 @@ while run:
             run = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_pos = pygame.mouse.get_pos()
-            if not playing:
-                if menu:
-                    handle_main_menu_events()
-                elif build_arena:
+            if not playing or game_paused:
+                for item in menu_items:
+                    if item.rect.collidepoint(mouse_pos):
+                        item.pressed = True
+                if build_arena:
                     handle_build_arena_menu_events(event)
-                elif settings:
-                    handle_settings_menu_events()
                 elif start_game:
                     handle_start_game_menu_events()
-                elif death:
-                    handle_death_screen_events()
-                elif map:
-                    handle_map_screen_events()
-            elif game_paused:
-                handle_pause_screen_events()
 
         elif event.type == pygame.KEYDOWN:
             if playing and not game_paused:
@@ -537,6 +534,8 @@ while run:
             else:
                 if event.button == 1:
                     menu_items[selected_item_index].pressed = True
+                if start_game:
+                    handle_start_game_menu_events()
 
         elif event.type == pygame.JOYAXISMOTION:
             if playing and not game_paused:
@@ -575,40 +574,47 @@ while run:
     # Painting the screens:
     elif game_paused:
         menu_items = screens.pause_screen(pygame, screen)
-        resume_rect, main_menu_rect, quit_rect = menu_items[0].rect, menu_items[1].rect, menu_items[2].rect
+        resume_item, main_menu_item, quit_item = menu_items[0], menu_items[1], menu_items[2]
+        handle_pause_screen_events()
     elif death:
         menu_items = screens.death_screen(pygame, screen)
-        main_menu_rect, quit_rect = menu_items[0].rect, menu_items[1].rect
+        main_menu_item, quit_item = menu_items[0], menu_items[1]
+        handle_death_screen_events()
     elif menu:
         menu_items = screens.main_menu(pygame, screen)
-        play_rect, build_arena_rect, settings_rect, exit_rect = (
-            menu_items[0].rect,
-            menu_items[1].rect,
-            menu_items[2].rect,
-            menu_items[3].rect,
+        play_item, build_arena_item, settings_item, exit_item = (
+            menu_items[0],
+            menu_items[1],
+            menu_items[2],
+            menu_items[3],
         )
+        handle_main_menu_events()
     elif settings:
         menu_items = screens.settings_menu(pygame, screen, available_resolutions)
-        resolution_rects = []
+        resolution_items = []
         for i in range(0, 4):
-            resolution_rects.append(menu_items[i].rect)
-        fullscreen_rect, back_rect = menu_items[4].rect, menu_items[5].rect
+            resolution_items.append(menu_items[i])
+        fullscreen_item, back_item = menu_items[4], menu_items[5]
+        handle_settings_menu_events()
     elif build_arena:
         input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_menu(pygame, screen, x_tiles, y_tiles)
-        start_building_rect = menu_items[0].rect
+        start_building_item = menu_items[0]
     elif start_game:
         menu_items = screens.start_screen(pygame, screen)
-        one_player_rect, two_player_rect, three_player_rect, four_player_rect = (
-            menu_items[0].rect,
-            menu_items[1].rect,
-            menu_items[2].rect,
-            menu_items[3].rect,
+        one_player_item, two_player_item, three_player_item, four_player_item = (
+            menu_items[0],
+            menu_items[1],
+            menu_items[2],
+            menu_items[3],
         )
     elif map:
-        menu_items, maps = screens.level_menu(pygame, screen, get_json_filenames(arena.maps_base_path))
-        level_rects = []
-        for item in menu_items:
-            level_rects.append(item.rect)
+        map_names = get_json_filenames(arena.maps_base_path)
+        maps = []
+        for name in map_names:
+            maps.append(name + ".json")
+        menu_items = screens.level_menu(pygame, screen, map_names)
+        level_items = menu_items
+        handle_map_screen_events()
 
     # Check mouse pos and select menu items
     if (not playing or game_paused) and not use_controller:
@@ -621,6 +627,10 @@ while run:
     # If using controller: Check selected item index and set it to True
     elif (not playing or game_paused) and use_controller:
         menu_items[selected_item_index].selected = True
+
+    # Reset pressed items
+    for item in menu_items:
+        item.pressed = False
 
     pygame.display.update()
 
