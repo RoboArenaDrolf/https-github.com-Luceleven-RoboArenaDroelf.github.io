@@ -39,7 +39,12 @@ class Arena:
 
     def __init__(self, filename, pygame):
         self.load_map_from_json(filename, pygame)
-        self.tile_size = int(min(pygame.display.get_window_size()) / max(len(self.tiles[0]), len(self.tiles)))
+        self.tile_size = int(
+            min(
+                pygame.display.get_window_size()[0] / len(self.tiles[0]),
+                pygame.display.get_window_size()[1] / len(self.tiles),
+            )
+        )
         self.TileType.set_values_to_pics(pygame, self.blocks_base_path, self.tile_size)
         self.map_size = (self.tile_size * len(self.tiles[0]), self.tile_size * len(self.tiles))
         self._set_background_image(self._background_image_unscaled, pygame)
@@ -68,6 +73,7 @@ class Arena:
             self._background_image_unscaled = pygame.image.load(
                 self.maps_base_path + data["background_image"]
             ).convert()
+            self._background_image_filename = self.maps_base_path + data["background_image"]
 
     def _set_background_image(self, image, pygame):
         self.background_image = pygame.transform.scale(image, self.map_size)
