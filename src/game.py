@@ -549,6 +549,8 @@ while run:
                 if event.button == 0:
                     if player_robot.jump_counter <= 1:
                         player_robot.jump = True
+                elif event.button == 7:
+                    game_paused = True
             else:
                 if event.button == 1:
                     menu_items[selected_item_index].pressed = True
