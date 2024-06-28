@@ -12,6 +12,15 @@ from robot import Robot
 from screens import Screens
 
 pygame.init()
+pygame.joystick.init()
+
+# Controller initialisieren
+joysticks = []
+for i in range(pygame.joystick.get_count()):
+    joystick = pygame.joystick.Joystick(i)
+    joystick.init()
+    joysticks.append(joystick)
+    print(f"Joystick {i}: {joystick.get_name()} initialized.")
 
 display_resolution = (720, 720)
 available_resolutions = [(720, 720), (1280, 720), (1280, 1080), (1920, 1080)]
@@ -44,6 +53,7 @@ player_count = 0
 death = False
 robots = []
 direction_left = False
+use_controller = True
 
 input_active_x = False
 input_active_y = False
@@ -383,20 +393,13 @@ def player_robot_handling(player_robot):
             player_robot.ranged_cd += 1
 
     # Player movement
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]:
-        player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
-        player_robot.change_alpha(180)
-        direction_left = True
-    elif keys[pygame.K_RIGHT]:
-        player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
-        player_robot.change_alpha(0)
-        direction_left = False
-    elif keys[pygame.K_DOWN]:
-        player_robot.change_alpha(90)
-    elif keys[pygame.K_UP]:
-        player_robot.change_alpha(270)
+    if use_controller:
+        joystick = joysticks[0]
+        moved = move_player_controller(player_robot, joystick)
     else:
+        keys = pygame.key.get_pressed()
+        moved = move_player_keys(player_robot, keys)
+    if not moved:
         if player_robot.vel < 0:
             player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 40000)
             if player_robot.vel + player_robot.accel >= 0:
@@ -413,6 +416,50 @@ def player_robot_handling(player_robot):
     movement.move_robot(player_robot, player_robot.vel, arena, dt)
     player_robot.paint_robot(pygame, screen, direction_left)
     player_robot.ranged_hit_reg(robots, display_resolution[1], display_resolution[0], arena)
+
+
+def move_player_keys(player_robot, keys):
+    global direction_left
+    if keys[pygame.K_LEFT]:
+        player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+        player_robot.change_alpha(180)
+        direction_left = True
+    elif keys[pygame.K_RIGHT]:
+        player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+        player_robot.change_alpha(0)
+        direction_left = False
+    elif keys[pygame.K_DOWN]:
+        player_robot.change_alpha(90)
+        return False
+    elif keys[pygame.K_UP]:
+        player_robot.change_alpha(270)
+        return False
+    else:
+        return False
+    return True
+
+
+def move_player_controller(player_robot, joystick):
+    global direction_left
+    value_x = joystick.get_axis(0)
+    value_y = joystick.get_axis(1)
+    if value_x < -0.2:
+        player_robot.change_acceleration(player_robot.accel - arena.map_size[0] / 20000)
+        player_robot.change_alpha(180)
+        direction_left = True
+    elif value_x > 0.2:
+        player_robot.change_acceleration(player_robot.accel + arena.map_size[0] / 20000)
+        player_robot.change_alpha(0)
+        direction_left = False
+    elif value_y > 0.2:
+        player_robot.change_alpha(90)
+        return False
+    elif value_y < -0.2:
+        player_robot.change_alpha(270)
+        return False
+    else:
+        return False
+    return True
 
 
 while run:
@@ -448,8 +495,8 @@ while run:
 
         elif event.type == pygame.KEYDOWN:
             if playing and not game_paused:
-                key = event.key
                 player_robot = robots[0]
+                key = event.key
                 if key == pygame.K_ESCAPE:
                     game_paused = True
                 elif (
@@ -467,6 +514,21 @@ while run:
                         player_robot.jump = True
             elif build_arena:
                 handle_build_arena_menu_events(event)
+        elif event.type == pygame.JOYBUTTONDOWN and playing and not game_paused:
+            player_robot = robots[0]
+            if event.button == 0:
+                if player_robot.jump_counter <= 1:
+                    player_robot.jump = True
+        elif event.type == pygame.JOYAXISMOTION and playing and not game_paused:
+            player_robot = robots[0]
+            if (
+                event.axis == 5 and event.value > 0.2 and player_robot.melee_cd == 0
+            ):  # we can attack if we have no cooldown and press the button
+                player_robot.melee_attack(pygame, screen, robots, arena)
+                player_robot.melee_cd += 1
+            if event.axis == 4 and event.value > 0.2 and (player_robot.ranged_cd == 0 or player_robot.ranged_cd == 10):
+                player_robot.ranged_attack()
+                player_robot.ranged_cd += 1
 
     if playing and not game_paused:
         game_loop()
