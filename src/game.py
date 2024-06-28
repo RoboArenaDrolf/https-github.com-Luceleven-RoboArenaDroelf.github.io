@@ -33,9 +33,10 @@ pygame.display.set_caption("Robo Arena")
 
 white = (255, 255, 255)
 
-map_name = "secondMap.json"
+map_filename = "secondMap.json"
+maps = []
 movement = Movement(display_resolution[1] / 2000)
-arena = Arena(map_name, pygame)
+arena = Arena(map_filename, pygame)
 
 robot_radius = arena.tile_size * 0.5
 robot_spawn_distance = display_resolution[0] / 10
@@ -98,7 +99,15 @@ def get_png_filenames(directory):
     return png_files
 
 
-screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
+def update_maps(map_names):
+    global maps
+    for name in map_names:
+        maps.append(name + ".json")
+
+
+map_names = get_json_filenames(arena.maps_base_path)
+update_maps(map_names)
+screens = Screens(pygame, available_resolutions, map_names)
 
 
 def recalculate_robot_values():
@@ -160,7 +169,9 @@ def handle_build_arena_menu_events(event):
                 menu = True
                 arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                 arenaBuilder.main()
-                screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
+                map_names = get_json_filenames(arena.maps_base_path)
+                update_maps(map_names)
+                screens = Screens(pygame, available_resolutions, map_names)
             except ValueError:
                 print("There should only be positive numbers in the fields!")
 
@@ -178,7 +189,8 @@ def handle_build_arena_menu_events(event):
 
 
 def handle_settings_menu_events():
-    global mouse_pos, display_resolution, fullscreen, menu, settings, screen, arena, movement, screens, selected_item_index
+    global mouse_pos, display_resolution, fullscreen, menu, settings,\
+        screen, arena, movement, screens, selected_item_index
 
     dis_res_changed = False
 
@@ -204,7 +216,7 @@ def handle_settings_menu_events():
         else:
             screen = pygame.display.set_mode(display_resolution)
         screens = Screens(pygame, available_resolutions, get_json_filenames(arena.maps_base_path))
-        arena = Arena(map_name, pygame)
+        arena = Arena(map_filename, pygame)
         movement = Movement(display_resolution[1] / 2000)
         recalculate_robot_values()
 
@@ -311,12 +323,12 @@ def handle_pause_screen_events():
 
 
 def handle_map_screen_events():
-    global map, playing, arena, map_name, selected_item_index
+    global map, playing, arena, map_filename, selected_item_index
 
     for i, level_item in enumerate(level_items):
         if level_item.pressed:
-            map_name = maps[i]
-            arena = Arena(map_name, pygame)
+            map_filename = maps[i]
+            arena = Arena(map_filename, pygame)
             arena.render_arena(pygame)
             map = False
             playing = True
@@ -590,7 +602,7 @@ while run:
         )
         handle_main_menu_events()
     elif settings:
-        menu_items = screens.settings_menu(pygame, screen, available_resolutions)
+        menu_items = screens.settings_menu(pygame, screen)
         resolution_items = []
         for i in range(0, 4):
             resolution_items.append(menu_items[i])
@@ -608,11 +620,7 @@ while run:
             menu_items[3],
         )
     elif map:
-        map_names = get_json_filenames(arena.maps_base_path)
-        maps = []
-        for name in map_names:
-            maps.append(name + ".json")
-        menu_items = screens.level_menu(pygame, screen, map_names)
+        menu_items = screens.level_menu(pygame, screen)
         level_items = menu_items
         handle_map_screen_events()
 

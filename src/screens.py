@@ -110,7 +110,7 @@ class Screens:
 
         return self.main_menu_items
 
-    def settings_menu(self, pygame, screen, available_resolutions):
+    def settings_menu(self, pygame, screen):
         screen.fill(self.white)
 
         font = pygame.font.Font(None, self.font_size_big)
@@ -204,7 +204,7 @@ class Screens:
 
         return self.start_screen_items
 
-    def level_menu(self, pygame, screen, json_filenames):
+    def level_menu(self, pygame, screen):
         screen.fill(self.white)
 
         font = pygame.font.Font(None, self.font_size_big)
