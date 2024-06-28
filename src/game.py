@@ -49,7 +49,6 @@ build_arena = False
 settings = False
 playing = False
 map = False
-player_count = 0
 death = False
 robots = []
 direction_left = False
@@ -131,7 +130,7 @@ def reset_selected_item():
 
 
 def handle_main_menu_events():
-    global robots, start_game, menu, build_arena, settings, run, selected_item_index
+    global robots, start_game, menu, build_arena, settings, run
 
     if play_item.pressed:
         robots = []
@@ -189,8 +188,7 @@ def handle_build_arena_menu_events(event):
 
 
 def handle_settings_menu_events():
-    global mouse_pos, display_resolution, fullscreen, menu, settings, \
-        screen, arena, movement, screens, selected_item_index, use_controller
+    global display_resolution, fullscreen, menu, settings, screen, arena, movement, screens, use_controller
 
     dis_res_changed = False
 
@@ -228,7 +226,7 @@ def handle_settings_menu_events():
 
 
 def handle_start_game_menu_events():
-    global player_count, robots, jump, start_game, playing, map, selected_item_index
+    global robots, jump, start_game, map
 
     robot1 = Robot(
         robot_spawn_distance + arena.x_offset,
@@ -280,20 +278,16 @@ def handle_start_game_menu_events():
     )
 
     if one_player_item.pressed:
-        player_count = 1
         robots = [robot1]
     elif two_player_item.pressed:
-        player_count = 2
         robots = [robot1, robot2]
         jump = [False]
         start_game = False
     elif three_player_item.pressed:
-        player_count = 3
         robots = [robot1, robot2, robot3]
         jump = [False, False]
         start_game = False
     elif four_player_item.pressed:
-        player_count = 4
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
@@ -303,7 +297,7 @@ def handle_start_game_menu_events():
 
 
 def handle_death_screen_events():
-    global menu, death, selected_item_index
+    global menu, death
 
     if main_menu_item.pressed:
         menu = True
@@ -314,7 +308,7 @@ def handle_death_screen_events():
 
 
 def handle_pause_screen_events():
-    global game_paused, menu, playing, selected_item_index
+    global game_paused, menu, playing
 
     if resume_item.pressed:
         game_paused = False
@@ -329,7 +323,7 @@ def handle_pause_screen_events():
 
 
 def handle_map_screen_events():
-    global map, playing, arena, map_filename, selected_item_index
+    global map, playing, arena, map_filename
 
     for i, level_item in enumerate(level_items):
         if level_item.pressed:
@@ -343,7 +337,7 @@ def handle_map_screen_events():
 
 
 def game_loop():
-    global player_robot, playing, death, frame_count
+    global player_robot, frame_count
 
     screen.fill(white)
     arena.paint_arena(screen)
@@ -391,7 +385,7 @@ def bots_handling():
 
 
 def player_robot_handling(player_robot):
-    global playing, death, direction_left
+    global playing, death
 
     # Überprüfen, ob player die seitlichen Grenzen der Arena erreicht hat
     if player_robot.posx + player_robot.radius - arena.x_offset < 0:
