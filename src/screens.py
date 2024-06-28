@@ -1,15 +1,18 @@
 class Screens:
     class MenuItem:
-        def __init__(self, text, textcolor, font, dist_mult, display_resolution, dist_between_elements):
+        def __init__(self, text, textcolor, font, dist_mult, display_resolution):
+            dist_between_elements = display_resolution[1] / 20
             self.text = font.render(text, True, textcolor)
             self.rect = self.text.get_rect(
                 center=(display_resolution[0] // 2, display_resolution[1] // 2 + dist_mult * dist_between_elements)
             )
             self.selected = False
 
-        def draw(self, screen, pygame, color):
+        def draw(self, screen, pygame, color, display_resolution):
+            rect_inflate_x = display_resolution[0] / 50
+            rect_inflate_y = display_resolution[1] / 50
             color = (255, 0, 0) if self.selected else color
-            pygame.draw.rect(screen, color, self.rect)
+            pygame.draw.rect(screen, color, self.rect.inflate(rect_inflate_x, rect_inflate_y))
             screen.blit(self.text, self.rect)
 
     black = (0, 0, 0)
@@ -42,12 +45,12 @@ class Screens:
 
         font = pygame.font.Font(None, self.font_size_small)
         menu_items = [
-            self.MenuItem("Main Menu", self.black, font, 2, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Quit Game", self.black, font, 3, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Main Menu", self.black, font, 2, self.display_resolution),
+            self.MenuItem("Quit Game", self.black, font, 3, self.display_resolution),
         ]
 
         for item in menu_items:
-            item.draw(screen, pygame, self.white)
+            item.draw(screen, pygame, self.white, self.display_resolution)
 
         return menu_items
 
@@ -64,13 +67,13 @@ class Screens:
 
         font = pygame.font.Font(None, self.font_size_small)
         menu_items = [
-            self.MenuItem("Resume", self.white, font, 1, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Main Menu", self.white, font, 2, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Quit Game", self.white, font, 3, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Resume", self.white, font, 1, self.display_resolution),
+            self.MenuItem("Main Menu", self.white, font, 2, self.display_resolution),
+            self.MenuItem("Quit Game", self.white, font, 3, self.display_resolution),
         ]
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return menu_items
 
@@ -79,14 +82,14 @@ class Screens:
 
         font = pygame.font.Font(None, self.font_size_small)
         menu_items = [
-            self.MenuItem("Play", self.white, font, 1, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Build Arena", self.white, font, 2, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Settings", self.white, font, 3, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("Exit", self.white, font, 4, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("Play", self.white, font, 1, self.display_resolution),
+            self.MenuItem("Build Arena", self.white, font, 2, self.display_resolution),
+            self.MenuItem("Settings", self.white, font, 3, self.display_resolution),
+            self.MenuItem("Exit", self.white, font, 4, self.display_resolution),
         ]
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return menu_items
 
@@ -106,21 +109,13 @@ class Screens:
         menu_items = []
         font = pygame.font.Font(None, self.font_size_small)
         for i, res in enumerate(available_resolutions):
-            menu_items.append(
-                self.MenuItem(
-                    f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution, self.dist_between_elements
-                )
-            )
+            menu_items.append(self.MenuItem(f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution))
 
-        menu_items.append(
-            self.MenuItem("Fullscreen", self.white, font, 4, self.display_resolution, self.dist_between_elements)
-        )
-        menu_items.append(
-            self.MenuItem("Back", self.white, font, 5, self.display_resolution, self.dist_between_elements)
-        )
+        menu_items.append(self.MenuItem("Fullscreen", self.white, font, 4, self.display_resolution))
+        menu_items.append(self.MenuItem("Back", self.white, font, 5, self.display_resolution))
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return menu_items
 
@@ -178,12 +173,10 @@ class Screens:
         )
 
         font = pygame.font.Font(None, self.font_size_small)
-        menu_items = [
-            self.MenuItem("Start Building", self.white, font, 3, self.display_resolution, self.dist_between_elements)
-        ]
+        menu_items = [self.MenuItem("Start Building", self.white, font, 3, self.display_resolution)]
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return input_rect_x_tiles, input_rect_y_tiles, menu_items
 
@@ -202,14 +195,14 @@ class Screens:
 
         font = pygame.font.Font(None, self.font_size_small)
         menu_items = [
-            self.MenuItem("1", self.white, font, 1, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("2", self.white, font, 2, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("3", self.white, font, 3, self.display_resolution, self.dist_between_elements),
-            self.MenuItem("4", self.white, font, 4, self.display_resolution, self.dist_between_elements),
+            self.MenuItem("1", self.white, font, 1, self.display_resolution),
+            self.MenuItem("2", self.white, font, 2, self.display_resolution),
+            self.MenuItem("3", self.white, font, 3, self.display_resolution),
+            self.MenuItem("4", self.white, font, 4, self.display_resolution),
         ]
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return menu_items
 
@@ -234,12 +227,10 @@ class Screens:
         # Anzeige der JSON-Dateinamen
         small_font = pygame.font.Font(None, self.font_size_small)
         for i, filename in enumerate(json_filenames):
-            menu_items.append(
-                self.MenuItem(filename, self.white, font, i, self.display_resolution, self.dist_between_elements)
-            )
+            menu_items.append(self.MenuItem(filename, self.white, small_font, i, self.display_resolution))
             maps.append(filename + ".json")
 
         for item in menu_items:
-            item.draw(screen, pygame, self.black)
+            item.draw(screen, pygame, self.black, self.display_resolution)
 
         return menu_items, maps
