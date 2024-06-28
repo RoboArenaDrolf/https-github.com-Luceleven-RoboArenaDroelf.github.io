@@ -632,8 +632,9 @@ while run:
     # Check mouse pos and select menu items
     if (not playing or game_paused) and not use_controller:
         mouse_pos = pygame.mouse.get_pos()
-        for item in menu_items:
+        for i, item in enumerate(menu_items):
             if item.rect.collidepoint(mouse_pos):
+                selected_item_index = i
                 item.selected = True
             else:
                 item.selected = False
