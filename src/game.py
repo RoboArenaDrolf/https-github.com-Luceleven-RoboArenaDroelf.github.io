@@ -190,11 +190,17 @@ def handle_build_arena_menu_events(event):
 
 def handle_settings_menu_events():
     global mouse_pos, display_resolution, fullscreen, menu, settings,\
-        screen, arena, movement, screens, selected_item_index
+        screen, arena, movement, screens, selected_item_index, use_controller
 
     dis_res_changed = False
 
-    if fullscreen_item.pressed:
+    if controller_on_off_item.pressed:
+        use_controller = not use_controller
+        if use_controller:
+            pygame.mouse.set_visible(False)
+        else:
+            pygame.mouse.set_visible(True)
+    elif fullscreen_item.pressed:
         display_resolution = fullscreen_res
         fullscreen = True
         dis_res_changed = True
@@ -603,10 +609,11 @@ while run:
         handle_main_menu_events()
     elif settings:
         menu_items = screens.settings_menu(pygame, screen)
+        controller_on_off_item = menu_items[0]
         resolution_items = []
-        for i in range(0, 4):
+        for i in range(1, 5):
             resolution_items.append(menu_items[i])
-        fullscreen_item, back_item = menu_items[4], menu_items[5]
+        fullscreen_item, back_item = menu_items[5], menu_items[6]
         handle_settings_menu_events()
     elif build_arena:
         input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_menu(pygame, screen, x_tiles, y_tiles)

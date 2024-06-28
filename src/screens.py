@@ -51,6 +51,7 @@ class Screens:
             self.MenuItem("Exit", self.white, font, 4, self.display_resolution),
         ]
         self.settings_menu_items = []
+        self.settings_menu_items.append(self.MenuItem("Controller On/Off", self.white, font, -1, self.display_resolution))
         for i, res in enumerate(available_resolutions):
             self.settings_menu_items.append(
                 self.MenuItem(f"{res[0]}x{res[1]}", self.white, font, i, self.display_resolution)
