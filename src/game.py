@@ -189,7 +189,7 @@ def handle_build_arena_menu_events(event):
 
 
 def handle_settings_menu_events():
-    global mouse_pos, display_resolution, fullscreen, menu, settings,\
+    global mouse_pos, display_resolution, fullscreen, menu, settings, \
         screen, arena, movement, screens, selected_item_index, use_controller
 
     dis_res_changed = False
@@ -601,7 +601,7 @@ while run:
         main_menu_item, quit_item = menu_items[0], menu_items[1]
         handle_death_screen_events()
     elif menu:
-        menu_items = screens.main_menu(pygame, screen)
+        menu_items = screens.main_menu_screen(pygame, screen)
         play_item, build_arena_item, settings_item, exit_item = (
             menu_items[0],
             menu_items[1],
@@ -610,7 +610,7 @@ while run:
         )
         handle_main_menu_events()
     elif settings:
-        menu_items = screens.settings_menu(pygame, screen)
+        menu_items = screens.settings_screen(pygame, screen)
         controller_on_off_item = menu_items[0]
         resolution_items = []
         for i in range(1, 5):
@@ -618,7 +618,9 @@ while run:
         fullscreen_item, back_item = menu_items[5], menu_items[6]
         handle_settings_menu_events()
     elif build_arena:
-        input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_menu(pygame, screen, x_tiles, y_tiles)
+        input_rect_x_tiles, input_rect_y_tiles, menu_items = screens.build_arena_screen(
+            pygame, screen, x_tiles, y_tiles
+        )
         start_building_item = menu_items[0]
     elif start_game:
         menu_items = screens.start_screen(pygame, screen)
@@ -629,7 +631,7 @@ while run:
             menu_items[3],
         )
     elif map:
-        menu_items = screens.level_menu(pygame, screen)
+        menu_items = screens.maps_screen(pygame, screen)
         level_items = menu_items
         handle_map_screen_events()
 
