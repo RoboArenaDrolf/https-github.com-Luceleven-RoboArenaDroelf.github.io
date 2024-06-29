@@ -25,8 +25,8 @@ pygame.display.set_caption("Robo Arena")
 white = (255, 255, 255)
 
 map_name = "secondMap.json"
-movement = Movement(display_resolution[1] / 2000)
 arena = Arena(map_name, pygame)
+movement = Movement(arena.tile_size / 120.0)
 screens = Screens(pygame)
 
 robot_radius = arena.tile_size * 0.5
@@ -190,9 +190,9 @@ def handle_start_game_menu_events():
         arena.spawn_positions[0][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "blue",
         0,
@@ -202,9 +202,9 @@ def handle_start_game_menu_events():
         arena.spawn_positions[1][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "red",
         1,
@@ -214,9 +214,9 @@ def handle_start_game_menu_events():
         arena.spawn_positions[2][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "green",
         2,
@@ -226,9 +226,9 @@ def handle_start_game_menu_events():
         arena.spawn_positions[3][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "yellow",
         3,
