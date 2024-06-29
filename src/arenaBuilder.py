@@ -37,7 +37,6 @@ class ArenaBuilder(Arena):
         self._legend_space = screen_size[0] / 5
         pygame.display.set_mode((screen_size[0] - self._legend_space, screen_size[1]))
         super().__init__(filename, pygame)
-        self.render_arena(pygame)
         self.x_offset = 0
         self.y_offset = 0
         self._calculate_spawn_positions()

@@ -53,7 +53,7 @@ class Arena:
         self.x_offset = int((pygame.display.get_window_size()[0] - self.map_size[0]) / 2)
         self.y_offset = int((pygame.display.get_window_size()[1] - self.map_size[1]) / 2)
         self._calculate_spawn_positions()
-        self.rendered_arena = None
+        self.render_arena(pygame)
 
     def load_map_from_json(self, filename, pygame):
         try:
@@ -112,10 +112,7 @@ class Arena:
 
         :param screen: screen element of pygame initialized with pygame.display.set_mode()
         """
-        if self.rendered_arena:
-            screen.blit(self.rendered_arena, (self.x_offset, self.y_offset))
-        else:
-            print("Error: Arena has not been rendered yet.")
+        screen.blit(self.rendered_arena, (self.x_offset, self.y_offset))
 
     def is_solid(self, x_positions, y_positions):
         for x in x_positions:

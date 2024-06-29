@@ -286,7 +286,6 @@ def handle_map_screen_events():
         if level_rect.collidepoint(mouse_pos):
             map_name = maps[i]
             arena = Arena(map_name, pygame)
-            arena.render_arena(pygame)
             recalculate_robot_values()
             movement = Movement(arena.tile_size / 120.0)
             map = False
