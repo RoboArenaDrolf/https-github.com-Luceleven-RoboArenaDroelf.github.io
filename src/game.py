@@ -25,12 +25,11 @@ pygame.display.set_caption("Robo Arena")
 white = (255, 255, 255)
 
 map_name = "secondMap.json"
-movement = Movement(display_resolution[1] / 2000)
 arena = Arena(map_name, pygame)
+movement = Movement(arena.tile_size / 120.0)
 screens = Screens(pygame)
 
 robot_radius = arena.tile_size * 0.5
-robot_spawn_distance = display_resolution[0] / 10
 
 game_paused = False
 run = True
@@ -87,14 +86,13 @@ def get_png_filenames(directory):
 
 
 def recalculate_robot_values():
-    global robots, robot_radius, robot_spawn_distance
+    global robots, robot_radius
     robot_radius = arena.tile_size * 0.5
-    # robot_spawn_distance = display_resolution[0] / 10
     if robots:
         for i, robot in enumerate(robots):
             robot.radius = robot_radius
-            # robot.posx = (i + 1) * robot_spawn_distance + arena.x_offset
-            # robot.posy = display_resolution[1] - 1.5 * arena.tile_size - arena.y_offset
+            robot.posx = arena.spawn_positions[i][0] + robot_radius
+            robot.posy = arena.spawn_positions[i][1] + robot_radius
             robot.accel_max = arena.tile_size / 50.0
             robot.accel_alpha_max = arena.tile_size / 50.0
             robot.vel_max = arena.tile_size / 10.0
@@ -138,7 +136,7 @@ def handle_build_arena_menu_events(event):
                 arenaBuilder = ArenaBuilder(num_x, num_y, pygame)
                 arenaBuilder.main()
             except ValueError:
-                print("There should only be positive numbers in the fields!")
+                screens.show_popup("There should only be positive numbers in the fields!")
 
     elif event.type == pygame.KEYDOWN:
         if input_active_x:
@@ -188,49 +186,49 @@ def handle_start_game_menu_events():
     global player_count, robots, jump, start_game, playing
 
     robot1 = Robot(
-        10 * arena.tile_size + arena.x_offset,
-        14 * arena.tile_size + arena.y_offset,
+        arena.spawn_positions[0][0] + robot_radius,
+        arena.spawn_positions[0][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "blue",
         0,
     )
     robot2 = Robot(
-        16 * arena.tile_size + arena.x_offset,
-        4 * arena.tile_size + arena.y_offset,
+        arena.spawn_positions[1][0] + robot_radius,
+        arena.spawn_positions[1][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "red",
         1,
     )
     robot3 = Robot(
-        40 * arena.tile_size + arena.x_offset,
-        3 * arena.tile_size + arena.y_offset,
+        arena.spawn_positions[2][0] + robot_radius,
+        arena.spawn_positions[2][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "green",
         2,
     )
     robot4 = Robot(
-        30 * arena.tile_size + arena.x_offset,
-        20 * arena.tile_size + arena.y_offset,
+        arena.spawn_positions[3][0] + robot_radius,
+        arena.spawn_positions[3][1] + robot_radius,
         robot_radius,
         0,
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(1000),
-        arena.map_size[0] / float(200),
+        arena.tile_size / 50.0,
+        arena.tile_size / 50.0,
+        arena.tile_size / 10.0,
         100,
         "yellow",
         3,
@@ -252,7 +250,6 @@ def handle_start_game_menu_events():
         robots = [robot1, robot2, robot3, robot4]
         jump = [False, False, False]
     if robots:
-        recalculate_robot_values()
         start_game = False
         playing = True
 
@@ -289,7 +286,6 @@ def handle_map_screen_events():
         if level_rect.collidepoint(mouse_pos):
             map_name = maps[i]
             arena = Arena(map_name, pygame)
-            arena.render_arena(pygame)
             recalculate_robot_values()
             movement = Movement(arena.tile_size / 120.0)
             map = False

@@ -1,3 +1,7 @@
+import tkinter as tk
+from tkinter import messagebox
+
+
 class Screens:
 
     black = (0, 0, 0)
@@ -303,3 +307,10 @@ class Screens:
             maps.append(filename + ".json")
 
         return level_rects, maps
+
+    @staticmethod
+    def show_popup(message):
+        root = tk.Tk()
+        root.withdraw()  # Verstecke das Haupt-Tkinter-Fenster
+        messagebox.showinfo("", message)
+        root.destroy()
